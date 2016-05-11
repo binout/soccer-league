@@ -1,10 +1,6 @@
 package io.github.binout.soccer.domain;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -12,13 +8,13 @@ import java.util.stream.Stream;
 public class Season {
 
     private final String name;
-    private List<FriendlyMatch> friendlyMatches;
-    private List<LeagueMatch> leagueMatches;
+    private final Set<FriendlyMatch> friendlyMatches;
+    private final Set<LeagueMatch> leagueMatches;
 
     public Season(String name) {
         this.name = Objects.requireNonNull(name);
-        this.friendlyMatches = new ArrayList<>();
-        this.leagueMatches = new ArrayList<>();
+        this.friendlyMatches = new HashSet<>();
+        this.leagueMatches = new HashSet<>();
     }
 
     public String name() {
@@ -33,14 +29,14 @@ public class Season {
         return leagueMatches.stream();
     }
 
-    public FriendlyMatch addFriendlyMatch(Instant instant, List<Player> players) {
-        FriendlyMatch match = new FriendlyMatch(instant, players);
+    public FriendlyMatch addFriendlyMatch(FriendlyDate date, Set<Player> players) {
+        FriendlyMatch match = new FriendlyMatch(date, players);
         this.friendlyMatches.add(match);
         return match;
     }
 
-    public LeagueMatch addLeagueMatch(Instant instant, List<Player> players) {
-        LeagueMatch match = new LeagueMatch(instant, players);
+    public LeagueMatch addLeagueMatch(LeagueDate date, Set<Player> players) {
+        LeagueMatch match = new LeagueMatch(date, players);
         this.leagueMatches.add(match);
         return match;
     }
@@ -49,7 +45,7 @@ public class Season {
         List<Player> participations = this.friendlyMatches.stream().flatMap(FriendlyMatch::players).collect(Collectors.toList());
         participations.addAll(this.leagueMatches.stream().flatMap(LeagueMatch::players).collect(Collectors.toList()));
 
-        return participations.stream().collect(Collectors.toMap(
+        return participations.stream().distinct().collect(Collectors.toMap(
                 Function.identity(),
                 p -> participations.stream().map(Player::name).filter(name -> name.equals(p.name())).count()
         ));

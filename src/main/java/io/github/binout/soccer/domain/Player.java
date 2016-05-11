@@ -1,11 +1,16 @@
 package io.github.binout.soccer.domain;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class Player {
 
-    private String name;
+    private final String name;
     private String email;
+
+    public Player(String name) {
+        this.name = Objects.requireNonNull(name);
+    }
 
     public Player(String name, String email) {
         this.name = Objects.requireNonNull(name);
@@ -16,8 +21,8 @@ public class Player {
         return name;
     }
 
-    public String email() {
-        return email;
+    public Optional<String> email() {
+        return Optional.ofNullable(email);
     }
 
     @Override
