@@ -10,11 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public interface Match {
 
     LocalDate date();

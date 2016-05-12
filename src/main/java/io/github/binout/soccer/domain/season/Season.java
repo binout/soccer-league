@@ -1,5 +1,6 @@
-package io.github.binout.soccer.domain;
+package io.github.binout.soccer.domain.season;
 
+import io.github.binout.soccer.domain.Player;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.match.FriendlyMatch;
@@ -47,14 +48,14 @@ public class Season {
         return match;
     }
 
-    public Map<Player, Long> computeParticipations() {
-        List<Player> participations = this.friendlyMatches.stream().flatMap(FriendlyMatch::players).collect(Collectors.toList());
-        participations.addAll(this.leagueMatches.stream().flatMap(LeagueMatch::players).collect(Collectors.toList()));
+    public SeasonStatistics statistics() {
+        List<Player> allPlayerGames = this.friendlyMatches.stream().flatMap(FriendlyMatch::players).collect(Collectors.toList());
+        allPlayerGames.addAll(this.leagueMatches.stream().flatMap(LeagueMatch::players).collect(Collectors.toList()));
 
-        return participations.stream().distinct().collect(Collectors.toMap(
+        return new SeasonStatistics(allPlayerGames.stream().distinct().collect(Collectors.toMap(
                 Function.identity(),
-                p -> participations.stream().map(Player::name).filter(name -> name.equals(p.name())).count()
-        ));
+                p -> allPlayerGames.stream().map(Player::name).filter(name -> name.equals(p.name())).count()
+        )));
     }
 
 }

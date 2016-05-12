@@ -5,11 +5,6 @@ import io.github.binout.soccer.domain.Player;
 import java.time.LocalDate;
 import java.time.Month;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public interface MatchDate {
 
     LocalDate date();

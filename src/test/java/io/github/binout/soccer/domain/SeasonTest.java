@@ -3,12 +3,12 @@ package io.github.binout.soccer.domain;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.MatchDate;
+import io.github.binout.soccer.domain.season.Season;
+import io.github.binout.soccer.domain.season.SeasonStatistics;
 import org.junit.Test;
 
 import java.time.Month;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,23 +21,23 @@ public class SeasonTest {
     }
 
     @Test
-    public void computeParticipations_1_league_match() {
+    public void compute_games_played_for_1_league_match() {
         Season season = new Season("2016");
         LeagueMatchDate date = MatchDate.newDateForLeague(2016, Month.MAY, 17);
         season.addLeagueMatch(date, players("benoit","nicolas","julien","pierre","mat"));
 
-        Map<Player, Long> participations = season.computeParticipations();
+        SeasonStatistics stats = season.statistics();
 
-        assertThat(participations).hasSize(5);
-        assertThat(participations.get(new Player("benoit"))).isEqualTo(1);
-        assertThat(participations.get(new Player("nicolas"))).isEqualTo(1);
-        assertThat(participations.get(new Player("julien"))).isEqualTo(1);
-        assertThat(participations.get(new Player("pierre"))).isEqualTo(1);
-        assertThat(participations.get(new Player("mat"))).isEqualTo(1);
+        assertThat(stats.nbPlayers()).isEqualTo(5);
+        assertThat(stats.gamesPlayed(new Player("benoit"))).isEqualTo(1);
+        assertThat(stats.gamesPlayed(new Player("nicolas"))).isEqualTo(1);
+        assertThat(stats.gamesPlayed(new Player("julien"))).isEqualTo(1);
+        assertThat(stats.gamesPlayed(new Player("pierre"))).isEqualTo(1);
+        assertThat(stats.gamesPlayed(new Player("mat"))).isEqualTo(1);
     }
 
     @Test
-    public void computeParticipations_1_league_match_and_1_friendly_match() {
+    public void compute_games_played_for_1_league_match_and_1_friendly_match() {
         Season season = new Season("2016");
 
         LeagueMatchDate leagueMatchDate = MatchDate.newDateForLeague(2016, Month.MAY, 17);
@@ -48,19 +48,19 @@ public class SeasonTest {
         players.addAll(players("flo","gauthier","fabien","guillaume","sebastien"));
         season.addFriendlyMatch(friendlyMatchDate, players);
 
-        Map<Player, Long> participations = season.computeParticipations();
+        SeasonStatistics stats = season.statistics();
 
-        assertThat(participations).hasSize(10);
-        assertThat(participations.get(new Player("benoit"))).isEqualTo(2);
-        assertThat(participations.get(new Player("nicolas"))).isEqualTo(2);
-        assertThat(participations.get(new Player("julien"))).isEqualTo(2);
-        assertThat(participations.get(new Player("pierre"))).isEqualTo(2);
-        assertThat(participations.get(new Player("mat"))).isEqualTo(2);
+        assertThat(stats.nbPlayers()).isEqualTo(10);
+        assertThat(stats.gamesPlayed(new Player("benoit"))).isEqualTo(2);
+        assertThat(stats.gamesPlayed(new Player("nicolas"))).isEqualTo(2);
+        assertThat(stats.gamesPlayed(new Player("julien"))).isEqualTo(2);
+        assertThat(stats.gamesPlayed(new Player("pierre"))).isEqualTo(2);
+        assertThat(stats.gamesPlayed(new Player("mat"))).isEqualTo(2);
 
-        assertThat(participations.get(new Player("flo"))).isEqualTo(1);
-        assertThat(participations.get(new Player("gauthier"))).isEqualTo(1);
-        assertThat(participations.get(new Player("fabien"))).isEqualTo(1);
-        assertThat(participations.get(new Player("guillaume"))).isEqualTo(1);
-        assertThat(participations.get(new Player("sebastien"))).isEqualTo(1);
+        assertThat(stats.gamesPlayed(new Player("flo"))).isEqualTo(1);
+        assertThat(stats.gamesPlayed(new Player("gauthier"))).isEqualTo(1);
+        assertThat(stats.gamesPlayed(new Player("fabien"))).isEqualTo(1);
+        assertThat(stats.gamesPlayed(new Player("guillaume"))).isEqualTo(1);
+        assertThat(stats.gamesPlayed(new Player("sebastien"))).isEqualTo(1);
     }
 }
