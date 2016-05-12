@@ -1,29 +1,41 @@
-package io.github.binout.soccer.domain;
+package io.github.binout.soccer.domain.match;
+
+import io.github.binout.soccer.domain.date.FriendlyMatchDate;
+import io.github.binout.soccer.domain.Player;
 
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class FriendlyMatch {
+public class FriendlyMatch implements Match {
 
-    private final FriendlyDate friendlyDate;
+    private final FriendlyMatchDate friendlyDate;
     private final Set<Player> players;
 
-    FriendlyMatch(FriendlyDate date, Set<Player> players) {
+    FriendlyMatch(FriendlyMatchDate date, Set<Player> players) {
         this.friendlyDate = Objects.requireNonNull(date);
-        this.players = Objects.requireNonNull(players);
-        if (this.players.size()!= 10) {
-            throw new IllegalArgumentException("10 players for a friendly match");
-        }
+        this.players = checkPlayers(date, players);
     }
 
+    @Override
     public LocalDate date() {
         return friendlyDate.date();
     }
 
+    @Override
     public Stream<Player> players() {
         return players.stream();
+    }
+
+    @Override
+    public int maxPlayers() {
+        return 10;
+    }
+
+    @Override
+    public int minPlayers() {
+        return 10;
     }
 
     @Override

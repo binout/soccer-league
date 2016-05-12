@@ -1,5 +1,11 @@
 package io.github.binout.soccer.domain;
 
+import io.github.binout.soccer.domain.date.FriendlyMatchDate;
+import io.github.binout.soccer.domain.date.LeagueMatchDate;
+import io.github.binout.soccer.domain.match.FriendlyMatch;
+import io.github.binout.soccer.domain.match.LeagueMatch;
+import io.github.binout.soccer.domain.match.Match;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,14 +35,14 @@ public class Season {
         return leagueMatches.stream();
     }
 
-    public FriendlyMatch addFriendlyMatch(FriendlyDate date, Set<Player> players) {
-        FriendlyMatch match = new FriendlyMatch(date, players);
+    public FriendlyMatch addFriendlyMatch(FriendlyMatchDate date, Set<Player> players) {
+        FriendlyMatch match = Match.newFriendlyMatch(date, players);
         this.friendlyMatches.add(match);
         return match;
     }
 
-    public LeagueMatch addLeagueMatch(LeagueDate date, Set<Player> players) {
-        LeagueMatch match = new LeagueMatch(date, players);
+    public LeagueMatch addLeagueMatch(LeagueMatchDate date, Set<Player> players) {
+        LeagueMatch match = Match.newLeagueMatch(date, players);
         this.leagueMatches.add(match);
         return match;
     }

@@ -1,28 +1,31 @@
 package io.github.binout.soccer.domain;
 
+import io.github.binout.soccer.domain.date.FriendlyMatchDate;
+import io.github.binout.soccer.domain.date.LeagueMatchDate;
+import io.github.binout.soccer.domain.date.MatchDate;
 import org.junit.Test;
 
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SeasonTest {
 
+    private Set<Player> players(String... names) {
+        return Arrays.stream(names).map(Player::new).collect(Collectors.toSet());
+    }
+
     @Test
     public void computeParticipations_1_league_match() {
         Season season = new Season("2016");
-        LeagueDate date = new LeagueDate(LocalDate.of(2016, Month.MAY, 17));
-        season.addLeagueMatch(date, new HashSet<>(Arrays.asList(
-                new Player("benoit"),
-                new Player("nicolas"),
-                new Player("julien"),
-                new Player("pierre"),
-                new Player("mat")
-                )));
+        LeagueMatchDate date = MatchDate.newDateForLeague(2016, Month.MAY, 17);
+        season.addLeagueMatch(date, players("benoit","nicolas","julien","pierre","mat"));
+
         Map<Player, Long> participations = season.computeParticipations();
 
         assertThat(participations).hasSize(5);
@@ -36,26 +39,15 @@ public class SeasonTest {
     @Test
     public void computeParticipations_1_league_match_and_1_friendly_match() {
         Season season = new Season("2016");
-        season.addLeagueMatch(new LeagueDate(LocalDate.of(2016, Month.MAY, 17)), new HashSet<>(Arrays.asList(
-                new Player("benoit"),
-                new Player("nicolas"),
-                new Player("julien"),
-                new Player("pierre"),
-                new Player("mat")
-        )));
-        season.addFriendlyMatch(new FriendlyDate(LocalDate.of(2016, Month.MAY, 24)), new HashSet<>(Arrays.asList(
-                new Player("benoit"),
-                new Player("nicolas"),
-                new Player("julien"),
-                new Player("pierre"),
-                new Player("mat"),
 
-                new Player("flo"),
-                new Player("gauthier"),
-                new Player("fabien"),
-                new Player("guillaume"),
-                new Player("sebastien")
-        )));
+        LeagueMatchDate leagueMatchDate = MatchDate.newDateForLeague(2016, Month.MAY, 17);
+        season.addLeagueMatch(leagueMatchDate, players("benoit","nicolas","julien","pierre","mat"));
+
+        FriendlyMatchDate friendlyMatchDate = MatchDate.newDateForFriendly(2016, Month.MAY, 24);
+        Set<Player> players = players("benoit", "nicolas", "julien", "pierre", "mat");
+        players.addAll(players("flo","gauthier","fabien","guillaume","sebastien"));
+        season.addFriendlyMatch(friendlyMatchDate, players);
+
         Map<Player, Long> participations = season.computeParticipations();
 
         assertThat(participations).hasSize(10);

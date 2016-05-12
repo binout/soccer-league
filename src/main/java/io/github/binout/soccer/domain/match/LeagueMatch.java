@@ -1,21 +1,21 @@
-package io.github.binout.soccer.domain;
+package io.github.binout.soccer.domain.match;
+
+import io.github.binout.soccer.domain.date.LeagueMatchDate;
+import io.github.binout.soccer.domain.Player;
 
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class LeagueMatch {
+public class LeagueMatch implements Match {
 
-    private final LeagueDate leagueDate;
+    private final LeagueMatchDate leagueDate;
     private final Set<Player> players;
 
-    LeagueMatch(LeagueDate date, Set<Player> players) {
+    LeagueMatch(LeagueMatchDate date, Set<Player> players) {
         this.leagueDate = Objects.requireNonNull(date);
-        this.players = Objects.requireNonNull(players);
-        if (this.players.size() < 5 || this.players.size() > 7) {
-            throw new IllegalArgumentException("5, 6 or 7 players for a league match");
-        }
+        this.players = checkPlayers(date, players);
     }
 
     public LocalDate date() {
@@ -24,6 +24,16 @@ public class LeagueMatch {
 
     public Stream<Player> players() {
         return players.stream();
+    }
+
+    @Override
+    public int maxPlayers() {
+        return 7;
+    }
+
+    @Override
+    public int minPlayers() {
+        return 5;
     }
 
     @Override
