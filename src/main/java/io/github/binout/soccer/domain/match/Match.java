@@ -1,6 +1,6 @@
 package io.github.binout.soccer.domain.match;
 
-import io.github.binout.soccer.domain.Player;
+import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.MatchDate;

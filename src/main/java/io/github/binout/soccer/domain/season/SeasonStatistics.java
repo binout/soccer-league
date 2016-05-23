@@ -1,6 +1,6 @@
 package io.github.binout.soccer.domain.season;
 
-import io.github.binout.soccer.domain.Player;
+import io.github.binout.soccer.domain.player.Player;
 
 import java.util.Map;
 

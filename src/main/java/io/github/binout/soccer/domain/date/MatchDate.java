@@ -1,6 +1,6 @@
 package io.github.binout.soccer.domain.date;
 
-import io.github.binout.soccer.domain.Player;
+import io.github.binout.soccer.domain.player.Player;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -14,6 +14,10 @@ public interface MatchDate {
     void absent(Player player);
 
     boolean isAbsent(Player player);
+
+    default boolean isPresent(Player player) {
+        return !isAbsent(player);
+    }
 
     static LeagueMatchDate newDateForLeague(int year, Month month, int dayOfMonth) {
         return new LeagueMatchDate(LocalDate.of(year, month, dayOfMonth));

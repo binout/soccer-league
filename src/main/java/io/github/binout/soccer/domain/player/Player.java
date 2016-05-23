@@ -1,4 +1,4 @@
-package io.github.binout.soccer.domain;
+package io.github.binout.soccer.domain.player;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -7,13 +7,15 @@ public class Player {
 
     private final String name;
     private String email;
+    private boolean isPlayerLeague;
 
     public Player(String name) {
         this.name = Objects.requireNonNull(name);
+        this.isPlayerLeague = false;
     }
 
     public Player(String name, String email) {
-        this.name = Objects.requireNonNull(name);
+        this(name);
         this.email = Objects.requireNonNull(email);
     }
 
@@ -23,6 +25,14 @@ public class Player {
 
     public Optional<String> email() {
         return Optional.ofNullable(email);
+    }
+
+    public boolean isPlayerLeague() {
+        return isPlayerLeague;
+    }
+
+    public void playsInLeague(boolean playerLeague) {
+        this.isPlayerLeague = playerLeague;
     }
 
     @Override

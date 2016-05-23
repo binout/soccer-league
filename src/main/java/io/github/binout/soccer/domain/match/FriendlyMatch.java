@@ -1,7 +1,7 @@
 package io.github.binout.soccer.domain.match;
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
-import io.github.binout.soccer.domain.Player;
+import io.github.binout.soccer.domain.player.Player;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class FriendlyMatch implements Match {
+
+    static final int MAX_PLAYERS = 10;
 
     private final FriendlyMatchDate friendlyDate;
     private final Set<Player> players;
@@ -30,7 +32,7 @@ public class FriendlyMatch implements Match {
 
     @Override
     public int maxPlayers() {
-        return 10;
+        return MAX_PLAYERS;
     }
 
     @Override

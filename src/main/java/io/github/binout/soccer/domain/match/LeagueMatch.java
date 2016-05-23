@@ -1,7 +1,7 @@
 package io.github.binout.soccer.domain.match;
 
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
-import io.github.binout.soccer.domain.Player;
+import io.github.binout.soccer.domain.player.Player;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class LeagueMatch implements Match {
+
+    static final int MAX_PLAYERS = 7;
 
     private final LeagueMatchDate leagueDate;
     private final Set<Player> players;
@@ -28,7 +30,7 @@ public class LeagueMatch implements Match {
 
     @Override
     public int maxPlayers() {
-        return 7;
+        return MAX_PLAYERS;
     }
 
     @Override
