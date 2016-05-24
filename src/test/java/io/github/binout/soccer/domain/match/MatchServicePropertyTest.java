@@ -11,9 +11,11 @@ import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.infrastructure.persistence.InMemoryPlayerRepository;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.time.Month;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,6 +93,26 @@ public class MatchServicePropertyTest {
         registerPlayers(nbPlayers, 0);
         FriendlyMatch friendlyMatch = matchService.planFriendlyMatch(EMPTY_SEASON, DATE_FOR_FRIENDLY);
         assertThat(friendlyMatch.players().count()).isEqualTo(10);
+    }
+
+    @Test
+    public void no_substitutes_if_only_10_players() {
+        registerPlayers(10, 0);
+        FriendlyMatch friendlyMatch = matchService.planFriendlyMatch(EMPTY_SEASON, DATE_FOR_FRIENDLY);
+
+        Set<Player> substitutes = matchService.getSubstitutes(EMPTY_SEASON, friendlyMatch);
+
+        assertThat(substitutes).isEmpty();
+    }
+
+    @Property
+    public void substitutes_if_more_than_10_players(@InRange(min = "10", max = "100") int nbPlayers) {
+        registerPlayers(nbPlayers, 0);
+        FriendlyMatch friendlyMatch = matchService.planFriendlyMatch(EMPTY_SEASON, DATE_FOR_FRIENDLY);
+
+        Set<Player> substitutes = matchService.getSubstitutes(EMPTY_SEASON, friendlyMatch);
+
+        assertThat(substitutes).hasSize(nbPlayers - 10);
     }
 
 

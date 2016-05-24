@@ -25,6 +25,10 @@ public class FriendlyMatch implements Match {
         return friendlyDate.date();
     }
 
+    public FriendlyMatchDate friendlyDate() {
+        return friendlyDate;
+    }
+
     @Override
     public Stream<Player> players() {
         return players.stream();

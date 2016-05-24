@@ -8,6 +8,7 @@ import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonStatistics;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,17 @@ public class MatchService {
                 .collect(Collectors.groupingBy(statistics::gamesPlayed));
         TreeMap<Integer, List<Player>> treeMap = new TreeMap<>(playersByGamesPlayed);
         return season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS));
+    }
+
+    public Set<Player> getSubstitutes(Season season, FriendlyMatch match) {
+        SeasonStatistics statistics = season.statistics();
+        FriendlyMatchDate date = match.friendlyDate();
+        List<Player> players = match.players().collect(Collectors.toList());
+        return playerRepository.all()
+                .filter(date::isPresent)
+                .filter(p -> !players.contains(p))
+                .sorted((p1, p2) -> Integer.compare(statistics.gamesPlayed(p1), statistics.gamesPlayed(p2)))
+                .collect(Collectors.toSet());
     }
 
     private Set<Player> extractPlayers(TreeMap<Integer, List<Player>> treeMap, int maxPlayers) {
