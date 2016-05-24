@@ -29,7 +29,6 @@ public class MatchService {
                 .filter(date::isPresent)
                 .collect(Collectors.groupingBy(statistics::gamesPlayed));
         TreeMap<Integer, List<Player>> treeMap = new TreeMap<>(playersByGamesPlayed);
-
         return new FriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS));
     }
 
@@ -38,7 +37,9 @@ public class MatchService {
         Iterator<Map.Entry<Integer, List<Player>>> iterator = treeMap.entrySet().iterator();
         while (iterator.hasNext() && teamIsNotFull(players, maxPlayers)) {
             Map.Entry<Integer, List<Player>> entry = iterator.next();
-            Iterator<Player> playerIterator = entry.getValue().iterator();
+            List<Player> playersForCurrentCount = entry.getValue();
+            Collections.shuffle(playersForCurrentCount); // randomize list
+            Iterator<Player> playerIterator = playersForCurrentCount.iterator();
             while (playerIterator.hasNext() && teamIsNotFull(players, maxPlayers)) {
                 players.add(playerIterator.next());
             }
