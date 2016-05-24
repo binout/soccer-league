@@ -4,6 +4,7 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonStatistics;
 
 import javax.inject.Inject;
@@ -15,21 +16,23 @@ public class MatchService {
     @Inject
     PlayerRepository playerRepository;
 
-    public LeagueMatch planLeagueMatch(LeagueMatchDate date, SeasonStatistics statistics) {
+    public LeagueMatch planLeagueMatch(Season season, LeagueMatchDate date) {
+        SeasonStatistics statistics = season.statistics();
         Map<Integer, List<Player>> playersByGamesPlayed = playerRepository.all()
                 .filter(date::isPresent)
                 .filter(Player::isPlayerLeague)
                 .collect(Collectors.groupingBy(statistics::gamesPlayed));
         TreeMap<Integer, List<Player>> treeMap = new TreeMap<>(playersByGamesPlayed);
-        return new LeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS));
+        return season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS));
     }
 
-    public FriendlyMatch planFriendlyMatch(FriendlyMatchDate date, SeasonStatistics statistics) {
+    public FriendlyMatch planFriendlyMatch(Season season, FriendlyMatchDate date) {
+        SeasonStatistics statistics = season.statistics();
         Map<Integer, List<Player>> playersByGamesPlayed = playerRepository.all()
                 .filter(date::isPresent)
                 .collect(Collectors.groupingBy(statistics::gamesPlayed));
         TreeMap<Integer, List<Player>> treeMap = new TreeMap<>(playersByGamesPlayed);
-        return new FriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS));
+        return season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS));
     }
 
     private Set<Player> extractPlayers(TreeMap<Integer, List<Player>> treeMap, int maxPlayers) {
