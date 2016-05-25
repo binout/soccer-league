@@ -1,11 +1,9 @@
-package io.github.binout.soccer.domain;
+package io.github.binout.soccer.domain.season;
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.MatchDate;
 import io.github.binout.soccer.domain.player.Player;
-import io.github.binout.soccer.domain.season.Season;
-import io.github.binout.soccer.domain.season.SeasonStatistics;
 import org.junit.Test;
 
 import java.time.Month;

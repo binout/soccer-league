@@ -1,4 +1,4 @@
-package io.github.binout.soccer.domain.match;
+package io.github.binout.soccer.domain.season.match;
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
@@ -8,7 +8,6 @@ import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonStatistics;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 

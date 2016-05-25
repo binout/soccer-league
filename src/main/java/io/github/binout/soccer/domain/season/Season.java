@@ -3,9 +3,9 @@ package io.github.binout.soccer.domain.season;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
-import io.github.binout.soccer.domain.match.FriendlyMatch;
-import io.github.binout.soccer.domain.match.LeagueMatch;
-import io.github.binout.soccer.domain.match.Match;
+import io.github.binout.soccer.domain.season.match.FriendlyMatch;
+import io.github.binout.soccer.domain.season.match.LeagueMatch;
+import io.github.binout.soccer.domain.season.match.Match;
 
 import java.util.*;
 import java.util.function.Function;

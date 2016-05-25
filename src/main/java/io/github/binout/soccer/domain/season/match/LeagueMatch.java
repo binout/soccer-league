@@ -1,4 +1,4 @@
-package io.github.binout.soccer.domain.match;
+package io.github.binout.soccer.domain.season.match;
 
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.player.Player;

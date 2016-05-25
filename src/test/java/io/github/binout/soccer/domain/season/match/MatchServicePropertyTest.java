@@ -1,4 +1,4 @@
-package io.github.binout.soccer.domain.match;
+package io.github.binout.soccer.domain.season.match;
 
 import com.pholser.junit.quickcheck.From;
 import com.pholser.junit.quickcheck.Property;
