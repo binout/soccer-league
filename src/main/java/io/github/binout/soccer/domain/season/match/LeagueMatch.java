@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 public class LeagueMatch implements Match {
 
-    static final int MAX_PLAYERS = 7;
+    public static final int MAX_PLAYERS = 7;
 
     private final LeagueMatchDate leagueDate;
     private final Set<Player> players;

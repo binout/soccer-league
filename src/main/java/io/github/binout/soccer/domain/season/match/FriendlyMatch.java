@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 public class FriendlyMatch implements Match {
 
-    static final int MAX_PLAYERS = 10;
+    public static final int MAX_PLAYERS = 10;
 
     private final FriendlyMatchDate friendlyDate;
     private final Set<Player> players;

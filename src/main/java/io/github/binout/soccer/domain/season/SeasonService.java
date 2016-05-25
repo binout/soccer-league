@@ -1,17 +1,17 @@
-package io.github.binout.soccer.domain.season.match;
+package io.github.binout.soccer.domain.season;
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
-import io.github.binout.soccer.domain.season.Season;
-import io.github.binout.soccer.domain.season.SeasonStatistics;
+import io.github.binout.soccer.domain.season.match.FriendlyMatch;
+import io.github.binout.soccer.domain.season.match.LeagueMatch;
 
 import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MatchService {
+public class SeasonService {
 
     @Inject
     PlayerRepository playerRepository;
