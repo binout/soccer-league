@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class InMemorySeasonRepository implements SeasonRepository {
@@ -25,6 +26,11 @@ public class InMemorySeasonRepository implements SeasonRepository {
     @Override
     public Optional<Season> byName(String name) {
         return Optional.ofNullable(seasons.get(name));
+    }
+
+    @Override
+    public Stream<Season> all() {
+        return seasons.values().stream();
     }
 
 }
