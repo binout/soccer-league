@@ -27,6 +27,10 @@ public class Player {
         return Optional.ofNullable(email);
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public boolean isPlayerLeague() {
         return isPlayerLeague;
     }
