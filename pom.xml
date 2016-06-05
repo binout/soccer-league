@@ -19,6 +19,7 @@
     </properties>
 
     <build>
+        <finalName>soccer-league</finalName>
         <plugins>
             <plugin>
                 <groupId>org.wildfly.swarm</groupId>
