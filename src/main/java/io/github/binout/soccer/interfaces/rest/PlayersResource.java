@@ -2,6 +2,8 @@ package io.github.binout.soccer.interfaces.rest;
 
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import io.github.binout.soccer.interfaces.rest.model.RestLink;
+import io.github.binout.soccer.interfaces.rest.model.RestPlayer;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -62,41 +64,4 @@ public class PlayersResource {
         return restPlayer;
     }
 
-    private static class RestPlayer extends RestModel {
-
-        private String name;
-        private String email;
-        private Boolean isPlayerLeague;
-
-        RestPlayer(){}
-
-        RestPlayer(String name) {
-            this();
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public Boolean isPlayerLeague() {
-            return isPlayerLeague;
-        }
-
-        public void setPlayerLeague(Boolean playerLeague) {
-            isPlayerLeague = playerLeague;
-        }
-    }
 }

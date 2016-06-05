@@ -9,6 +9,7 @@ import java.time.Month;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class InMemoryLeagueMatchDateRepository implements LeagueMatchDateRepository {
@@ -17,6 +18,11 @@ public class InMemoryLeagueMatchDateRepository implements LeagueMatchDateReposit
 
     public InMemoryLeagueMatchDateRepository() {
         dates = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public Stream<LeagueMatchDate> all() {
+        return dates.values().stream();
     }
 
     @Override

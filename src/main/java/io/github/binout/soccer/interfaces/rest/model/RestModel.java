@@ -1,4 +1,4 @@
-package io.github.binout.soccer.interfaces.rest;
+package io.github.binout.soccer.interfaces.rest.model;
 
 import java.util.ArrayList;
 import java.util.List;

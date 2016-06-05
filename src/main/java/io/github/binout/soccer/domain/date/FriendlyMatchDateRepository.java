@@ -2,6 +2,7 @@ package io.github.binout.soccer.domain.date;
 
 import java.time.Month;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * LECTRA
@@ -9,6 +10,8 @@ import java.util.Optional;
  * @author b.prioux
  */
 public interface FriendlyMatchDateRepository {
+
+    Stream<FriendlyMatchDate> all();
 
     void add(FriendlyMatchDate date);
 

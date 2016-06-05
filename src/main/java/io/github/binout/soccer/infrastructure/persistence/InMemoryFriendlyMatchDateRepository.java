@@ -9,6 +9,7 @@ import java.time.Month;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class InMemoryFriendlyMatchDateRepository implements FriendlyMatchDateRepository {
@@ -17,6 +18,11 @@ public class InMemoryFriendlyMatchDateRepository implements FriendlyMatchDateRep
 
     public InMemoryFriendlyMatchDateRepository() {
         dates = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public Stream<FriendlyMatchDate> all() {
+        return dates.values().stream();
     }
 
     @Override

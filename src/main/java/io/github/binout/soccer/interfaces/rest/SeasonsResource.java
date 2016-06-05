@@ -2,6 +2,8 @@ package io.github.binout.soccer.interfaces.rest;
 
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
+import io.github.binout.soccer.interfaces.rest.model.RestLink;
+import io.github.binout.soccer.interfaces.rest.model.RestSeason;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -51,23 +53,4 @@ public class SeasonsResource {
         return restSeason;
     }
 
-    private static class RestSeason extends RestModel {
-
-        private String name;
-
-        RestSeason(){}
-
-        RestSeason(String name) {
-            this();
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
 }
