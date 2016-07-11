@@ -1,1 +1,1 @@
-web:    java -Dswarm.http.port=$PORT -jar target/soccer-league-swarm.jar
+web:    java -jar -DPROD_MODE=true target/soccer-league.jar

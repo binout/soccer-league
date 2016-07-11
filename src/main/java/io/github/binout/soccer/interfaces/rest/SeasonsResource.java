@@ -2,54 +2,47 @@ package io.github.binout.soccer.interfaces.rest;
 
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
-import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestSeason;
+import net.codestory.http.annotations.Get;
+import net.codestory.http.annotations.Prefix;
+import net.codestory.http.annotations.Put;
+import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("seasons")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@Prefix("seasons")
 public class SeasonsResource {
 
     @Inject
     SeasonRepository seasonRepository;
 
-    @GET
-    public List<RestSeason> getAll(@Context UriInfo uriInfo) {
-        return seasonRepository.all().map(s -> toRestModel(uriInfo, s)).collect(Collectors.toList());
+    @Get
+    public List<RestSeason> getAll() {
+        return seasonRepository.all().map(s -> toRestModel(s)).collect(Collectors.toList());
     }
 
-    @Path("{name}")
-    @PUT
-    public Response put(@PathParam("name") String name) {
+    @Put(":name")
+    public Payload put(String name) {
         if (!seasonRepository.byName(name).isPresent()) {
             seasonRepository.add(new Season(name));
         }
-        return Response.ok().build();
+        return Payload.ok();
     }
 
-    @Path("{name}")
-    @GET
-    public Response get(@PathParam("name") String name) {
+    @Get(":name")
+    public Payload get(String name) {
         return seasonRepository.byName(name)
                 .map(s -> new RestSeason(s.name()))
-                .map(s -> Response.ok(s).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+                .map(Payload::new)
+                .orElse(Payload.notFound());
     }
 
-    private static RestSeason toRestModel(UriInfo uriInfo, Season s) {
+    private static RestSeason toRestModel(Season s) {
         RestSeason restSeason = new RestSeason(s.name());
-        URI uri = uriInfo.getAbsolutePathBuilder().path(s.name()).build();
-        restSeason.addLinks(new RestLink(uri));
+        //URI uri = uriInfo.getAbsolutePathBuilder().path(s.name()).build();
+        //restSeason.addLinks(new RestLink(uri));
         return restSeason;
     }
 

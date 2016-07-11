@@ -18,7 +18,7 @@ export class Application extends React.Component {
         };
     }
     fetchState() {
-        $.ajax('/rest/hello').done((data) => this.setState(data));
+        $.ajax('/hello').done((data) => this.setState(data));
     }
     render() {
         return (
@@ -36,7 +36,7 @@ export class Application extends React.Component {
                     </Nav>
                 </Navbar>
                 <div className="app-hello-message">
-                    Hello {this.state.name} #{this.state.counter} at {this.state.timestamp}
+                    Hello {this.state.name} #{this.state.counter} at {this.state.timestamp} in ReactJS served by FluentHttp
                 </div>
             </div>
         );
