@@ -1,21 +1,19 @@
 package io.github.binout.soccer.interfaces.rest;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import net.codestory.http.annotations.Get;
+import net.codestory.http.annotations.Prefix;
+
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Path("hello")
+@Prefix("hello")
 public class HelloResource {
 
     private static AtomicLong counter = new AtomicLong();
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Get
     public Map<String, String> hello() {
         Map<String, String> map = new HashMap<>();
         map.put("name", "World");
