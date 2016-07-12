@@ -2,7 +2,9 @@ package io.github.binout.soccer.interfaces.rest;
 
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestPlayer;
+import net.codestory.http.Context;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Prefix;
 import net.codestory.http.annotations.Put;
@@ -20,8 +22,8 @@ public class PlayersResource {
     PlayerRepository playerRepository;
 
     @Get
-    public List<RestPlayer> getAll() {
-        return playerRepository.all().map(p -> toRestModel(p)).collect(Collectors.toList());
+    public List<RestPlayer> getAll(Context context) {
+        return playerRepository.all().map(p -> toRestModel(context.uri(), p)).collect(Collectors.toList());
     }
 
     @Put(":name")
@@ -50,12 +52,11 @@ public class PlayersResource {
         return restPlayer;
     }
 
-    /*
-    private static RestPlayer toRestModel(Player p) {
-        RestPlayer restPlayer = new RestPlayer(p.name());
-        URI uri = uriInfo.getAbsolutePathBuilder().path(p.name()).build();
-        restPlayer.addLinks(new RestLink(uri));
+
+    private static RestPlayer toRestModel(String baseUri, Player p) {
+        RestPlayer restPlayer = toRestModel(p);
+        restPlayer.addLinks(new RestLink(baseUri + "/" + p.name()));
         return restPlayer;
-    }*/
+    }
 
 }

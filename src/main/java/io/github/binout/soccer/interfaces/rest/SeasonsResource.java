@@ -2,7 +2,9 @@ package io.github.binout.soccer.interfaces.rest;
 
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
+import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestSeason;
+import net.codestory.http.Context;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Prefix;
 import net.codestory.http.annotations.Put;
@@ -19,8 +21,8 @@ public class SeasonsResource {
     SeasonRepository seasonRepository;
 
     @Get
-    public List<RestSeason> getAll() {
-        return seasonRepository.all().map(s -> toRestModel(s)).collect(Collectors.toList());
+    public List<RestSeason> getAll(Context context) {
+        return seasonRepository.all().map(s -> toRestModel(context.uri(), s)).collect(Collectors.toList());
     }
 
     @Put(":name")
@@ -39,10 +41,9 @@ public class SeasonsResource {
                 .orElse(Payload.notFound());
     }
 
-    private static RestSeason toRestModel(Season s) {
+    private static RestSeason toRestModel(String baseUri, Season s) {
         RestSeason restSeason = new RestSeason(s.name());
-        //URI uri = uriInfo.getAbsolutePathBuilder().path(s.name()).build();
-        //restSeason.addLinks(new RestLink(uri));
+        restSeason.addLinks(new RestLink(baseUri + "/" + s.name()));
         return restSeason;
     }
 

@@ -33,7 +33,7 @@ const Players = React.createClass({
                 <tr key={i}>
                     <td>{this.state.players[i].name}</td>
                     <td>{this.state.players[i].email}</td>
-                    <td><input type="checkbox" defaultChecked={this.state.players[i].playerLeague}/></td>
+                    <td><input type="checkbox" checked={this.state.players[i].playerLeague}/></td>
                 </tr>
             )
         }

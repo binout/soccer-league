@@ -3,7 +3,9 @@ package io.github.binout.soccer.interfaces.rest;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import io.github.binout.soccer.domain.date.MatchDate;
+import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestMatchDate;
+import net.codestory.http.Context;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Prefix;
 import net.codestory.http.annotations.Put;
@@ -22,8 +24,8 @@ public class LeagueMatchDateResource {
     LeagueMatchDateRepository repository;
 
     @Get
-    public List<RestMatchDate> all() {
-        return repository.all().map(m -> toRestModel(m)).collect(Collectors.toList());
+    public List<RestMatchDate> all(Context context) {
+        return repository.all().map(m -> toRestModel(context.uri(), m)).collect(Collectors.toList());
     }
 
     @Put(":year-:month-:day")
@@ -45,9 +47,9 @@ public class LeagueMatchDateResource {
                 .orElse(Payload.notFound());
     }
 
-    private RestMatchDate toRestModel(MatchDate m) {
+    private RestMatchDate toRestModel(String baseUri, MatchDate m) {
         RestMatchDate restMatchDate = new RestMatchDate(m.date());
-        //restMatchDate.addLinks(new RestLink(uriInfo.getAbsolutePathBuilder().path(restMatchDate.getDate()).build()));
+        restMatchDate.addLinks(new RestLink(baseUri + restMatchDate.getDate()));
         return restMatchDate;
     }
 
