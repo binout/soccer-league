@@ -1,7 +1,9 @@
 package io.github.binout.soccer;
 
 import io.github.binout.soccer.infrastructure.ioc.WeldIocAdapter;
-import io.github.binout.soccer.interfaces.rest.HelloResource;
+import io.github.binout.soccer.interfaces.rest.FriendlyMatchDateResource;
+import io.github.binout.soccer.interfaces.rest.LeagueMatchDateResource;
+import io.github.binout.soccer.interfaces.rest.PlayersResource;
 import io.github.binout.soccer.interfaces.rest.SeasonsResource;
 import net.codestory.http.Configuration;
 import net.codestory.http.WebServer;
@@ -32,8 +34,10 @@ public class Server {
         @Override
         public void configure(Routes routes) {
             routes.setIocAdapter(iocAdapter);
-            routes.add(HelloResource.class);
             routes.add(SeasonsResource.class);
+            routes.add(PlayersResource.class);
+            routes.add(FriendlyMatchDateResource.class);
+            routes.add(LeagueMatchDateResource.class);
         }
     }
 }
