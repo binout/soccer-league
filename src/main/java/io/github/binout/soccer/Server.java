@@ -34,10 +34,10 @@ public class Server {
         @Override
         public void configure(Routes routes) {
             routes.setIocAdapter(iocAdapter);
-            routes.add(SeasonsResource.class);
-            routes.add(PlayersResource.class);
-            routes.add(FriendlyMatchDateResource.class);
-            routes.add(LeagueMatchDateResource.class);
+            routes.add("rest", SeasonsResource.class);
+            routes.add("rest", PlayersResource.class);
+            routes.add("rest", FriendlyMatchDateResource.class);
+            routes.add("rest", LeagueMatchDateResource.class);
         }
     }
 }

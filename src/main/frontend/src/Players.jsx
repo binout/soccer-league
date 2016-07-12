@@ -19,7 +19,7 @@ const Players = React.createClass({
             playerLeague : this.refs.inputPlayerLeague.checked
         };
         $.ajax({
-            url: '/players/' + name,
+            url: '/rest/players/' + name,
             type: 'PUT',
             contentType : 'application/json',
             data : JSON.stringify(player)
@@ -67,7 +67,7 @@ const Players = React.createClass({
     },
 
     fetchState() {
-        $.get('/players').done(data => this.setState({players : data}));
+        $.get('/rest/players').done(data => this.setState({players : data}));
     },
 
     componentDidMount() {
