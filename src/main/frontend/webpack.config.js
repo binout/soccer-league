@@ -10,10 +10,7 @@ module.exports = {
     },
     module: {
         loaders: [
-            {
-                test: /\.css$/,
-                loader: "style!css"
-            },
+            { test: /\.css$/, loader: "style-loader!css-loader" },
             {
                 test: /\.jsx?$/,
                 include: [
@@ -23,10 +20,6 @@ module.exports = {
                 query: {
                     presets: ['es2015', 'react']
                 }
-            },
-            {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader")
             }
         ]
     },

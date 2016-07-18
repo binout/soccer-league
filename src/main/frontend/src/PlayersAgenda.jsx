@@ -1,13 +1,34 @@
 import React from 'react';
-import {Table} from 'react-bootstrap';
+import {Table,Button} from 'react-bootstrap';
+import DatePicker from 'react-datepicker';
+
+var moment = require('moment');
+require('react-datepicker/dist/react-datepicker.css');
+
 
 const PlayersAgenda = React.createClass({
 
     getDefaultProps() {
         return {
             players : [],
-            matchDates : []
+            matchDates : [],
         }
+    },
+
+    getInitialState() {
+        return {
+            startDate: moment()
+        };
+    },
+
+    handleChange(date) {
+        this.setState({
+            startDate: date
+        });
+    },
+
+    handleSubmit() {
+        this.props.matchDateHandler(this.state.startDate);
     },
 
     render() {
@@ -31,17 +52,25 @@ const PlayersAgenda = React.createClass({
             );
         }
         return (
-            <Table striped bordered condensed hover>
-                <thead>
-                <tr>
-                    <th>Players</th>
-                    {thsHead}
-                </tr>
-                </thead>
-                <tbody>
-                {trsBody}
-                </tbody>
-            </Table>
+            <div>
+                <br/>
+                <form>
+                    <DatePicker selected={this.state.startDate} onChange={this.handleChange} dateFormat="YYYY/MM/DD"/>
+                    &nbsp;<Button bsStyle="primary" bsSize="small" onClick={this.handleSubmit}>ADD</Button>
+                </form>
+                <br/>
+                <Table striped bordered condensed hover>
+                    <thead>
+                    <tr>
+                        <th>Players</th>
+                        {thsHead}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {trsBody}
+                    </tbody>
+                </Table>
+            </div>
         );
     }
 });

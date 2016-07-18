@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
-import {Table,Button } from 'react-bootstrap';
+import {Table,Button,Panel } from 'react-bootstrap';
 
 const Players = React.createClass({
 
@@ -56,12 +56,14 @@ const Players = React.createClass({
                         {this.renderLines()}
                     </tbody>
                 </Table>
+                <Panel>
                 <form ref="form" onSubmit={this.handleSubmit}>
-                    <div>Name <input type="text" ref="inputPlayerName" /></div>
-                    <div>Email <input type="text" ref="inputPlayerEmail" /></div>
-                    <div>Plays in league : <input type="checkbox" ref="inputPlayerLeague" /></div>
-                    <div><Button bsStyle="primary" onClick={this.handleSubmit}>PUT</Button></div>
+                    Name <input type="text" ref="inputPlayerName" />
+                    &nbsp;Email <input type="text" ref="inputPlayerEmail" />
+                    &nbsp;Plays in league : <input type="checkbox" ref="inputPlayerLeague" />
+                    &nbsp;<Button bsStyle="primary" bsSize="small" onClick={this.handleSubmit}>PUT</Button>
                 </form>
+                </Panel>
             </div>
         );
     },
