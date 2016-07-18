@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import React from 'react';
-import Cleave from 'cleave.js/react';
 import {Table,Button } from 'react-bootstrap';
 
 const Players = React.createClass({
