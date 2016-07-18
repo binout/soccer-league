@@ -3,6 +3,7 @@ package io.github.binout.soccer.interfaces.rest;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import io.github.binout.soccer.domain.date.MatchDate;
+import io.github.binout.soccer.interfaces.rest.model.RestDate;
 import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestMatchDate;
 import net.codestory.http.Context;
@@ -12,14 +13,7 @@ import net.codestory.http.annotations.Put;
 import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
-import java.time.temporal.IsoFields;
-import java.time.temporal.TemporalAccessor;
-import java.time.temporal.TemporalField;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,9 +24,6 @@ public class FriendlyMatchDateResource {
     @Inject
     FriendlyMatchDateRepository repository;
 
-    private TemporalAccessor getTemporalAccessor(String date) {
-        return DateTimeFormatter.ISO_LOCAL_DATE.parse(date);
-    }
 
     @Get
     public List<RestMatchDate> all(Context context) {
@@ -46,26 +37,20 @@ public class FriendlyMatchDateResource {
                 .map(m -> toRestModel(context.uri(), m)).collect(Collectors.toList());
     }
 
-    @Put(":date")
-    public Payload put(String date) {
-        TemporalAccessor accessor = getTemporalAccessor(date);
-        int year = accessor.get(ChronoField.YEAR);
-        Month month = Month.of(accessor.get(ChronoField.MONTH_OF_YEAR));
-        int day = accessor.get(ChronoField.DAY_OF_MONTH);
-        Optional<FriendlyMatchDate> leagueMatchDate = repository.byDate(year, month, day);
+    @Put(":dateParam")
+    public Payload put(String dateParam) {
+        RestDate date = new RestDate(dateParam);
+        Optional<FriendlyMatchDate> leagueMatchDate = repository.byDate(date.year(), date.month(), date.day());
         if (!leagueMatchDate.isPresent()) {
-            repository.add(MatchDate.newDateForFriendly(year, month, day));
+            repository.add(MatchDate.newDateForFriendly(date.year(), date.month(), date.day()));
         }
         return Payload.ok();
     }
 
-    @Get(":date")
-    public Payload get(String date) {
-        TemporalAccessor accessor = getTemporalAccessor(date);
-        int year = accessor.get(ChronoField.YEAR);
-        Month month = Month.of(accessor.get(ChronoField.MONTH_OF_YEAR));
-        int day = accessor.get(ChronoField.DAY_OF_MONTH);
-        return repository.byDate(year, month, day)
+    @Get(":dateParam")
+    public Payload get(String dateParam) {
+        RestDate date = new RestDate(dateParam);
+        return repository.byDate(date.year(), date.month(), date.day())
                 .map(m -> new RestMatchDate(m.date()))
                 .map(Payload::new)
                 .orElse(Payload.notFound());
