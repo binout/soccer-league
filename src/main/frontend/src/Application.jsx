@@ -4,6 +4,7 @@ import {Router,Route,browserHistory} from 'react-router';
 
 import SoccerNavBar from './SoccerNavBar.jsx';
 import Players from './Players.jsx';
+import Agenda from './Agenda.jsx';
 
 const Welcome = React.createClass({
 
@@ -42,6 +43,7 @@ const Application = React.createClass({
             <Router history={browserHistory}>
                 <Route path="/" component={Container}>
                     <Route path="players" component={Players}/>
+                    <Route path="agenda" component={Agenda}/>
                 </Route>
             </Router>
         );

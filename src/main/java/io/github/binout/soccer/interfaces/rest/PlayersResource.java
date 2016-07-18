@@ -26,6 +26,11 @@ public class PlayersResource {
         return playerRepository.all().map(p -> toRestModel(context.uri(), p)).collect(Collectors.toList());
     }
 
+    @Get("league")
+    public List<RestPlayer> getAllLeague(Context context) {
+        return playerRepository.all().filter(Player::isPlayerLeague).map(p -> toRestModel(context.uri(), p)).collect(Collectors.toList());
+    }
+
     @Put(":name")
     public Payload put(String name, RestPlayer restPlayer) {
         Player player = playerRepository.byName(name).orElse(new Player(name));

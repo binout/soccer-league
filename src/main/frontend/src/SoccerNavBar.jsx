@@ -19,7 +19,7 @@ const SoccerNavBar = React.createClass({
                         Season
                         <SeasonSelector list={this.props.seasons} onClick={() => browserHistory.push('/')}/>
                     </NavItem>
-                    <NavItem eventKey={2} onClick={() => browserHistory.push('/')}>Agenda</NavItem>
+                    <NavItem eventKey={2} onClick={() => browserHistory.push('agenda')}>Agenda</NavItem>
                     <NavItem eventKey={3} onClick={() => browserHistory.push('players')}>Players</NavItem>
                 </Nav>
             </Navbar>
