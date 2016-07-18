@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import Cleave from 'cleave.js/react';
+import {Table,Button } from 'react-bootstrap';
 
 const Players = React.createClass({
 
@@ -57,10 +58,10 @@ const Players = React.createClass({
                     </tbody>
                 </Table>
                 <form ref="form" onSubmit={this.handleSubmit}>
-                    Name : <input type="text" ref="inputPlayerName" />
-                    Email : <input type="text" ref="inputPlayerEmail" />
-                    Plays in league : <input type="checkbox" ref="inputPlayerLeague" />
-                    <button onClick={this.handleSubmit}>PUT</button>
+                    <div>Name <input type="text" ref="inputPlayerName" /></div>
+                    <div>Email <input type="text" ref="inputPlayerEmail" /></div>
+                    <div>Plays in league : <input type="checkbox" ref="inputPlayerLeague" /></div>
+                    <div><Button bsStyle="primary" onClick={this.handleSubmit}>PUT</Button></div>
                 </form>
             </div>
         );
