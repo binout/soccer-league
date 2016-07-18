@@ -7,6 +7,9 @@ import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
 import io.github.binout.soccer.domain.season.match.Match;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -58,4 +61,14 @@ public class Season {
         )));
     }
 
+    public static String currentSeasonName() {
+        LocalDate now = LocalDate.now();
+        int month = now.get(ChronoField.MONTH_OF_YEAR);
+        int year = now.get(ChronoField.YEAR);
+        if (month > Month.AUGUST.getValue()) {
+            return year + "-" + (year+1);
+        } else {
+            return (year - 1) + "-" + year;
+        }
+    }
 }

@@ -25,6 +25,11 @@ public class SeasonsResource {
         return seasonRepository.all().map(s -> toRestModel(context.uri(), s)).collect(Collectors.toList());
     }
 
+    @Get("current")
+    public RestSeason getCurrent(Context context) {
+        return seasonRepository.all().filter(s -> s.name().equals(Season.currentSeasonName())).map(s -> toRestModel(context.uri(), s)).findFirst().orElse(new RestSeason("Unknown"));
+    }
+
     @Put(":name")
     public Payload put(String name) {
         if (!seasonRepository.byName(name).isPresent()) {

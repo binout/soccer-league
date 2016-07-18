@@ -7,6 +7,9 @@ import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,6 +18,17 @@ public class SeasonService {
 
     @Inject
     PlayerRepository playerRepository;
+
+    @Inject
+    SeasonRepository seasonRepository;
+
+    public void initCurrentSeason(@Observes @Initialized(ApplicationScoped.class) Object init) {
+        String currentSeason = Season.currentSeasonName();
+        Optional<Season> optSeason = seasonRepository.all().filter(s -> s.name().equals(currentSeason)).findFirst();
+        if (!optSeason.isPresent()) {
+            seasonRepository.add(new Season(currentSeason));
+        }
+    }
 
     public LeagueMatch planLeagueMatch(Season season, LeagueMatchDate date) {
         SeasonStatistics statistics = season.statistics();

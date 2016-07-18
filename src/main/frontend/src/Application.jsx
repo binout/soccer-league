@@ -17,19 +17,19 @@ const Container = React.createClass({
 
     getInitialState() {
         return {
-            seasons : []
+            season : {}
         }
     },
 
     componentDidMount() {
-        $.get('/rest/seasons').done(data => this.setState({seasons : data.map(s => s.name)}));
+        $.get('/rest/seasons/current').done(data => this.setState({season : data}));
     },
 
     render() {
         const content = this.props.children == null ? <Welcome/> : this.props.children;
         return (
             <div className="App container">
-                <SoccerNavBar seasons={this.state.seasons}/>
+                <SoccerNavBar season={this.state.season}/>
                 {content}
             </div>
         )
