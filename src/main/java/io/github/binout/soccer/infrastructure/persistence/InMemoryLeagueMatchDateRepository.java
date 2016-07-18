@@ -6,6 +6,7 @@ import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import javax.enterprise.context.ApplicationScoped;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +23,7 @@ public class InMemoryLeagueMatchDateRepository implements LeagueMatchDateReposit
 
     @Override
     public Stream<LeagueMatchDate> all() {
-        return dates.values().stream();
+        return dates.values().stream().sorted(Comparator.comparing(LeagueMatchDate::date));
     }
 
     @Override
