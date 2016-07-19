@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 public class LeagueMatch implements Match {
 
     public static final int MAX_PLAYERS = 7;
+    public static final int MIN_PLAYERS = 5;
 
     private final LeagueMatchDate leagueDate;
     private final Set<Player> players;
@@ -35,7 +36,7 @@ public class LeagueMatch implements Match {
 
     @Override
     public int minPlayers() {
-        return 5;
+        return MIN_PLAYERS;
     }
 
     @Override

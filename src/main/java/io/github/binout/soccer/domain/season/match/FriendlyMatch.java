@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 public class FriendlyMatch implements Match {
 
     public static final int MAX_PLAYERS = 10;
+    public static final int MIN_PLAYERS = 10;
 
     private final FriendlyMatchDate friendlyDate;
     private final Set<Player> players;
@@ -41,7 +42,7 @@ public class FriendlyMatch implements Match {
 
     @Override
     public int minPlayers() {
-        return 10;
+        return MIN_PLAYERS;
     }
 
     @Override

@@ -33,14 +33,23 @@ public class LeagueMatchDateResource {
 
     @Get
     public List<RestMatchDate> all(Context context) {
-        return repository.all().map(m -> toRestModel(context.uri(), m)).collect(Collectors.toList());
+        return repository.all()
+                .map(m -> toRestModel(context.uri(), m))
+                .collect(Collectors.toList());
     }
 
     @Get("next")
     public List<RestMatchDate> next(Context context) {
         return repository.all()
                 .filter(d -> d.date().isAfter(LocalDate.now()))
-                .map(m -> toRestModel(context.uri(), m)).collect(Collectors.toList());
+                .map(m -> toRestModel(context.uri(), m))
+                .collect(Collectors.toList());
+    }
+
+    public RestMatchDate toRestModel(String baseUri, LeagueMatchDate m) {
+        RestMatchDate restMatchDate = toRestModel(m);
+        restMatchDate.addLinks(new RestLink(baseUri + restMatchDate.getDate()));
+        return restMatchDate;
     }
 
     @Put(":dateParam")
@@ -57,14 +66,15 @@ public class LeagueMatchDateResource {
     public Payload get(String dateParam) {
         RestDate date = new RestDate(dateParam);
         return repository.byDate(date.year(), date.month(), date.day())
-                .map(m -> new RestMatchDate(m.date()))
+                .map(this::toRestModel)
                 .map(Payload::new)
                 .orElse(Payload.notFound());
     }
 
-    private RestMatchDate toRestModel(String baseUri, MatchDate m) {
+    private RestMatchDate toRestModel(MatchDate m) {
         RestMatchDate restMatchDate = new RestMatchDate(m.date());
-        restMatchDate.addLinks(new RestLink(baseUri + restMatchDate.getDate()));
+        m.presents().map(Player::name).forEach(restMatchDate::addPresent);
+        restMatchDate.setCanBePlanned(m.canBePlanned());
         return restMatchDate;
     }
 

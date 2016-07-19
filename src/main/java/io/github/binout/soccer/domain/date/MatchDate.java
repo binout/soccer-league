@@ -16,6 +16,8 @@ public interface MatchDate {
 
     void absent(Player player);
 
+    boolean canBePlanned();
+
     default int nbPresents() {
         return (int) presents().count();
     }

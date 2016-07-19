@@ -1,6 +1,7 @@
 package io.github.binout.soccer.domain.date;
 
 import io.github.binout.soccer.domain.player.Player;
+import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -36,6 +37,11 @@ public class FriendlyMatchDate implements MatchDate {
     @Override
     public void absent(Player player) {
         presents.remove(player);
+    }
+
+    @Override
+    public boolean canBePlanned() {
+        return nbPresents() >= FriendlyMatch.MIN_PLAYERS;
     }
 
     @Override

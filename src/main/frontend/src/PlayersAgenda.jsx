@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table,Button} from 'react-bootstrap';
+import {Table,Button,Badge,Label} from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 
 var moment = require('moment');
@@ -31,18 +31,38 @@ const PlayersAgenda = React.createClass({
         this.props.matchDateHandler(this.state.startDate);
     },
 
+    handleOnCheck(date, player, event) {
+        if (event.target.checked) {
+            this.props.presentHandler(date, player);
+        } else {
+            this.props.absentHandler(date, player);
+        }
+    },
+
     render() {
         const thsHead = [];
         for (var i = 0; i < this.props.matchDates.length; i++) {
+            const currentMatchDate = this.props.matchDates[i];
             thsHead.push(
-                <th>{this.props.matchDates[i].date}</th>
+                <th>{currentMatchDate.date}
+                    &nbsp;<Badge>{currentMatchDate.presents.length}</Badge>
+                    &nbsp;{this.props.matchDates[i].canBePlanned ? <Label bsStyle="success">OK</Label> : ''}
+                </th>
             );
         }
         const trsBody = [];
         for (var j = 0; j < this.props.players.length; j++) {
             const cols = [];
             for (var k = 0; k < this.props.matchDates.length; k++) {
-                cols.push(<td><input type="checkbox"/></td>)
+                const matchDate = this.props.matchDates[k];
+                const player = this.props.players[j].name;
+                cols.push(
+                    <td>
+                        <input type="checkbox"
+                               defaultChecked={matchDate.presents.includes(player)}
+                               onChange={this.handleOnCheck.bind(this, matchDate.date, player)}
+                        />
+                    </td>)
             }
             trsBody.push(
                 <tr>
