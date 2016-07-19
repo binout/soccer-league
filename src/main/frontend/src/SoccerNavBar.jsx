@@ -9,7 +9,7 @@ const SoccerNavBar = React.createClass({
             <Navbar>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a href="/">Planning Equipe Soccer 5 (Season {this.props.season.name} )</a>
+                        <a href="/">Planning Equipe Soccer 5</a>
                     </Navbar.Brand>
                 </Navbar.Header>
                 <Nav>

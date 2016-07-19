@@ -45,22 +45,19 @@ public class SeasonsResource {
         return seasonRepository.all().map(s -> toRestModel(context.uri(), s)).collect(Collectors.toList());
     }
 
-    @Get("current")
-    public RestSeason getCurrent(Context context) {
-        return seasonRepository.all().filter(s -> s.name().equals(Season.currentSeasonName())).map(s -> toRestModel(context.uri(), s)).findFirst().orElse(new RestSeason("Unknown"));
-    }
-
     @Put(":name")
     public Payload put(String name) {
-        if (!seasonRepository.byName(name).isPresent()) {
-            seasonRepository.add(new Season(name));
+        String seasonName = new SeasonName(name).name();
+        if (!seasonRepository.byName(seasonName).isPresent()) {
+            seasonRepository.add(new Season(seasonName));
         }
         return Payload.ok();
     }
 
     @Get(":name/matches/friendly")
     public Payload getFriendlyMatch(String name) {
-        return seasonRepository.byName(name)
+        String seasonName = new SeasonName(name).name();
+        return seasonRepository.byName(seasonName)
                 .map(Season::friendlyMatches)
                 .map(s -> s.map(this::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
@@ -75,7 +72,8 @@ public class SeasonsResource {
 
     @Put(":name/matches/friendly/:dateParam")
     public Payload putFriendlyMatch(String name, String dateParam) {
-        Optional<Season> season = seasonRepository.byName(name);
+        String seasonName = new SeasonName(name).name();
+        Optional<Season> season = seasonRepository.byName(seasonName);
         RestDate date = new RestDate(dateParam);
         Optional<FriendlyMatchDate> matchDate = friendlyMatchDateRepository.byDate(date.year(), date.month(), date.day());
         if (season.isPresent() && matchDate.isPresent()) {
@@ -88,7 +86,8 @@ public class SeasonsResource {
 
     @Get(":name/matches/league")
     public Payload getLeagueMatch(String name) {
-        return seasonRepository.byName(name)
+        String seasonName = new SeasonName(name).name();
+        return seasonRepository.byName(seasonName)
                 .map(Season::leagueMatches)
                 .map(s -> s.map(this::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
@@ -103,7 +102,8 @@ public class SeasonsResource {
 
     @Put(":name/matches/league/:dateParam")
     public Payload putLeagueMatch(String name, String dateParam) {
-        Optional<Season> season = seasonRepository.byName(name);
+        String seasonName = new SeasonName(name).name();
+        Optional<Season> season = seasonRepository.byName(seasonName);
         RestDate date = new RestDate(dateParam);
         Optional<LeagueMatchDate> matchDate = leagueMatchDateRepository.byDate(date.year(), date.month(), date.day());
         if (season.isPresent() && matchDate.isPresent()) {
@@ -116,7 +116,8 @@ public class SeasonsResource {
 
     @Get(":name")
     public Payload get(String name) {
-        return seasonRepository.byName(name)
+        String seasonName = new SeasonName(name).name();
+        return seasonRepository.byName(seasonName)
                 .map(s -> new RestSeason(s.name()))
                 .map(Payload::new)
                 .orElse(Payload.notFound());

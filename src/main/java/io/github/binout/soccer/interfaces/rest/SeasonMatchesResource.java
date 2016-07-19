@@ -38,7 +38,8 @@ public class SeasonMatchesResource {
 
     @Get("friendly")
     public Payload getFriendly(String name) {
-        return seasonRepository.byName(name)
+        String seasonName = new SeasonName(name).name();
+        return seasonRepository.byName(seasonName)
                 .map(Season::friendlyMatches)
                 .map(s -> s.map(this::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
@@ -53,7 +54,8 @@ public class SeasonMatchesResource {
 
     @Put("friendly/:dateParam")
     public Payload putFriendly(String name, String dateParam) {
-        Optional<Season> season = seasonRepository.byName(name);
+        String seasonName = new SeasonName(name).name();
+        Optional<Season> season = seasonRepository.byName(seasonName);
         RestDate date = new RestDate(dateParam);
         Optional<FriendlyMatchDate> matchDate = friendlyMatchDateRepository.byDate(date.year(), date.month(), date.day());
         if (season.isPresent() && matchDate.isPresent()) {
@@ -66,7 +68,8 @@ public class SeasonMatchesResource {
 
     @Get("league")
     public Payload getLeague(String name) {
-        return seasonRepository.byName(name)
+        String seasonName = new SeasonName(name).name();
+        return seasonRepository.byName(seasonName)
                 .map(Season::leagueMatches)
                 .map(s -> s.map(this::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
@@ -75,7 +78,8 @@ public class SeasonMatchesResource {
 
     @Put("league/:dateParam")
     public Payload putLeague(String name, String dateParam) {
-        Optional<Season> season = seasonRepository.byName(name);
+        String seasonName = new SeasonName(name).name();
+        Optional<Season> season = seasonRepository.byName(seasonName);
         RestDate date = new RestDate(dateParam);
         Optional<LeagueMatchDate> matchDate = leagueMatchDateRepository.byDate(date.year(), date.month(), date.day());
         if (season.isPresent() && matchDate.isPresent()) {
