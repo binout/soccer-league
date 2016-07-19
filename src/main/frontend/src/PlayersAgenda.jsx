@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table,Button,Badge,Label} from 'react-bootstrap';
+import {Table,Button,Label} from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 
 var moment = require('moment');
@@ -43,10 +43,10 @@ const PlayersAgenda = React.createClass({
         const thsHead = [];
         for (var i = 0; i < this.props.matchDates.length; i++) {
             const currentMatchDate = this.props.matchDates[i];
+            const badgeStyle = this.props.matchDates[i].canBePlanned ? "success" : "warning";
             thsHead.push(
-                <th>{currentMatchDate.date}
-                    &nbsp;<Badge>{currentMatchDate.presents.length}</Badge>
-                    &nbsp;{this.props.matchDates[i].canBePlanned ? <Label bsStyle="success">OK</Label> : ''}
+                <th>{moment(currentMatchDate.date).format('dddd YYYY/MM/DD')}
+                    &nbsp;<Label bsStyle={badgeStyle}>{currentMatchDate.presents.length}</Label>
                 </th>
             );
         }
