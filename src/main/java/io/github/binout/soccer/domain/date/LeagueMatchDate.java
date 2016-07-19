@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class LeagueMatchDate implements MatchDate {
 
@@ -23,23 +24,18 @@ public class LeagueMatchDate implements MatchDate {
     }
 
     @Override
+    public Stream<Player> presents() {
+        return presents.stream();
+    }
+
+    @Override
     public void present(Player player) {
         presents.add(player);
     }
 
     @Override
-    public int nbPresents() {
-        return presents.size();
-    }
-
-    @Override
     public void absent(Player player) {
         presents.remove(player);
-    }
-
-    @Override
-    public boolean isAbsent(Player player) {
-        return !presents.contains(player);
     }
 
     @Override

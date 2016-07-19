@@ -3,10 +3,13 @@ package io.github.binout.soccer.interfaces.rest;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import io.github.binout.soccer.domain.date.MatchDate;
+import io.github.binout.soccer.domain.player.Player;
+import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.interfaces.rest.model.RestDate;
 import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestMatchDate;
 import net.codestory.http.Context;
+import net.codestory.http.annotations.Delete;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Prefix;
 import net.codestory.http.annotations.Put;
@@ -16,6 +19,7 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @Prefix("match-dates/league")
@@ -23,6 +27,9 @@ public class LeagueMatchDateResource {
 
     @Inject
     LeagueMatchDateRepository repository;
+
+    @Inject
+    PlayerRepository playerRepository;
 
     @Get
     public List<RestMatchDate> all(Context context) {
@@ -61,4 +68,25 @@ public class LeagueMatchDateResource {
         return restMatchDate;
     }
 
+    @Put(":dateParam/players/:name")
+    public Payload putPlayers(String dateParam, String name) {
+        return managePlayers(dateParam, name, LeagueMatchDate::present);
+    }
+
+    @Delete(":dateParam/players/:name")
+    public Payload deletePlayers(String dateParam, String name) {
+        return managePlayers(dateParam, name, LeagueMatchDate::absent);
+    }
+
+    private Payload managePlayers(String dateParam, String name, BiConsumer<LeagueMatchDate, Player> consumer) {
+        RestDate date = new RestDate(dateParam);
+        Optional<LeagueMatchDate> leagueMatchDate = repository.byDate(date.year(), date.month(), date.day());
+        Optional<Player> player = playerRepository.byName(name);
+        if (player.isPresent() && leagueMatchDate.isPresent()) {
+            consumer.accept(leagueMatchDate.get(), player.get());
+            return Payload.ok();
+        } else {
+            return Payload.badRequest();
+        }
+    }
 }

@@ -4,21 +4,28 @@ import io.github.binout.soccer.domain.player.Player;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.stream.Stream;
 
 public interface MatchDate {
 
     LocalDate date();
 
-    void present(Player player);
+    Stream<Player> presents();
 
-    int nbPresents();
+    void present(Player player);
 
     void absent(Player player);
 
-    boolean isAbsent(Player player);
+    default int nbPresents() {
+        return (int) presents().count();
+    }
+
+    default boolean isAbsent(Player player) {
+        return !isPresent(player);
+    }
 
     default boolean isPresent(Player player) {
-        return !isAbsent(player);
+        return presents().map(Player::name).filter(n -> n.equals(player.name())).findFirst().isPresent();
     }
 
     static LeagueMatchDate newDateForLeague(int year, Month month, int dayOfMonth) {
