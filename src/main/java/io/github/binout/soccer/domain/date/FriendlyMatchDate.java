@@ -10,11 +10,11 @@ import java.util.Set;
 public class FriendlyMatchDate implements MatchDate {
 
     private final LocalDate date;
-    private final Set<Player> absents;
+    private final Set<Player> presents;
 
     FriendlyMatchDate(LocalDate date) {
         this.date = Objects.requireNonNull(date);
-        this.absents = new HashSet<>();
+        this.presents = new HashSet<>();
     }
 
     @Override
@@ -24,17 +24,22 @@ public class FriendlyMatchDate implements MatchDate {
 
     @Override
     public void present(Player player) {
-        absents.remove(player);
+        presents.add(player);
+    }
+
+    @Override
+    public int nbPresents() {
+        return presents.size();
     }
 
     @Override
     public void absent(Player player) {
-        absents.add(player);
+        presents.remove(player);
     }
 
     @Override
     public boolean isAbsent(Player player) {
-        return absents.contains(player);
+        return !presents.contains(player);
     }
 
     @Override

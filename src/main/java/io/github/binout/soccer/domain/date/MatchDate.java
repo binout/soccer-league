@@ -11,6 +11,8 @@ public interface MatchDate {
 
     void present(Player player);
 
+    int nbPresents();
+
     void absent(Player player);
 
     boolean isAbsent(Player player);

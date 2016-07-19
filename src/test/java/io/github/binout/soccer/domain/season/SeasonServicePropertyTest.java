@@ -44,6 +44,8 @@ public class SeasonServicePropertyTest {
 
     private void addToRepository(List<Player>... nbPlayers) {
         Arrays.stream(nbPlayers).flatMap(Collection::stream).forEach(playerRepository::add);
+        Arrays.stream(nbPlayers).flatMap(Collection::stream).forEach(DATE_FOR_LEAGUE::present);
+        Arrays.stream(nbPlayers).flatMap(Collection::stream).forEach(DATE_FOR_FRIENDLY::present);
     }
 
     @Property

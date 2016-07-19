@@ -4,6 +4,7 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.MatchDate;
 import io.github.binout.soccer.domain.player.Player;
+import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import org.junit.Test;
 
 import java.time.Month;
@@ -23,7 +24,7 @@ public class SeasonTest {
     public void compute_games_played_for_1_league_match() {
         Season season = new Season("2016");
         LeagueMatchDate date = MatchDate.newDateForLeague(2016, Month.MAY, 17);
-        season.addLeagueMatch(date, players("benoit","nicolas","julien","pierre","mat"));
+        addLeagueMatch(season, date, players("benoit", "nicolas", "julien", "pierre", "mat"));
 
         SeasonStatistics stats = season.statistics();
 
@@ -35,17 +36,27 @@ public class SeasonTest {
         assertThat(stats.gamesPlayed(new Player("mat"))).isEqualTo(1);
     }
 
+    public void addLeagueMatch(Season season, LeagueMatchDate date, Set<Player> players) {
+        players.forEach(date::present);
+        season.addLeagueMatch(date, players);
+    }
+
+    public void addFriendlyMatch(Season season, FriendlyMatchDate date, Set<Player> players) {
+        players.forEach(date::present);
+        season.addFriendlyMatch(date, players);
+    }
+
     @Test
     public void compute_games_played_for_1_league_match_and_1_friendly_match() {
         Season season = new Season("2016");
 
         LeagueMatchDate leagueMatchDate = MatchDate.newDateForLeague(2016, Month.MAY, 17);
-        season.addLeagueMatch(leagueMatchDate, players("benoit","nicolas","julien","pierre","mat"));
+        addLeagueMatch(season, leagueMatchDate, players("benoit","nicolas","julien","pierre","mat"));
 
         FriendlyMatchDate friendlyMatchDate = MatchDate.newDateForFriendly(2016, Month.MAY, 24);
         Set<Player> players = players("benoit", "nicolas", "julien", "pierre", "mat");
         players.addAll(players("flo","gauthier","fabien","guillaume","sebastien"));
-        season.addFriendlyMatch(friendlyMatchDate, players);
+        addFriendlyMatch(season, friendlyMatchDate, players);
 
         SeasonStatistics stats = season.statistics();
 
