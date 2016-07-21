@@ -9,9 +9,11 @@ public class RestMatch extends RestModel {
 
     private String date;
     private List<String> players;
+    private List<String> subs;
 
     RestMatch() {
         players = new ArrayList<>();
+        subs = new ArrayList<>();
     }
 
     public RestMatch(LocalDate date) {
@@ -33,5 +35,13 @@ public class RestMatch extends RestModel {
 
     public void addPlayer(String player) {
         this.players.add(player);
+    }
+
+    public List<String> getSubs() {
+        return subs;
+    }
+
+    public void addSub(String player) {
+        this.subs.add(player);
     }
 }

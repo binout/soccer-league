@@ -18,7 +18,9 @@ import net.codestory.http.annotations.Put;
 import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Prefix("seasons/:name/matches")
@@ -39,17 +41,39 @@ public class SeasonMatchesResource {
     @Get("friendly")
     public Payload getFriendly(String name) {
         String seasonName = new SeasonName(name).name();
-        return seasonRepository.byName(seasonName)
-                .map(Season::friendlyMatches)
-                .map(s -> s.map(this::toRestMatch).collect(Collectors.toList()))
-                .map(Payload::new)
-                .orElse(Payload.badRequest());
+        Optional<Season> season = seasonRepository.byName(seasonName);
+        if (!season.isPresent()) {
+            return Payload.badRequest();
+        } else {
+            return new Payload(season.get().friendlyMatches()
+                    .map(m -> toRestMatch(season.get(), m))
+                    .collect(Collectors.toList()));
+        }
     }
 
-    private RestMatch toRestMatch(FriendlyMatch m) {
+    private RestMatch toRestMatch(Season s, FriendlyMatch m) {
         RestMatch restMatch = new RestMatch(m.date());
         m.players().map(Player::name).forEach(restMatch::addPlayer);
+        seasonService.getSubstitutes(s, m).stream().map(Player::name).forEach(restMatch::addSub);
         return restMatch;
+    }
+
+    @Get("friendly/to-plan")
+    public Payload friendlyToPlan(String name) {
+        String seasonName = new SeasonName(name).name();
+        Optional<Season> season = seasonRepository.byName(seasonName);
+        if (!season.isPresent()) {
+            return Payload.badRequest();
+        } else {
+            Set<LocalDate> dates = season.get().friendlyMatches().map(FriendlyMatch::date).collect(Collectors.toSet());
+            return new Payload(friendlyMatchDateRepository.all()
+                    .filter(d -> d.date().isAfter(LocalDate.now()))
+                    .filter(FriendlyMatchDate::canBePlanned)
+                    .map(FriendlyMatchDate::date)
+                    .filter(d -> !dates.contains(d))
+                    .map(RestMatch::new)
+                    .collect(Collectors.toList()));
+        }
     }
 
     @Put("friendly/:dateParam")
@@ -74,6 +98,24 @@ public class SeasonMatchesResource {
                 .map(s -> s.map(this::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
                 .orElse(Payload.badRequest());
+    }
+
+    @Get("league/to-plan")
+    public Payload leagueToPlan(String name) {
+        String seasonName = new SeasonName(name).name();
+        Optional<Season> season = seasonRepository.byName(seasonName);
+        if (!season.isPresent()) {
+            return Payload.badRequest();
+        } else {
+            Set<LocalDate> dates = season.get().leagueMatches().map(LeagueMatch::date).collect(Collectors.toSet());
+            return new Payload(leagueMatchDateRepository.all()
+                    .filter(d -> d.date().isAfter(LocalDate.now()))
+                    .filter(LeagueMatchDate::canBePlanned)
+                    .map(LeagueMatchDate::date)
+                    .filter(d -> !dates.contains(d))
+                    .map(RestMatch::new)
+                    .collect(Collectors.toList()));
+        }
     }
 
     @Put("league/:dateParam")

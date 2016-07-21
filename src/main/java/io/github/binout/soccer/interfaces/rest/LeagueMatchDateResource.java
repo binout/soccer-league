@@ -46,15 +46,6 @@ public class LeagueMatchDateResource {
                 .collect(Collectors.toList());
     }
 
-    @Get("to-plan")
-    public List<RestMatchDate> toPlan(Context context) {
-        return repository.all()
-                .filter(d -> d.date().isAfter(LocalDate.now()))
-                .filter(LeagueMatchDate::canBePlanned)
-                .map(m -> toRestModel(context.uri(), m))
-                .collect(Collectors.toList());
-    }
-
     public RestMatchDate toRestModel(String baseUri, LeagueMatchDate m) {
         RestMatchDate restMatchDate = toRestModel(m);
         restMatchDate.addLinks(new RestLink(baseUri + restMatchDate.getDate()));

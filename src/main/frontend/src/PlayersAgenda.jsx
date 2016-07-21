@@ -70,7 +70,7 @@ const PlayersAgenda = React.createClass({
     },
 
     renderPlayerLine(player) {
-        const checkboxes = this.props.matchDates.map(m => this.renderMatchDateCheckbox(m, player));
+        const checkboxes = this.props.matchDates.map(m => this.renderMatchDateCheckbox(m, player.name));
         return (
             <tr>
                 <td>{player.name}</td>
