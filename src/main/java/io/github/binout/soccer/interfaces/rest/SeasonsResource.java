@@ -5,15 +5,14 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import io.github.binout.soccer.domain.player.Player;
+import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
 import io.github.binout.soccer.domain.season.SeasonService;
+import io.github.binout.soccer.domain.season.SeasonStatistics;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
-import io.github.binout.soccer.interfaces.rest.model.RestDate;
-import io.github.binout.soccer.interfaces.rest.model.RestLink;
-import io.github.binout.soccer.interfaces.rest.model.RestMatch;
-import io.github.binout.soccer.interfaces.rest.model.RestSeason;
+import io.github.binout.soccer.interfaces.rest.model.*;
 import net.codestory.http.Context;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Prefix;
@@ -21,6 +20,7 @@ import net.codestory.http.annotations.Put;
 import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,6 +30,9 @@ public class SeasonsResource {
 
     @Inject
     SeasonRepository seasonRepository;
+
+    @Inject
+    PlayerRepository playerRepository;
 
     @Inject
     SeasonService seasonService;
@@ -121,6 +124,20 @@ public class SeasonsResource {
                 .map(s -> new RestSeason(s.name()))
                 .map(Payload::new)
                 .orElse(Payload.notFound());
+    }
+
+    @Get(":name/stats")
+    public Payload stats(String name) {
+        String seasonName = new SeasonName(name).name();
+        return seasonRepository.byName(seasonName)
+                .map(Season::statistics)
+                .map(this::toRestStatList)
+                .map(Payload::new)
+                .orElse(Payload.notFound());
+    }
+
+    private List<RestStat> toRestStatList(SeasonStatistics s) {
+        return playerRepository.all().map(p -> new RestStat(p.name(), s.gamesPlayed(p))).sorted(Comparator.comparing(RestStat::getNbMatches).reversed()).collect(Collectors.toList());
     }
 
     private static RestSeason toRestModel(String baseUri, Season s) {

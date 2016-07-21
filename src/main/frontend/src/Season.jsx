@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
-import {Button,Row,Col,Tabs,Tab} from 'react-bootstrap';
+import {Button,Row,Col,Tabs,Tab,Table} from 'react-bootstrap';
 
 var moment = require('moment');
 
@@ -14,7 +14,8 @@ const Season = React.createClass({
             friendlyMatches: [],
             friendlyMatchesToPlan : [],
             leagueMatches: [],
-            leagueMatchesToPlan : []
+            leagueMatchesToPlan : [],
+            stats : []
         }
     },
 
@@ -22,6 +23,11 @@ const Season = React.createClass({
         $.get('/rest/seasons/current').done(data => this.setState({season : data}));
         this.fetchFriendlyMatchStates();
         this.fetchLeagueMatchStates();
+        this.fetchStats();
+    },
+
+    fetchStats() {
+        $.get('/rest/seasons/current/stats').done(data => this.setState({stats : data}));
     },
 
     fetchFriendlyMatchStates() {
@@ -53,7 +59,7 @@ const Season = React.createClass({
             type: 'PUT',
             contentType : 'application/json',
             data : {}
-        }).done(data => this.fetchFriendlyMatchStates());
+        }).done(data => {this.fetchFriendlyMatchStates();this.fetchStats()});
     },
 
     handleLeaguePlan(date) {
@@ -62,7 +68,7 @@ const Season = React.createClass({
             type: 'PUT',
             contentType : 'application/json',
             data : {}
-        }).done(data => this.fetchLeagueMatchStates());
+        }).done(data => {this.fetchLeagueMatchStates();this.fetchStats()});
     },
 
     renderMatchToPlan(matchDate, planHanlder) {
@@ -71,6 +77,15 @@ const Season = React.createClass({
                 {matchDate.date}
                 &nbsp;<Button bsStyle="primary" bsSize="xsmall" onClick={planHanlder}>PLAN</Button>
             </li>
+        );
+    },
+
+    renderStatLine(stat) {
+        return (
+          <tr>
+              <td>{stat.player}</td>
+              <td>{stat.nbMatches}</td>
+          </tr>
         );
     },
 
@@ -97,7 +112,17 @@ const Season = React.createClass({
                         {this.state.leagueMatchesToPlan.map(m => this.renderMatchToPlan(m, this.handleLeaguePlan.bind(this, m.date)))}
                     </Tab>
 
-
+                    <Tab eventKey={3} title="Statistics">
+                        <Table>
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Matches Played</th>
+                                </tr>
+                                {this.state.stats.map(s => this.renderStatLine(s))}
+                            </thead>
+                        </Table>
+                    </Tab>
                 </Tabs>
             </div>);
     }
