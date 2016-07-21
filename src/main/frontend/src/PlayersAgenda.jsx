@@ -39,38 +39,55 @@ const PlayersAgenda = React.createClass({
         }
     },
 
+    renderMatchDate(m) {
+        return (
+            <th>{moment(m.date).format('dddd YYYY/MM/DD')}
+                &nbsp;<Label bsStyle={m.canBePlanned ? "success" : "warning"}>{m.presents.length}</Label>
+            </th>
+        );
+    },
+
+    renderMatchDateCheckbox(matchDate, player) {
+        return (
+            <td>
+                <input type="checkbox"
+                       defaultChecked={matchDate.presents.includes(player)}
+                       onChange={this.handleOnCheck.bind(this, matchDate.date, player)}
+                />
+            </td>
+        );
+    },
+
+    renderThead() {
+        return (
+            <thead>
+            <tr>
+                <th>Players</th>
+                {this.props.matchDates.map(m => this.renderMatchDate(m))}
+            </tr>
+            </thead>
+        );
+    },
+
+    renderPlayerLine(player) {
+        const checkboxes = this.props.matchDates.map(m => this.renderMatchDateCheckbox(m, player));
+        return (
+            <tr>
+                <td>{player.name}</td>
+                {checkboxes}
+            </tr>
+        );
+    },
+
+    renderTbody() {
+        return (
+            <tbody>
+            {this.props.players.map(p => this.renderPlayerLine(p))}
+            </tbody>
+        );
+    },
+
     render() {
-        const thsHead = [];
-        for (var i = 0; i < this.props.matchDates.length; i++) {
-            const currentMatchDate = this.props.matchDates[i];
-            const badgeStyle = this.props.matchDates[i].canBePlanned ? "success" : "warning";
-            thsHead.push(
-                <th>{moment(currentMatchDate.date).format('dddd YYYY/MM/DD')}
-                    &nbsp;<Label bsStyle={badgeStyle}>{currentMatchDate.presents.length}</Label>
-                </th>
-            );
-        }
-        const trsBody = [];
-        for (var j = 0; j < this.props.players.length; j++) {
-            const cols = [];
-            for (var k = 0; k < this.props.matchDates.length; k++) {
-                const matchDate = this.props.matchDates[k];
-                const player = this.props.players[j].name;
-                cols.push(
-                    <td>
-                        <input type="checkbox"
-                               defaultChecked={matchDate.presents.includes(player)}
-                               onChange={this.handleOnCheck.bind(this, matchDate.date, player)}
-                        />
-                    </td>)
-            }
-            trsBody.push(
-                <tr>
-                    <td>{this.props.players[j].name}</td>
-                    {cols}
-                </tr>
-            );
-        }
         return (
             <div>
                 <br/>
@@ -80,15 +97,8 @@ const PlayersAgenda = React.createClass({
                 </form>
                 <br/>
                 <Table striped bordered condensed hover>
-                    <thead>
-                    <tr>
-                        <th>Players</th>
-                        {thsHead}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {trsBody}
-                    </tbody>
+                    {this.renderThead()}
+                    {this.renderTbody()}
                 </Table>
             </div>
         );
