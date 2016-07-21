@@ -32,11 +32,11 @@ public class Season {
     }
 
     public Stream<FriendlyMatch> friendlyMatches() {
-        return friendlyMatches.stream();
+        return friendlyMatches.stream().sorted(Comparator.comparing(FriendlyMatch::date));
     }
 
     public Stream<LeagueMatch> leagueMatches() {
-        return leagueMatches.stream();
+        return leagueMatches.stream().sorted(Comparator.comparing(LeagueMatch::date));
     }
 
     public FriendlyMatch addFriendlyMatch(FriendlyMatchDate date, Set<Player> players) {

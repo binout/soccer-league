@@ -66,8 +66,9 @@ public class SeasonMatchesResource {
             return Payload.badRequest();
         } else {
             Set<LocalDate> dates = season.get().friendlyMatches().map(FriendlyMatch::date).collect(Collectors.toSet());
+            LocalDate now = LocalDate.now();
             return new Payload(friendlyMatchDateRepository.all()
-                    .filter(d -> d.date().isAfter(LocalDate.now()))
+                    .filter(d -> d.date().isAfter(now) || d.date().isEqual(now))
                     .filter(FriendlyMatchDate::canBePlanned)
                     .map(FriendlyMatchDate::date)
                     .filter(d -> !dates.contains(d))
@@ -108,8 +109,9 @@ public class SeasonMatchesResource {
             return Payload.badRequest();
         } else {
             Set<LocalDate> dates = season.get().leagueMatches().map(LeagueMatch::date).collect(Collectors.toSet());
+            LocalDate now = LocalDate.now();
             return new Payload(leagueMatchDateRepository.all()
-                    .filter(d -> d.date().isAfter(LocalDate.now()))
+                    .filter(d -> d.date().isAfter(now) || d.date().isEqual(now))
                     .filter(LeagueMatchDate::canBePlanned)
                     .map(LeagueMatchDate::date)
                     .filter(d -> !dates.contains(d))

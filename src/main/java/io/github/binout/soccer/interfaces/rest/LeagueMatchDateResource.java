@@ -40,8 +40,9 @@ public class LeagueMatchDateResource {
 
     @Get("next")
     public List<RestMatchDate> next(Context context) {
+        LocalDate now = LocalDate.now();
         return repository.all()
-                .filter(d -> d.date().isAfter(LocalDate.now()))
+                .filter(d -> d.date().isAfter(now) || d.date().isEqual(now))
                 .map(m -> toRestModel(context.uri(), m))
                 .collect(Collectors.toList());
     }
