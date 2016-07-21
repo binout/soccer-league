@@ -96,7 +96,7 @@ const PlayersAgenda = React.createClass({
                     &nbsp;<Button bsStyle="primary" bsSize="small" onClick={this.handleSubmit}>ADD</Button>
                 </form>
                 <br/>
-                <Table striped bordered condensed hover>
+                <Table striped bordered condensed>
                     {this.renderThead()}
                     {this.renderTbody()}
                 </Table>

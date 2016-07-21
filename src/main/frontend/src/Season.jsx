@@ -113,6 +113,7 @@ const Season = React.createClass({
                     </Tab>
 
                     <Tab eventKey={3} title="Statistics">
+                        <br/>
                         <Table>
                             <thead>
                                 <tr>

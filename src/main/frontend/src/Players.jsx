@@ -40,7 +40,7 @@ const Players = React.createClass({
         return (
             <div>
                 <h2>Players</h2>
-                <Table striped bordered condensed hover>
+                <Table striped bordered condensed>
                     <thead>
                     <tr>
                         <th>Name</th>
