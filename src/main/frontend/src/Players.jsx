@@ -26,18 +26,14 @@ const Players = React.createClass({
         }).done(data => this.fetchState());
     },
 
-    renderLines() {
-        const lines = [];
-        for (var i = 0; i < this.state.players.length; i++) {
-            lines.push(
-                <tr key={i}>
-                    <td>{this.state.players[i].name}</td>
-                    <td>{this.state.players[i].email}</td>
-                    <td><input type="checkbox" checked={this.state.players[i].playerLeague} readOnly="true"/></td>
+    renderLine(player) {
+        return (
+                <tr key={player.name}>
+                    <td>{player.name}</td>
+                    <td>{player.email}</td>
+                    <td><input type="checkbox" checked={player.playerLeague} readOnly="true"/></td>
                 </tr>
-            )
-        }
-        return lines;
+            );
     },
 
     render() {
@@ -53,7 +49,7 @@ const Players = React.createClass({
                     </tr>
                     </thead>
                     <tbody>
-                        {this.renderLines()}
+                        {this.state.players.map(p => this.renderLine(p))}
                     </tbody>
                 </Table>
                 <Panel>
