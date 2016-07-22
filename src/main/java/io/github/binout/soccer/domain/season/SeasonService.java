@@ -44,7 +44,7 @@ public class SeasonService {
     }
 
     public void substitutePlayer(Season season, Match match, Player player) {
-        Set<Player> substitutes = getSubstitutes(season, match);
+        List<Player> substitutes = getSubstitutes(season, match);
         if (substitutes.isEmpty()) {
             throw new IllegalArgumentException("No substitutes available");
         }
@@ -84,15 +84,16 @@ public class SeasonService {
         return players.size() < maxPlayers;
     }
 
-    public Set<Player> getSubstitutes(Season season, Match match) {
+    public List<Player> getSubstitutes(Season season, Match match) {
         SeasonStatistics statistics = season.statistics();
         MatchDate date = match.matchDate();
         List<Player> players = match.players().collect(Collectors.toList());
+        Comparator<Player> gamesPlayedComparator = (p1, p2) -> Integer.compare(statistics.gamesPlayed(p1), statistics.gamesPlayed(p2));
         return playerRepository.all()
                 .filter(date::isPresent)
                 .filter(p -> !players.contains(p))
-                .sorted((p1, p2) -> Integer.compare(statistics.gamesPlayed(p1), statistics.gamesPlayed(p2)))
-                .collect(Collectors.toSet());
+                .sorted(gamesPlayedComparator)
+                .collect(Collectors.toList());
     }
 
     public List<FriendlyMatchDate> friendlyMatchDatesToPlan(Season season) {

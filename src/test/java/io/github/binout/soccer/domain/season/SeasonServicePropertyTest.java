@@ -100,7 +100,7 @@ public class SeasonServicePropertyTest {
         addToRepository(nbPlayers);
         FriendlyMatch friendlyMatch = seasonService.planFriendlyMatch(EMPTY_SEASON, DATE_FOR_FRIENDLY);
 
-        Set<Player> substitutes = seasonService.getSubstitutes(EMPTY_SEASON, friendlyMatch);
+        List<Player> substitutes = seasonService.getSubstitutes(EMPTY_SEASON, friendlyMatch);
 
         assertThat(substitutes).hasSize(nbPlayers.size() - 10);
     }

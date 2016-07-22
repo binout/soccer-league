@@ -51,6 +51,13 @@ const Season = React.createClass({
             </tr>);
     },
 
+    intersperse(arr, sep) {
+        if (arr.length === 0) {
+            return [];
+        }
+        return arr.slice(1).reduce((xs, x, i) => xs.concat([sep, x]), [arr[0]]);
+    },
+
     renderMatch(match, substituteHandler) {
         return (
             <div>
@@ -61,7 +68,7 @@ const Season = React.createClass({
                         {match.players.map(p => this.renderPlayer(match, p, substituteHandler))}
                         </tbody>
                     </Table>
-                    Substitutes : {match.subs}
+                    <i>Substitutes : </i> {match.subs.length == 0 ? 'None' : this.intersperse(match.subs, ", ")}
                 </Col>
             </div>);
     },
