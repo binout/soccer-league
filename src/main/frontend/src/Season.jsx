@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
-import {Button,Row,Col,Tabs,Tab,Table} from 'react-bootstrap';
+import {Button,Glyphicon,Label,Row,Col,Tabs,Tab,Table} from 'react-bootstrap';
 
 var moment = require('moment');
 
@@ -40,23 +40,54 @@ const Season = React.createClass({
         $.get('/rest/seasons/current/matches/league/to-plan').done(data => this.setState({leagueMatchesToPlan : data}));
     },
 
-    renderMatch(match) {
+    renderPlayer(match, player, substituteHandler) {
+        const exit = match.subs.length == 0
+            ? ''
+            : <Button bsSize="xsmall" onClick={() => substituteHandler(player)}><Glyphicon glyph="log-out"/></Button>;
+        return (
+            <tr>
+                <td>{player}</td>
+                <td>{exit}</td>
+            </tr>);
+    },
+
+    renderMatch(match, substituteHandler) {
         return (
             <div>
                 <Col md={3}>
                     <h4>{moment(match.date).format('dddd YYYY/MM/DD')}</h4>
-                    <ul>
-                        {match.players.map(p => (<li>{p}</li>))}
-                    </ul>
+                    <Table condensed>
+                        <tbody>
+                        {match.players.map(p => this.renderPlayer(match, p, substituteHandler))}
+                        </tbody>
+                    </Table>
                     Substitutes : {match.subs}
                 </Col>
             </div>);
+    },
+
+    handleFriendlySubstitute(date, player) {
+        $.ajax({
+            url: '/rest/seasons/current/matches/friendly/' + date + '/players/' + player,
+            type: 'DELETE',
+            contentType : 'application/json',
+            data : {}
+        }).done(data => {this.fetchFriendlyMatchStates();this.fetchStats()});
     },
 
     handleFriendlyPlan(date) {
         $.ajax({
             url: '/rest/seasons/current/matches/friendly/' + date,
             type: 'PUT',
+            contentType : 'application/json',
+            data : {}
+        }).done(data => {this.fetchFriendlyMatchStates();this.fetchStats()});
+    },
+
+    handleLeagueSubstitute(date, player) {
+        $.ajax({
+            url: '/rest/seasons/current/matches/league/' + date + '/players/' + player,
+            type: 'DELETE',
             contentType : 'application/json',
             data : {}
         }).done(data => {this.fetchFriendlyMatchStates();this.fetchStats()});
@@ -97,7 +128,7 @@ const Season = React.createClass({
                     <Tab eventKey={1} title="Friendly">
                         <h3>Next friendly matches</h3>
                         <Row>
-                            {this.state.friendlyMatches.map(m => this.renderMatch(m))}
+                            {this.state.friendlyMatches.map(m => this.renderMatch(m, this.handleFriendlySubstitute.bind(this, m.date)))}
                         </Row>
                         <h3>Friendly matches to plan</h3>
                         {this.state.friendlyMatchesToPlan.map(m => this.renderMatchToPlan(m, this.handleFriendlyPlan.bind(this, m.date)))}
@@ -106,7 +137,7 @@ const Season = React.createClass({
                     <Tab eventKey={2} title="League">
                         <h3>Next league matches</h3>
                         <Row>
-                            {this.state.leagueMatches.map(m => this.renderMatch(m))}
+                            {this.state.leagueMatches.map(m => this.renderMatch(m, this.handleLeagueSubstitute.bind(this, m.date)))}
                         </Row>
                         <h3>League matches to plan</h3>
                         {this.state.leagueMatchesToPlan.map(m => this.renderMatchToPlan(m, this.handleLeaguePlan.bind(this, m.date)))}

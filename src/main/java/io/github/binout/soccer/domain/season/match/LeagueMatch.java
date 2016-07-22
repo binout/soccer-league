@@ -31,6 +31,18 @@ public class LeagueMatch implements Match {
         return leagueDate;
     }
 
+    @Override
+    public void substitutePlayer(Player from, Player by) {
+        if (leagueDate.isAbsent(by)) {
+            throw new IllegalArgumentException(by.name() + " is not present for this date");
+        }
+        if (!players.contains(from)) {
+            throw new IllegalArgumentException(from.name() + " is not a player of this match");
+        }
+        players.remove(from);
+        players.add(by);
+    }
+
     public Stream<Player> players() {
         return players.stream();
     }

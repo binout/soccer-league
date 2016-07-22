@@ -5,6 +5,7 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import io.github.binout.soccer.domain.player.Player;
+import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
 import io.github.binout.soccer.domain.season.SeasonService;
@@ -12,6 +13,7 @@ import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
 import io.github.binout.soccer.interfaces.rest.model.RestDate;
 import io.github.binout.soccer.interfaces.rest.model.RestMatch;
+import net.codestory.http.annotations.Delete;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Prefix;
 import net.codestory.http.annotations.Put;
@@ -35,6 +37,9 @@ public class SeasonMatchesResource {
 
     @Inject
     LeagueMatchDateRepository leagueMatchDateRepository;
+
+    @Inject
+    PlayerRepository playerRepository;
 
     @Get("friendly")
     public Payload getFriendly(String name) {
@@ -84,6 +89,24 @@ public class SeasonMatchesResource {
         }
     }
 
+    @Delete("friendly/:dateParam/players/:playerName")
+    public Payload susbstitutePlayerFriendly(String name, String dateParam, String playerName) {
+        String seasonName = new SeasonName(name).name();
+        Optional<Season> season = seasonRepository.byName(seasonName);
+        Optional<Player> player = playerRepository.byName(playerName);
+        if (season.isPresent() && player.isPresent()) {
+            RestDate date = new RestDate(dateParam);
+            Optional<FriendlyMatch> match = season.get().friendlyMatches().filter(m -> m.date().equals(date.asLocalDate())).findFirst();
+            if (!match.isPresent()) {
+                return Payload.badRequest();
+            }
+            seasonService.substitutePlayer(season.get(), match.get(), player.get());
+            return Payload.ok();
+        } else {
+            return Payload.badRequest();
+        }
+    }
+
     @Get("league")
     public Payload getLeague(String name) {
         String seasonName = new SeasonName(name).name();
@@ -119,6 +142,24 @@ public class SeasonMatchesResource {
         Optional<LeagueMatchDate> matchDate = leagueMatchDateRepository.byDate(date.year(), date.month(), date.day());
         if (season.isPresent() && matchDate.isPresent()) {
             seasonService.planLeagueMatch(season.get(), matchDate.get());
+            return Payload.ok();
+        } else {
+            return Payload.badRequest();
+        }
+    }
+
+    @Delete("league/:dateParam/players/:playerName")
+    public Payload susbstitutePlayerLeague(String name, String dateParam, String playerName) {
+        String seasonName = new SeasonName(name).name();
+        Optional<Season> season = seasonRepository.byName(seasonName);
+        Optional<Player> player = playerRepository.byName(playerName);
+        if (season.isPresent() && player.isPresent()) {
+            RestDate date = new RestDate(dateParam);
+            Optional<LeagueMatch> match = season.get().leagueMatches().filter(m -> m.date().equals(date.asLocalDate())).findFirst();
+            if (!match.isPresent()) {
+                return Payload.badRequest();
+            }
+            seasonService.substitutePlayer(season.get(), match.get(), player.get());
             return Payload.ok();
         } else {
             return Payload.badRequest();

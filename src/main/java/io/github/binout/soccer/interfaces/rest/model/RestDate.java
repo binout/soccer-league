@@ -1,5 +1,6 @@
 package io.github.binout.soccer.interfaces.rest.model;
 
+import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
@@ -33,5 +34,9 @@ public class RestDate {
 
     public int day() {
         return day;
+    }
+
+    public LocalDate asLocalDate() {
+        return LocalDate.of(year(), month(), day());
     }
 }

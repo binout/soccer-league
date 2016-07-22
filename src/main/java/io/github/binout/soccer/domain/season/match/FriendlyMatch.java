@@ -38,6 +38,18 @@ public class FriendlyMatch implements Match {
     }
 
     @Override
+    public void substitutePlayer(Player from, Player by) {
+        if (friendlyDate.isAbsent(by)) {
+            throw new IllegalArgumentException(by.name() + " is not present for this date");
+        }
+        if (!players.contains(from)) {
+            throw new IllegalArgumentException(from.name() + " is not a player of this match");
+        }
+        players.remove(from);
+        players.add(by);
+    }
+
+    @Override
     public int maxPlayers() {
         return MAX_PLAYERS;
     }

@@ -43,6 +43,15 @@ public class SeasonService {
         return season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS));
     }
 
+    public void substitutePlayer(Season season, Match match, Player player) {
+        Set<Player> substitutes = getSubstitutes(season, match);
+        if (substitutes.isEmpty()) {
+            throw new IllegalArgumentException("No substitutes available");
+        }
+        match.substitutePlayer(player, substitutes.iterator().next());
+        match.matchDate().absent(player);
+    }
+
     public FriendlyMatch planFriendlyMatch(Season season, FriendlyMatchDate date) {
         TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all());
         return season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS));
