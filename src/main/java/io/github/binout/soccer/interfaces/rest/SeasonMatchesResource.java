@@ -18,9 +18,7 @@ import net.codestory.http.annotations.Put;
 import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Prefix("seasons/:name/matches")
@@ -65,13 +63,8 @@ public class SeasonMatchesResource {
         if (!season.isPresent()) {
             return Payload.badRequest();
         } else {
-            Set<LocalDate> dates = season.get().friendlyMatches().map(FriendlyMatch::date).collect(Collectors.toSet());
-            LocalDate now = LocalDate.now();
-            return new Payload(friendlyMatchDateRepository.all()
-                    .filter(d -> d.date().isAfter(now) || d.date().isEqual(now))
-                    .filter(FriendlyMatchDate::canBePlanned)
+            return new Payload(seasonService.friendlyMatchDatesToPlan(season.get()).stream()
                     .map(FriendlyMatchDate::date)
-                    .filter(d -> !dates.contains(d))
                     .map(RestMatch::new)
                     .collect(Collectors.toList()));
         }
@@ -94,11 +87,14 @@ public class SeasonMatchesResource {
     @Get("league")
     public Payload getLeague(String name) {
         String seasonName = new SeasonName(name).name();
-        return seasonRepository.byName(seasonName)
-                .map(Season::leagueMatches)
-                .map(s -> s.map(this::toRestMatch).collect(Collectors.toList()))
-                .map(Payload::new)
-                .orElse(Payload.badRequest());
+        Optional<Season> season = seasonRepository.byName(seasonName);
+        if (!season.isPresent()) {
+            return Payload.badRequest();
+        } else {
+            return new Payload(season.get().leagueMatches()
+                    .map(m -> toRestMatch(season.get(), m))
+                    .collect(Collectors.toList()));
+        }
     }
 
     @Get("league/to-plan")
@@ -108,13 +104,8 @@ public class SeasonMatchesResource {
         if (!season.isPresent()) {
             return Payload.badRequest();
         } else {
-            Set<LocalDate> dates = season.get().leagueMatches().map(LeagueMatch::date).collect(Collectors.toSet());
-            LocalDate now = LocalDate.now();
-            return new Payload(leagueMatchDateRepository.all()
-                    .filter(d -> d.date().isAfter(now) || d.date().isEqual(now))
-                    .filter(LeagueMatchDate::canBePlanned)
+            return new Payload(seasonService.leagueMatchDatesToPlan(season.get()).stream()
                     .map(LeagueMatchDate::date)
-                    .filter(d -> !dates.contains(d))
                     .map(RestMatch::new)
                     .collect(Collectors.toList()));
         }
@@ -134,9 +125,10 @@ public class SeasonMatchesResource {
         }
     }
 
-    private RestMatch toRestMatch(LeagueMatch m) {
+    private RestMatch toRestMatch(Season s, LeagueMatch m) {
         RestMatch restMatch = new RestMatch(m.date());
         m.players().map(Player::name).forEach(restMatch::addPlayer);
+        seasonService.getSubstitutes(s, m).stream().map(Player::name).forEach(restMatch::addSub);
         return restMatch;
     }
 

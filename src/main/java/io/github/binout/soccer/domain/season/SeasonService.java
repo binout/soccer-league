@@ -1,18 +1,20 @@
 package io.github.binout.soccer.domain.season;
 
-import io.github.binout.soccer.domain.date.FriendlyMatchDate;
-import io.github.binout.soccer.domain.date.LeagueMatchDate;
+import io.github.binout.soccer.domain.date.*;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
+import io.github.binout.soccer.domain.season.match.Match;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SeasonService {
 
@@ -21,6 +23,12 @@ public class SeasonService {
 
     @Inject
     SeasonRepository seasonRepository;
+
+    @Inject
+    FriendlyMatchDateRepository friendlyMatchDateRepository;
+
+    @Inject
+    LeagueMatchDateRepository leagueMatchDateRepository;
 
     public void initCurrentSeason(@Observes @Initialized(ApplicationScoped.class) Object init) {
         String currentSeason = Season.currentSeasonName();
@@ -31,33 +39,21 @@ public class SeasonService {
     }
 
     public LeagueMatch planLeagueMatch(Season season, LeagueMatchDate date) {
-        SeasonStatistics statistics = season.statistics();
-        Map<Integer, List<Player>> playersByGamesPlayed = playerRepository.all()
-                .filter(date::isPresent)
-                .filter(Player::isPlayerLeague)
-                .collect(Collectors.groupingBy(statistics::gamesPlayed));
-        TreeMap<Integer, List<Player>> treeMap = new TreeMap<>(playersByGamesPlayed);
+        TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all().filter(Player::isPlayerLeague));
         return season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS));
     }
 
     public FriendlyMatch planFriendlyMatch(Season season, FriendlyMatchDate date) {
-        SeasonStatistics statistics = season.statistics();
-        Map<Integer, List<Player>> playersByGamesPlayed = playerRepository.all()
-                .filter(date::isPresent)
-                .collect(Collectors.groupingBy(statistics::gamesPlayed));
-        TreeMap<Integer, List<Player>> treeMap = new TreeMap<>(playersByGamesPlayed);
+        TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all());
         return season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS));
     }
 
-    public Set<Player> getSubstitutes(Season season, FriendlyMatch match) {
+    private TreeMap<Integer, List<Player>> computeGamesPlayed(Season season, MatchDate date, Stream<Player> players) {
         SeasonStatistics statistics = season.statistics();
-        FriendlyMatchDate date = match.friendlyDate();
-        List<Player> players = match.players().collect(Collectors.toList());
-        return playerRepository.all()
+        Map<Integer, List<Player>> playersByGamesPlayed = players
                 .filter(date::isPresent)
-                .filter(p -> !players.contains(p))
-                .sorted((p1, p2) -> Integer.compare(statistics.gamesPlayed(p1), statistics.gamesPlayed(p2)))
-                .collect(Collectors.toSet());
+                .collect(Collectors.groupingBy(statistics::gamesPlayed));
+        return new TreeMap<>(playersByGamesPlayed);
     }
 
     private Set<Player> extractPlayers(TreeMap<Integer, List<Player>> treeMap, int maxPlayers) {
@@ -77,5 +73,35 @@ public class SeasonService {
 
     private boolean teamIsNotFull(Set<Player> players, int maxPlayers) {
         return players.size() < maxPlayers;
+    }
+
+    public Set<Player> getSubstitutes(Season season, Match match) {
+        SeasonStatistics statistics = season.statistics();
+        MatchDate date = match.matchDate();
+        List<Player> players = match.players().collect(Collectors.toList());
+        return playerRepository.all()
+                .filter(date::isPresent)
+                .filter(p -> !players.contains(p))
+                .sorted((p1, p2) -> Integer.compare(statistics.gamesPlayed(p1), statistics.gamesPlayed(p2)))
+                .collect(Collectors.toSet());
+    }
+
+    public List<FriendlyMatchDate> friendlyMatchDatesToPlan(Season season) {
+        Set<LocalDate> dates = season.friendlyMatches().map(FriendlyMatch::date).collect(Collectors.toSet());
+        return matchDatesToPlan(dates, friendlyMatchDateRepository.all());
+    }
+
+    public List<LeagueMatchDate> leagueMatchDatesToPlan(Season season) {
+        Set<LocalDate> dates = season.leagueMatches().map(LeagueMatch::date).collect(Collectors.toSet());
+        return matchDatesToPlan(dates, leagueMatchDateRepository.all());
+    }
+
+    private <T extends MatchDate> List<T> matchDatesToPlan(Set<LocalDate> dates, Stream<T> allDates) {
+        LocalDate now = LocalDate.now();
+        return allDates
+                .filter(d -> d.date().isAfter(now) || d.date().isEqual(now))
+                .filter(d -> !dates.contains(d.date()))
+                .filter(MatchDate::canBePlanned)
+                .collect(Collectors.toList());
     }
 }

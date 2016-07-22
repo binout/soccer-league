@@ -1,6 +1,7 @@
 package io.github.binout.soccer.domain.season.match;
 
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
+import io.github.binout.soccer.domain.date.MatchDate;
 import io.github.binout.soccer.domain.player.Player;
 
 import java.time.LocalDate;
@@ -23,6 +24,11 @@ public class LeagueMatch implements Match {
 
     public LocalDate date() {
         return leagueDate.date();
+    }
+
+    @Override
+    public MatchDate matchDate() {
+        return leagueDate;
     }
 
     public Stream<Player> players() {

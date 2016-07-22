@@ -1,6 +1,7 @@
 package io.github.binout.soccer.domain.season.match;
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
+import io.github.binout.soccer.domain.date.MatchDate;
 import io.github.binout.soccer.domain.player.Player;
 
 import java.time.LocalDate;
@@ -26,7 +27,8 @@ public class FriendlyMatch implements Match {
         return friendlyDate.date();
     }
 
-    public FriendlyMatchDate friendlyDate() {
+    @Override
+    public MatchDate matchDate() {
         return friendlyDate;
     }
 

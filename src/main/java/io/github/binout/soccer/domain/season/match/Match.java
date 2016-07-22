@@ -20,6 +20,8 @@ public interface Match {
 
     int minPlayers();
 
+    MatchDate matchDate();
+
     default Set<Player> checkPlayers(MatchDate date, Set<Player> players) {
         if (players.size() < minPlayers() || players.size() > maxPlayers()) {
             throw new IllegalArgumentException("Number of players is incorrect for the match");
