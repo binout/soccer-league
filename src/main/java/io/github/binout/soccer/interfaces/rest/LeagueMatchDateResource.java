@@ -5,6 +5,7 @@ import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import io.github.binout.soccer.domain.date.MatchDate;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.RestDate;
 import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestMatchDate;
@@ -23,6 +24,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @Prefix("match-dates/league")
+@TransactedScopeEnabled
 public class LeagueMatchDateResource {
 
     @Inject

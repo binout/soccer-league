@@ -12,6 +12,7 @@ import io.github.binout.soccer.domain.season.SeasonService;
 import io.github.binout.soccer.domain.season.SeasonStatistics;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
+import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.*;
 import net.codestory.http.Context;
 import net.codestory.http.annotations.Get;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Prefix("seasons")
+@TransactedScopeEnabled
 public class SeasonsResource {
 
     @Inject

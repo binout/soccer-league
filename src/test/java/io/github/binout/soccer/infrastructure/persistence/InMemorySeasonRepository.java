@@ -4,12 +4,14 @@ import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Vetoed;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @ApplicationScoped
+@Vetoed
 public class InMemorySeasonRepository implements SeasonRepository {
 
     private Map<String, Season> seasons;

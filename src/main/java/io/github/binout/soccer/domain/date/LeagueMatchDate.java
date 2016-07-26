@@ -7,16 +7,27 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class LeagueMatchDate implements MatchDate {
 
-    private final LocalDate date;
-    private final Set<Player> presents;
+    private final String id;
+    private LocalDate date;
+    private Set<Player> presents;
+
+    LeagueMatchDate() {
+        this.id = UUID.randomUUID().toString();
+        this.presents = new HashSet<>();
+    }
 
     LeagueMatchDate(LocalDate date) {
+        this();
         this.date = Objects.requireNonNull(date);
-        this.presents = new HashSet<>();
+    }
+
+    public String id() {
+        return id;
     }
 
     @Override

@@ -8,4 +8,7 @@
     <weld:scan>
         <weld:include name="io.github.binout.soccer.**" />
     </weld:scan>
+    <interceptors>
+        <class>io.github.binout.soccer.infrastructure.persistence.mongo.MongoTransactedScopeInterceptor</class>
+    </interceptors>
 </beans>

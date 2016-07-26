@@ -17,14 +17,24 @@ import java.util.stream.Stream;
 
 public class Season {
 
-    private final String name;
+    private final String id;
+    private String name;
     private final Set<FriendlyMatch> friendlyMatches;
     private final Set<LeagueMatch> leagueMatches;
 
-    public Season(String name) {
-        this.name = Objects.requireNonNull(name);
+    Season() {
+        this.id = UUID.randomUUID().toString();
         this.friendlyMatches = new HashSet<>();
         this.leagueMatches = new HashSet<>();
+    }
+
+    public Season(String name) {
+        this();
+        this.name = Objects.requireNonNull(name);
+    }
+
+    public String id() {
+        return id;
     }
 
     public String name() {

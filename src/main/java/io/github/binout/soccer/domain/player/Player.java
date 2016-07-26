@@ -2,14 +2,21 @@ package io.github.binout.soccer.domain.player;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 public class Player {
 
-    private final String name;
+    private final String id;
+    private String name;
     private String email;
     private boolean isPlayerLeague;
 
+    Player() {
+        this.id = UUID.randomUUID().toString();
+    }
+
     public Player(String name) {
+        this();
         this.name = Objects.requireNonNull(name);
         this.isPlayerLeague = false;
     }
@@ -17,6 +24,10 @@ public class Player {
     public Player(String name, String email) {
         this(name);
         this.email = Objects.requireNonNull(email);
+    }
+
+    public String id() {
+        return id;
     }
 
     public String name() {
