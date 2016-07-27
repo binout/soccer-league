@@ -3,7 +3,6 @@ package io.github.binout.soccer.infrastructure.persistence.mongo;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
 import org.mongolink.MongoSession;
-import org.mongolink.domain.criteria.Criteria;
 import org.mongolink.domain.criteria.Restrictions;
 
 import javax.inject.Inject;
@@ -15,25 +14,30 @@ import java.util.stream.Stream;
  *
  * @author b.prioux
  */
-public class MongoPlayerRepository implements PlayerRepository {
+public class MongoPlayerRepository extends MongoRepository<Player> implements PlayerRepository {
 
     @Inject
-    MongoSession mongoSession;
-
-    @Override
-    public void add(Player player) {
-        mongoSession.save(player);
+    MongoPlayerRepository(MongoSession mongoSession) {
+        super(mongoSession);
     }
 
     @Override
-    public Stream<Player> all() {
-        return mongoSession.createCriteria(Player.class).list().stream();
+    protected Class<Player> clazz() {
+        return Player.class;
+    }
+
+    @Override
+    public void add(Player player) {
+        super.add(player, player::id);
     }
 
     @Override
     public Optional<Player> byName(String name) {
-        Criteria criteria = mongoSession.createCriteria(Player.class);
-        criteria.add(Restrictions.equals("name", name));
-        return criteria.list().stream().findFirst();
+        return super.findBy(Restrictions.equals("name", name)).findFirst();
+    }
+
+    @Override
+    public Stream<Player> all() {
+        return super.all();
     }
 }

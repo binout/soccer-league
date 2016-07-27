@@ -24,13 +24,12 @@ public class MongoPlayerRepositoryTest {
 
     @Before
     public void initRepository() {
-        repository = new MongoPlayerRepository();
-        repository.mongoSession = mongolinkRule.getCurrentSession();
+        repository = new MongoPlayerRepository(mongolinkRule.getCurrentSession());
     }
 
     private void persistPlayer(Player leaguePlayer) {
         repository.add(leaguePlayer);
-        repository.mongoSession.flush();
+        repository.session().flush();
     }
 
     @Test

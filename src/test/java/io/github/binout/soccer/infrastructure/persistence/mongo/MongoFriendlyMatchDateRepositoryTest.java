@@ -28,16 +28,14 @@ public class MongoFriendlyMatchDateRepositoryTest {
 
     @Before
     public void initRepository() {
-        playerRepository = new MongoPlayerRepository();
-        playerRepository.mongoSession = mongolinkRule.getCurrentSession();
-        repository = new MongoFriendlyMatchDateRepository();
-        repository.mongoSession = mongolinkRule.getCurrentSession();
+        playerRepository = new MongoPlayerRepository(mongolinkRule.getCurrentSession());
+        repository = new MongoFriendlyMatchDateRepository(mongolinkRule.getCurrentSession());
     }
 
     @Test
     public void should_persist_date_without_player() {
         repository.add(MatchDate.newDateForFriendly(2016, Month.APRIL, 1));
-        repository.mongoSession.flush();
+        repository.session().flush();
 
         Optional<FriendlyMatchDate> matchDate = repository.byDate(2016, Month.APRIL, 1);
         assertThat(matchDate).isPresent();
@@ -49,12 +47,12 @@ public class MongoFriendlyMatchDateRepositoryTest {
     public void should_persist_date_with_player() {
         Player benoit = new Player("benoit");
         playerRepository.add(benoit);
-        repository.mongoSession.flush();
+        repository.session().flush();
 
         FriendlyMatchDate date = MatchDate.newDateForFriendly(2016, Month.APRIL, 1);
         date.present(benoit);
         repository.add(date);
-        repository.mongoSession.flush();
+        repository.session().flush();
 
         Optional<FriendlyMatchDate> matchDate = repository.byDate(2016, Month.APRIL, 1);
         assertThat(matchDate).isPresent();
@@ -65,7 +63,7 @@ public class MongoFriendlyMatchDateRepositoryTest {
         assertThat(benoit.isPlayerLeague()).isFalse();
 
         benoit.playsInLeague(true);
-        repository.mongoSession.flush();
+        repository.session().flush();
 
         benoit = repository.byDate(2016, Month.APRIL, 1).get().presents().findFirst().get();
         assertThat(benoit.name()).isEqualTo("benoit");

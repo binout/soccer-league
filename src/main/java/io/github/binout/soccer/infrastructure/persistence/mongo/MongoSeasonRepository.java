@@ -2,10 +2,7 @@ package io.github.binout.soccer.infrastructure.persistence.mongo;
 
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
-import io.github.binout.soccer.infrastructure.persistence.TransactedScope;
-import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import org.mongolink.MongoSession;
-import org.mongolink.domain.criteria.Criteria;
 import org.mongolink.domain.criteria.Restrictions;
 
 import javax.inject.Inject;
@@ -17,24 +14,30 @@ import java.util.stream.Stream;
  *
  * @author b.prioux
  */
-public class MongoSeasonRepository implements SeasonRepository {
+public class MongoSeasonRepository extends MongoRepository<Season> implements SeasonRepository {
 
     @Inject
-    MongoSession mongoSession;
+    MongoSeasonRepository(MongoSession mongoSession) {
+        super(mongoSession);
+    }
+
+    @Override
+    protected Class<Season> clazz() {
+        return Season.class;
+    }
 
     @Override
     public void add(Season season) {
-        mongoSession.save(season);
+        super.add(season, season::id);
     }
 
     @Override
     public Optional<Season> byName(String name) {
-        Criteria criteria = mongoSession.createCriteria(Season.class);
-        criteria.add(Restrictions.equals("name", name));
-        return criteria.list().stream().findFirst();    }
+        return findBy(Restrictions.equals("name", name)).findFirst();
+    }
 
     @Override
     public Stream<Season> all() {
-        return mongoSession.createCriteria(Season.class).list().stream();
+        return super.all();
     }
 }

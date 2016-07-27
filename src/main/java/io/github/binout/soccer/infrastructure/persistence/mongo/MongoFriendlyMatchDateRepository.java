@@ -3,7 +3,6 @@ package io.github.binout.soccer.infrastructure.persistence.mongo;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import org.mongolink.MongoSession;
-import org.mongolink.domain.criteria.Criteria;
 import org.mongolink.domain.criteria.Restrictions;
 
 import javax.inject.Inject;
@@ -17,25 +16,30 @@ import java.util.stream.Stream;
  *
  * @author b.prioux
  */
-public class MongoFriendlyMatchDateRepository implements FriendlyMatchDateRepository {
+public class MongoFriendlyMatchDateRepository extends MongoRepository<FriendlyMatchDate> implements FriendlyMatchDateRepository {
 
     @Inject
-    MongoSession mongoSession;
+    MongoFriendlyMatchDateRepository(MongoSession mongoSession) {
+        super(mongoSession);
+    }
 
     @Override
-    public Stream<FriendlyMatchDate> all() {
-        return mongoSession.createCriteria(FriendlyMatchDate.class).list().stream();
+    protected Class<FriendlyMatchDate> clazz() {
+        return FriendlyMatchDate.class;
     }
 
     @Override
     public void add(FriendlyMatchDate date) {
-        mongoSession.save(date);
+        super.add(date, date::id);
     }
 
     @Override
     public Optional<FriendlyMatchDate> byDate(int year, Month month, int dayOfMonth) {
-        Criteria criteria = mongoSession.createCriteria(FriendlyMatchDate.class);
-        criteria.add(Restrictions.equals("date", LocalDate.of(year, month, dayOfMonth)));
-        return criteria.list().stream().findFirst();
+        return super.findBy(Restrictions.equals("date", LocalDate.of(year, month, dayOfMonth))).findFirst();
+    }
+
+    @Override
+    public Stream<FriendlyMatchDate> all() {
+        return super.all();
     }
 }

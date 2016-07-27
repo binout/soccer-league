@@ -24,14 +24,13 @@ public class MongoSeasonRepositoryTest {
 
     @Before
     public void initRepository() {
-        repository = new MongoSeasonRepository();
-        repository.mongoSession = mongolinkRule.getCurrentSession();
+        repository = new MongoSeasonRepository(mongolinkRule.getCurrentSession());
     }
 
     @Test
     public void should_persist_season() {
         repository.add(new Season("2016"));
-        repository.mongoSession.flush();
+        repository.session().flush();
 
         Optional<Season> season = repository.byName("2016");
         assertThat(season).isPresent();

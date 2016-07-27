@@ -3,7 +3,6 @@ package io.github.binout.soccer.infrastructure.persistence.mongo;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import org.mongolink.MongoSession;
-import org.mongolink.domain.criteria.Criteria;
 import org.mongolink.domain.criteria.Restrictions;
 
 import javax.inject.Inject;
@@ -17,25 +16,30 @@ import java.util.stream.Stream;
  *
  * @author b.prioux
  */
-public class MongoLeagueMatchDateRepository implements LeagueMatchDateRepository {
+public class MongoLeagueMatchDateRepository extends MongoRepository<LeagueMatchDate> implements LeagueMatchDateRepository {
 
     @Inject
-    MongoSession mongoSession;
+    MongoLeagueMatchDateRepository(MongoSession mongoSession) {
+        super(mongoSession);
+    }
 
     @Override
-    public Stream<LeagueMatchDate> all() {
-        return mongoSession.createCriteria(LeagueMatchDate.class).list().stream();
+    protected Class<LeagueMatchDate> clazz() {
+        return LeagueMatchDate.class;
     }
 
     @Override
     public void add(LeagueMatchDate date) {
-        mongoSession.save(date);
+        super.add(date, date::id);
     }
 
     @Override
     public Optional<LeagueMatchDate> byDate(int year, Month month, int dayOfMonth) {
-        Criteria criteria = mongoSession.createCriteria(LeagueMatchDate.class);
-        criteria.add(Restrictions.equals("date", LocalDate.of(year, month, dayOfMonth)));
-        return criteria.list().stream().findFirst();
+        return super.findBy(Restrictions.equals("date", LocalDate.of(year, month, dayOfMonth))).findFirst();
+    }
+
+    @Override
+    public Stream<LeagueMatchDate> all() {
+        return super.all();
     }
 }

@@ -5,6 +5,7 @@ import io.github.binout.soccer.domain.date.MatchDate;
 import io.github.binout.soccer.domain.player.Player;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -14,10 +15,15 @@ public class LeagueMatch implements Match {
     public static final int MAX_PLAYERS = 7;
     public static final int MIN_PLAYERS = 5;
 
-    private final LeagueMatchDate leagueDate;
-    private final Set<Player> players;
+    private LeagueMatchDate leagueDate;
+    private Set<Player> players;
+
+    LeagueMatch(){
+        this.players = new HashSet<>();
+    }
 
     LeagueMatch(LeagueMatchDate date, Set<Player> players) {
+        this();
         this.leagueDate = Objects.requireNonNull(date);
         this.players = checkPlayers(date, players);
     }
