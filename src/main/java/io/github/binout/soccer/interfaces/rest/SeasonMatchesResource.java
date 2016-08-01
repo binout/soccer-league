@@ -66,15 +66,13 @@ public class SeasonMatchesResource {
     @Get("friendly/to-plan")
     public Payload friendlyToPlan(String name) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = seasonRepository.byName(seasonName);
-        if (!season.isPresent()) {
-            return Payload.badRequest();
-        } else {
-            return new Payload(seasonService.friendlyMatchDatesToPlan(season.get()).stream()
-                    .map(FriendlyMatchDate::date)
-                    .map(RestMatch::new)
-                    .collect(Collectors.toList()));
-        }
+        return seasonRepository.byName(seasonName)
+                .map(s -> seasonService.friendlyMatchDatesToPlan(s).stream()
+                        .map(FriendlyMatchDate::date)
+                        .map(RestMatch::new)
+                        .collect(Collectors.toList()))
+                .map(Payload::new)
+                .orElse(Payload.badRequest());
     }
 
     @Put("friendly/:dateParam")
@@ -125,15 +123,13 @@ public class SeasonMatchesResource {
     @Get("league/to-plan")
     public Payload leagueToPlan(String name) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = seasonRepository.byName(seasonName);
-        if (!season.isPresent()) {
-            return Payload.badRequest();
-        } else {
-            return new Payload(seasonService.leagueMatchDatesToPlan(season.get()).stream()
-                    .map(LeagueMatchDate::date)
-                    .map(RestMatch::new)
-                    .collect(Collectors.toList()));
-        }
+        return seasonRepository.byName(seasonName)
+                .map(s -> seasonService.leagueMatchDatesToPlan(s).stream()
+                        .map(LeagueMatchDate::date)
+                        .map(RestMatch::new)
+                        .collect(Collectors.toList()))
+                .map(Payload::new)
+                .orElse(Payload.badRequest());
     }
 
     @Put("league/:dateParam")
