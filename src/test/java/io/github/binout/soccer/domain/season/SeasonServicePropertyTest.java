@@ -3,15 +3,15 @@ package io.github.binout.soccer.domain.season;
 import com.pholser.junit.quickcheck.From;
 import com.pholser.junit.quickcheck.Property;
 import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
-import io.github.binout.soccer.domain.date.FriendlyMatchDate;
-import io.github.binout.soccer.domain.date.LeagueMatchDate;
-import io.github.binout.soccer.domain.date.MatchDate;
+import io.github.binout.soccer.domain.date.*;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.player.PlayersGenerators.LeaguePlayers;
 import io.github.binout.soccer.domain.player.PlayersGenerators.Players;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
+import io.github.binout.soccer.infrastructure.persistence.InMemoryFriendlyMatchDateRepository;
+import io.github.binout.soccer.infrastructure.persistence.InMemoryLeagueMatchDateRepository;
 import io.github.binout.soccer.infrastructure.persistence.InMemoryPlayerRepository;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -20,7 +20,6 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
@@ -40,6 +39,14 @@ public class SeasonServicePropertyTest {
         seasonService = new SeasonService();
         playerRepository = new InMemoryPlayerRepository();
         seasonService.playerRepository = playerRepository;
+
+        LeagueMatchDateRepository leagueMatchDateRepository = new InMemoryLeagueMatchDateRepository();
+        leagueMatchDateRepository.add(DATE_FOR_LEAGUE);
+        seasonService.leagueMatchDateRepository = leagueMatchDateRepository;
+
+        FriendlyMatchDateRepository friendlyMatchDateRepository = new InMemoryFriendlyMatchDateRepository();
+        friendlyMatchDateRepository.add(DATE_FOR_FRIENDLY);
+        seasonService.friendlyMatchDateRepository = friendlyMatchDateRepository;
     }
 
     private void addToRepository(List<Player>... nbPlayers) {

@@ -4,6 +4,7 @@ import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Vetoed;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Comparator;
@@ -13,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @ApplicationScoped
+@Vetoed
 public class InMemoryLeagueMatchDateRepository implements LeagueMatchDateRepository {
 
     private Map<LocalDate, LeagueMatchDate> dates;

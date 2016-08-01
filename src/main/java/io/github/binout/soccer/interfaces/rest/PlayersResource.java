@@ -2,6 +2,7 @@ package io.github.binout.soccer.interfaces.rest;
 
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestPlayer;
 import net.codestory.http.Context;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Prefix("players")
+@TransactedScopeEnabled
 public class PlayersResource {
 
     @Inject

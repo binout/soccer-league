@@ -6,9 +6,9 @@ import java.util.Map;
 
 public class SeasonStatistics {
 
-    private final Map<Player, Long> gamesPlayed;
+    private final Map<String, Long> gamesPlayed;
 
-    SeasonStatistics(Map<Player, Long> gamesPlayed) {
+    SeasonStatistics(Map<String, Long> gamesPlayed) {
         this.gamesPlayed = gamesPlayed;
     }
 
@@ -17,6 +17,6 @@ public class SeasonStatistics {
     }
 
     public int gamesPlayed(Player player) {
-        return this.gamesPlayed.getOrDefault(player, 0L).intValue();
+        return this.gamesPlayed.getOrDefault(player.name(), 0L).intValue();
     }
 }

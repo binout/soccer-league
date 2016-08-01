@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import io.github.binout.soccer.domain.date.*;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import net.codestory.http.Request;
 import net.codestory.http.annotations.Post;
 import net.codestory.http.annotations.Prefix;
@@ -22,6 +23,7 @@ import java.util.stream.IntStream;
  * @author b.prioux
  */
 @Prefix("faker")
+@TransactedScopeEnabled
 public class FakerResource {
 
     @Inject

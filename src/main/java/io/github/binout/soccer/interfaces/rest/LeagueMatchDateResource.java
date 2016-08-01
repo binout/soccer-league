@@ -5,6 +5,7 @@ import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import io.github.binout.soccer.domain.date.MatchDate;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.RestDate;
 import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestMatchDate;
@@ -23,6 +24,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @Prefix("match-dates/league")
+@TransactedScopeEnabled
 public class LeagueMatchDateResource {
 
     @Inject
@@ -74,7 +76,7 @@ public class LeagueMatchDateResource {
 
     private RestMatchDate toRestModel(MatchDate m) {
         RestMatchDate restMatchDate = new RestMatchDate(m.date());
-        m.presents().map(Player::name).forEach(restMatchDate::addPresent);
+        m.presents().forEach(restMatchDate::addPresent);
         restMatchDate.setCanBePlanned(m.canBePlanned());
         return restMatchDate;
     }

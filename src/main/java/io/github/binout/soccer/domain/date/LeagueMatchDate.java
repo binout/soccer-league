@@ -7,16 +7,27 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class LeagueMatchDate implements MatchDate {
 
-    private final LocalDate date;
-    private final Set<Player> presents;
+    private final String id;
+    private LocalDate date;
+    private Set<String> presents;
+
+    LeagueMatchDate() {
+        this.id = UUID.randomUUID().toString();
+        this.presents = new HashSet<>();
+    }
 
     LeagueMatchDate(LocalDate date) {
+        this();
         this.date = Objects.requireNonNull(date);
-        this.presents = new HashSet<>();
+    }
+
+    public String id() {
+        return id;
     }
 
     @Override
@@ -25,18 +36,18 @@ public class LeagueMatchDate implements MatchDate {
     }
 
     @Override
-    public Stream<Player> presents() {
+    public Stream<String> presents() {
         return presents.stream();
     }
 
     @Override
     public void present(Player player) {
-        presents.add(player);
+        presents.add(player.name());
     }
 
     @Override
     public void absent(Player player) {
-        presents.remove(player);
+        presents.remove(player.name());
     }
 
     @Override
