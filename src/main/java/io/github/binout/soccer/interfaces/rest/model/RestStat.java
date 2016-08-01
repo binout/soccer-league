@@ -1,10 +1,5 @@
 package io.github.binout.soccer.interfaces.rest.model;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public class RestStat {
 
     private String player;

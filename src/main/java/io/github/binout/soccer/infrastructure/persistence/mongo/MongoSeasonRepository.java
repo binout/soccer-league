@@ -9,11 +9,6 @@ import javax.inject.Inject;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public class MongoSeasonRepository extends MongoRepository<Season> implements SeasonRepository {
 
     @Inject

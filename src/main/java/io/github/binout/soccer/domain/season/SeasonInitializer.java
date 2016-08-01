@@ -8,11 +8,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.Optional;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 @TransactedScopeEnabled
 public class SeasonInitializer {
 

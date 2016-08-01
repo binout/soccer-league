@@ -6,11 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public class RestDate {
 
     private final int year;

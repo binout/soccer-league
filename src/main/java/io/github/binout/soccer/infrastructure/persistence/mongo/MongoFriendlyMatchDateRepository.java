@@ -12,11 +12,6 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public class MongoFriendlyMatchDateRepository extends MongoRepository<FriendlyMatchDate> implements FriendlyMatchDateRepository {
 
     @Inject

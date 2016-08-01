@@ -9,11 +9,6 @@ import net.codestory.http.routes.Routes;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public class Server {
 
     public static void main(String[] args) {

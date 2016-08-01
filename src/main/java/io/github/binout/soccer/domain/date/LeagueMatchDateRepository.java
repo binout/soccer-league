@@ -4,11 +4,6 @@ import java.time.Month;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public interface LeagueMatchDateRepository {
 
     Stream<LeagueMatchDate> all();

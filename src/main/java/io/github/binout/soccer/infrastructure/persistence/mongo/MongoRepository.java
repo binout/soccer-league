@@ -8,11 +8,6 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public abstract class MongoRepository<T> {
 
     private final MongoSession mongoSession;

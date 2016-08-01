@@ -2,11 +2,6 @@ package io.github.binout.soccer.interfaces.rest;
 
 import io.github.binout.soccer.domain.season.Season;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 class SeasonName {
 
     private final String name;

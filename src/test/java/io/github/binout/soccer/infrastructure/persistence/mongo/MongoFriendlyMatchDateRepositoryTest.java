@@ -13,11 +13,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public class MongoFriendlyMatchDateRepositoryTest {
 
     @Rule

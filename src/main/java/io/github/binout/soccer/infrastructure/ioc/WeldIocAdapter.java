@@ -3,11 +3,6 @@ package io.github.binout.soccer.infrastructure.ioc;
 import net.codestory.http.injection.IocAdapter;
 import org.jboss.weld.environment.se.WeldContainer;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public class WeldIocAdapter implements IocAdapter {
 
     private final WeldContainer weldContainer;

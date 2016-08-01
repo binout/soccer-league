@@ -17,11 +17,6 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 @Prefix("faker")
 @TransactedScopeEnabled
 public class FakerResource {

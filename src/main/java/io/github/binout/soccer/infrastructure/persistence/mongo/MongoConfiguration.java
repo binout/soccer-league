@@ -12,11 +12,6 @@ import org.mongolink.domain.mapper.ContextBuilder;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public class MongoConfiguration {
 
     @Produces
