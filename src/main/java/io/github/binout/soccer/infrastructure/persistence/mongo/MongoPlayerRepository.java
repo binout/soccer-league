@@ -6,6 +6,7 @@ import org.mongolink.MongoSession;
 import org.mongolink.domain.criteria.Restrictions;
 
 import javax.inject.Inject;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -38,6 +39,6 @@ public class MongoPlayerRepository extends MongoRepository<Player> implements Pl
 
     @Override
     public Stream<Player> all() {
-        return super.all();
+        return super.all().sorted(Comparator.comparing(Player::name));
     }
 }

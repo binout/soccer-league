@@ -5,6 +5,7 @@ import io.github.binout.soccer.domain.player.PlayerRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Vetoed;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +28,7 @@ public class InMemoryPlayerRepository implements PlayerRepository {
 
     @Override
     public Stream<Player> all() {
-        return players.values().stream();
+        return players.values().stream().sorted(Comparator.comparing(Player::name));
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.mongolink.domain.criteria.Restrictions;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -40,6 +41,6 @@ public class MongoLeagueMatchDateRepository extends MongoRepository<LeagueMatchD
 
     @Override
     public Stream<LeagueMatchDate> all() {
-        return super.all();
+        return super.all().sorted(Comparator.comparing(LeagueMatchDate::date));
     }
 }
