@@ -1,0 +1,37 @@
+= Soccer League
+
+== Description
+
+This project is a web app to manage a planning for soccer matches between friends.
+
+...and a opportunity to test a technical stack :-)
+
+== Technical Stack
+
+=== BackEnd
+
+* JDK 8
+* https://github.com/CodeStory/fluent-http[fluent-http] as web server
+* http://weld.cdi-spec.org/[weld] as dependency injection framework
+* MongoDB as database with http://mongolink.org/[MongoLink] as object document mapper
+
+=== FrontEnd
+
+* https://facebook.github.io/react/[react]
+
+== Build Tools
+
+* Maven + NPM (with webpack configuration)
+* Travis for continuous integration
+
+image:https://travis-ci.org/binout/soccer-league.svg?branch=master["Build Status", link="https://travis-ci.org/binout/soccer-league"]
+
+== Environment Variable
+
+MONGODB_URI:: a uri for a mongo database, if not an im-memory implementation is used (https://github.com/fakemongo/fongo[fongo])
+
+PROD_MODE:: set to true for production mode of fluent-http
+
+== Demo
+
+On Heroku:: https://pes5.herokuapp.com/
