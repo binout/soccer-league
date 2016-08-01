@@ -58,7 +58,7 @@ public class SeasonMatchesResource {
 
     private RestMatch toRestMatch(Season s, FriendlyMatch m) {
         RestMatch restMatch = new RestMatch(m.date());
-        m.players().map(Player::name).forEach(restMatch::addPlayer);
+        m.players().forEach(restMatch::addPlayer);
         seasonService.getSubstitutes(s, m).stream().map(Player::name).forEach(restMatch::addSub);
         return restMatch;
     }
@@ -170,7 +170,7 @@ public class SeasonMatchesResource {
 
     private RestMatch toRestMatch(Season s, LeagueMatch m) {
         RestMatch restMatch = new RestMatch(m.date());
-        m.players().map(Player::name).forEach(restMatch::addPlayer);
+        m.players().forEach(restMatch::addPlayer);
         seasonService.getSubstitutes(s, m).stream().map(Player::name).forEach(restMatch::addSub);
         return restMatch;
     }

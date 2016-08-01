@@ -14,7 +14,7 @@ public class LeagueMatchDate implements MatchDate {
 
     private final String id;
     private LocalDate date;
-    private Set<Player> presents;
+    private Set<String> presents;
 
     LeagueMatchDate() {
         this.id = UUID.randomUUID().toString();
@@ -36,18 +36,18 @@ public class LeagueMatchDate implements MatchDate {
     }
 
     @Override
-    public Stream<Player> presents() {
+    public Stream<String> presents() {
         return presents.stream();
     }
 
     @Override
     public void present(Player player) {
-        presents.add(player);
+        presents.add(player.name());
     }
 
     @Override
     public void absent(Player player) {
-        presents.remove(player);
+        presents.remove(player.name());
     }
 
     @Override

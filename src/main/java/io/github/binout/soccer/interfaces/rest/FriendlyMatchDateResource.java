@@ -76,7 +76,7 @@ public class FriendlyMatchDateResource {
 
     private RestMatchDate toRestModel(MatchDate m) {
         RestMatchDate restMatchDate = new RestMatchDate(m.date());
-        m.presents().map(Player::name).forEach(restMatchDate::addPresent);
+        m.presents().forEach(restMatchDate::addPresent);
         restMatchDate.setCanBePlanned(m.canBePlanned());
         return restMatchDate;
     }

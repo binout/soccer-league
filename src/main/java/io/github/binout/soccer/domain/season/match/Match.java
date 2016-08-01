@@ -14,15 +14,13 @@ public interface Match {
 
     LocalDate date();
 
-    Stream<Player> players();
+    Stream<String> players();
 
     int maxPlayers();
 
     int minPlayers();
 
-    MatchDate matchDate();
-
-    void substitutePlayer(Player from, Player by);
+    void replacePlayer(Player from, Player by);
 
     default Set<Player> checkPlayers(MatchDate date, Set<Player> players) {
         if (players.size() < minPlayers() || players.size() > maxPlayers()) {

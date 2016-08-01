@@ -4,14 +4,12 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
-import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
 import io.github.binout.soccer.domain.season.SeasonService;
 import io.github.binout.soccer.domain.season.SeasonStatistics;
-import io.github.binout.soccer.domain.season.match.FriendlyMatch;
-import io.github.binout.soccer.domain.season.match.LeagueMatch;
+import io.github.binout.soccer.domain.season.match.Match;
 import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.*;
 import net.codestory.http.Context;
@@ -64,15 +62,9 @@ public class SeasonsResource {
         String seasonName = new SeasonName(name).name();
         return seasonRepository.byName(seasonName)
                 .map(Season::friendlyMatches)
-                .map(s -> s.map(this::toRestMatch).collect(Collectors.toList()))
+                .map(s -> s.map(SeasonsResource::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
                 .orElse(Payload.badRequest());
-    }
-
-    private RestMatch toRestMatch(FriendlyMatch m) {
-        RestMatch restMatch = new RestMatch(m.date());
-        m.players().map(Player::name).forEach(restMatch::addPlayer);
-        return restMatch;
     }
 
     @Put(":name/matches/friendly/:dateParam")
@@ -94,15 +86,9 @@ public class SeasonsResource {
         String seasonName = new SeasonName(name).name();
         return seasonRepository.byName(seasonName)
                 .map(Season::leagueMatches)
-                .map(s -> s.map(this::toRestMatch).collect(Collectors.toList()))
+                .map(s -> s.map(SeasonsResource::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
                 .orElse(Payload.badRequest());
-    }
-
-    private RestMatch toRestMatch(LeagueMatch m) {
-        RestMatch restMatch = new RestMatch(m.date());
-        m.players().map(Player::name).forEach(restMatch::addPlayer);
-        return restMatch;
     }
 
     @Put(":name/matches/league/:dateParam")
@@ -136,6 +122,12 @@ public class SeasonsResource {
                 .map(this::toRestStatList)
                 .map(Payload::new)
                 .orElse(Payload.notFound());
+    }
+
+    private static RestMatch toRestMatch(Match m) {
+        RestMatch restMatch = new RestMatch(m.date());
+        m.players().forEach(restMatch::addPlayer);
+        return restMatch;
     }
 
     private List<RestStat> toRestStatList(SeasonStatistics s) {

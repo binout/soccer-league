@@ -33,12 +33,31 @@ public class SeasonService {
     }
 
     public void substitutePlayer(Season season, Match match, Player player) {
+        Player by = getSubstitute(season, match);
+        MatchDate matchDate = getMatchDate(match).orElseThrow(() -> new IllegalArgumentException("Unknown match date"));
+        if (matchDate.isAbsent(by)) {
+            throw new IllegalArgumentException(by.name() + " is not present for this date");
+        }
+        match.replacePlayer(player, by);
+        matchDate.absent(player);
+    }
+
+    private Player getSubstitute(Season season, Match match) {
         List<Player> substitutes = getSubstitutes(season, match);
         if (substitutes.isEmpty()) {
             throw new IllegalArgumentException("No substitutes available");
         }
-        match.substitutePlayer(player, substitutes.iterator().next());
-        match.matchDate().absent(player);
+        return substitutes.iterator().next();
+    }
+
+    private Optional<? extends MatchDate> getMatchDate(Match match) {
+        LocalDate date = match.date();
+        if (match instanceof FriendlyMatch) {
+            return friendlyMatchDateRepository.byDate(date.getYear(), date.getMonth(), date.getDayOfMonth());
+        } else {
+            return leagueMatchDateRepository.byDate(date.getYear(), date.getMonth(), date.getDayOfMonth());
+        }
+
     }
 
     public FriendlyMatch planFriendlyMatch(Season season, FriendlyMatchDate date) {
@@ -75,12 +94,12 @@ public class SeasonService {
 
     public List<Player> getSubstitutes(Season season, Match match) {
         SeasonStatistics statistics = season.statistics();
-        MatchDate date = match.matchDate();
-        List<Player> players = match.players().collect(Collectors.toList());
+        MatchDate date = getMatchDate(match).orElseThrow(() -> new IllegalArgumentException("Unknown match date"));
+        List<String> players = match.players().collect(Collectors.toList());
         Comparator<Player> gamesPlayedComparator = (p1, p2) -> Integer.compare(statistics.gamesPlayed(p1), statistics.gamesPlayed(p2));
         return playerRepository.all()
                 .filter(date::isPresent)
-                .filter(p -> !players.contains(p))
+                .filter(p -> !players.contains(p.name()))
                 .sorted(gamesPlayedComparator)
                 .collect(Collectors.toList());
     }

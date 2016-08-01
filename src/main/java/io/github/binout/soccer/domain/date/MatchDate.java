@@ -10,7 +10,7 @@ public interface MatchDate {
 
     LocalDate date();
 
-    Stream<Player> presents();
+    Stream<String> presents();
 
     void present(Player player);
 
@@ -27,7 +27,7 @@ public interface MatchDate {
     }
 
     default boolean isPresent(Player player) {
-        return presents().map(Player::name).filter(n -> n.equals(player.name())).findFirst().isPresent();
+        return presents().filter(n -> n.equals(player.name())).findFirst().isPresent();
     }
 
     static LeagueMatchDate newDateForLeague(int year, Month month, int dayOfMonth) {

@@ -58,15 +58,6 @@ public class MongoFriendlyMatchDateRepositoryTest {
         assertThat(matchDate).isPresent();
         assertThat(matchDate.get().id()).isNotNull();
         assertThat(matchDate.get().presents().count()).isEqualTo(1);
-        benoit = matchDate.get().presents().findFirst().get();
-        assertThat(benoit.name()).isEqualTo("benoit");
-        assertThat(benoit.isPlayerLeague()).isFalse();
-
-        benoit.playsInLeague(true);
-        repository.session().flush();
-
-        benoit = repository.byDate(2016, Month.APRIL, 1).get().presents().findFirst().get();
-        assertThat(benoit.name()).isEqualTo("benoit");
-        assertThat(benoit.isPlayerLeague()).isTrue();
+        assertThat(matchDate.get().presents().findFirst().get()).isEqualTo("benoit");
     }
 }

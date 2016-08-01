@@ -1,13 +1,13 @@
 package io.github.binout.soccer.domain.season.match;
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
-import io.github.binout.soccer.domain.date.MatchDate;
 import io.github.binout.soccer.domain.player.Player;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FriendlyMatch implements Match {
@@ -15,44 +15,36 @@ public class FriendlyMatch implements Match {
     public static final int MAX_PLAYERS = 10;
     public static final int MIN_PLAYERS = 10;
 
-    private FriendlyMatchDate friendlyDate;
-    private Set<Player> players;
+    private LocalDate friendlyDate;
+    private Set<String> players;
 
     FriendlyMatch(){
         this.players = new HashSet<>();
     }
 
-    FriendlyMatch(FriendlyMatchDate date, Set<Player> players) {
+    FriendlyMatch(FriendlyMatchDate matchDate, Set<Player> players) {
         this();
-        this.friendlyDate = Objects.requireNonNull(date);
-        this.players = checkPlayers(date, players);
+        this.friendlyDate = Objects.requireNonNull(matchDate.date());
+        this.players = checkPlayers(matchDate, players).stream().map(Player::name).collect(Collectors.toSet());
     }
 
     @Override
     public LocalDate date() {
-        return friendlyDate.date();
-    }
-
-    @Override
-    public MatchDate matchDate() {
         return friendlyDate;
     }
 
     @Override
-    public Stream<Player> players() {
+    public Stream<String> players() {
         return players.stream();
     }
 
     @Override
-    public void substitutePlayer(Player from, Player by) {
-        if (friendlyDate.isAbsent(by)) {
-            throw new IllegalArgumentException(by.name() + " is not present for this date");
-        }
-        if (!players.contains(from)) {
+    public void replacePlayer(Player from, Player by) {
+        if (!players.contains(from.name())) {
             throw new IllegalArgumentException(from.name() + " is not a player of this match");
         }
-        players.remove(from);
-        players.add(by);
+        players.remove(from.name());
+        players.add(by.name());
     }
 
     @Override
