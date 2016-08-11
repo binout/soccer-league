@@ -2,6 +2,7 @@ package io.github.binout.soccer.infrastructure.persistence.mongo;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
 import io.github.binout.soccer.infrastructure.persistence.TransactedScope;
 import org.mongolink.MongoSession;
@@ -22,7 +23,7 @@ public class MongoConfiguration {
             Fongo fongo = new Fongo("Dev Server");
             return fongo.getDatabase("dev");
         } else {
-            MongoClient client = new MongoClient(uri);
+            MongoClient client = new MongoClient(new MongoClientURI(uri));
             return client.getDatabase("prod");
         }
     }
