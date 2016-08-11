@@ -15,7 +15,9 @@ import io.github.binout.soccer.infrastructure.persistence.InMemoryLeagueMatchDat
 import io.github.binout.soccer.infrastructure.persistence.InMemoryPlayerRepository;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
+import javax.enterprise.event.Event;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,6 +49,9 @@ public class SeasonServicePropertyTest {
         FriendlyMatchDateRepository friendlyMatchDateRepository = new InMemoryFriendlyMatchDateRepository();
         friendlyMatchDateRepository.add(DATE_FOR_FRIENDLY);
         seasonService.friendlyMatchDateRepository = friendlyMatchDateRepository;
+
+        seasonService.friendlyMatchPlannedEvent = Mockito.mock(Event.class);
+        seasonService.leagueMatchPlannedEvent = Mockito.mock(Event.class);
     }
 
     private void addToRepository(List<Player>... nbPlayers) {
