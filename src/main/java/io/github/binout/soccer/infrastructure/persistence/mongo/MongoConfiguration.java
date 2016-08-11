@@ -23,8 +23,9 @@ public class MongoConfiguration {
             Fongo fongo = new Fongo("Dev Server");
             return fongo.getDatabase("dev");
         } else {
-            MongoClient client = new MongoClient(new MongoClientURI(uri));
-            return client.getDatabase("prod");
+            MongoClientURI mongoClientURI = new MongoClientURI(uri);
+            MongoClient client = new MongoClient(mongoClientURI);
+            return client.getDatabase(mongoClientURI.getDatabase());
         }
     }
 
