@@ -30,19 +30,19 @@ class SendGridMailService implements MailService {
         }
     }
 
-    String toSendGridMail(Mail email) {
+    static String toSendGridMail(Mail email) {
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.append("from", toEmail(email.from()));
-            jsonObject.append("personalizations", toPersonalizations(email));
-            jsonObject.append("content", toContent(email));
+            jsonObject.put("from", toEmail(email.from()));
+            jsonObject.put("personalizations", toPersonalizations(email));
+            jsonObject.put("content", toContent(email));
             return jsonObject.toString();
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private JSONArray toContent(Mail email) {
+    private static JSONArray toContent(Mail email) {
         try {
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObject = new JSONObject();
@@ -59,8 +59,8 @@ class SendGridMailService implements MailService {
         try {
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObject = new JSONObject();
-            jsonObject.append("to", toTos(email));
-            jsonObject.append("subject", email.subject());
+            jsonObject.put("to", toTos(email));
+            jsonObject.put("subject", email.subject());
             jsonArray.put(jsonObject);
             return jsonArray;
         } catch (JSONException e) {
@@ -76,7 +76,7 @@ class SendGridMailService implements MailService {
 
     private static JSONObject toEmail(String address) {
         try {
-            return new JSONObject().append("email", address);
+            return new JSONObject().put("email", address);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
