@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public interface MailService {
 
     void sendMail(Mail mail);
@@ -29,6 +24,10 @@ public interface MailService {
         public Mail addRecipient(String to) {
             this.tos.add(to);
             return this;
+        }
+
+        public boolean hasRecipients() {
+            return !tos.isEmpty();
         }
 
         public String from() {

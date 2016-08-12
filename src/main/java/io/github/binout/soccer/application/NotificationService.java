@@ -7,11 +7,6 @@ import io.github.binout.soccer.infrastructure.mail.MailService;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 public class NotificationService {
 
     @Inject

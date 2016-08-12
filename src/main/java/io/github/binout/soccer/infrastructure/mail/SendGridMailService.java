@@ -1,42 +1,91 @@
 package io.github.binout.soccer.infrastructure.mail;
 
-import com.sendgrid.*;
+import feign.*;
+import io.github.binout.soccer.infrastructure.log.LoggerService;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import javax.inject.Inject;
 
-/**
- * LECTRA
- *
- * @author b.prioux
- */
 class SendGridMailService implements MailService {
+
+    private static final String SENDGRID_API = "https://api.sendgrid.com/v3";
+
+    @Inject
+    LoggerService loggerService;
 
     @Override
     public void sendMail(Mail email) {
         String apiKey = System.getenv("SENDGRID_API_KEY");
         if (apiKey != null) {
-            try {
-                SendGrid sg = new SendGrid(apiKey);
-                Request request = new Request();
-                request.method = Method.POST;
-                request.endpoint = "mail/send";
-                request.body = toSendGridMail(email).build();
-                sg.api(request);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+            if (email.hasRecipients()) {
+                Feign.builder()
+                        .requestInterceptor(r -> r.header("Authorization", "Bearer " + apiKey))
+                        .target(SendGrid.class, SENDGRID_API)
+                        .sendMail(toSendGridMail(email));
             }
+        } else {
+            loggerService.log(this.getClass(), "No SendGrid Configuration");
         }
     }
 
-    private com.sendgrid.Mail toSendGridMail(Mail email) {
-        com.sendgrid.Mail mail = new com.sendgrid.Mail();
-        mail.setFrom(new Email(email.from()));
-        mail.setSubject(email.subject());
-        mail.addContent(new Content("text/plain", email.content()));
-        Personalization personalization = new Personalization();
-        email.recipients().map(Email::new).forEach(personalization::addTo);
-        mail.addPersonalization(personalization);
-        return mail;
+    String toSendGridMail(Mail email) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.append("from", toEmail(email.from()));
+            jsonObject.append("personalizations", toPersonalizations(email));
+            jsonObject.append("content", toContent(email));
+            return jsonObject.toString();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private JSONArray toContent(Mail email) {
+        try {
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type", "text/html");
+            jsonObject.put("value", email.content());
+            jsonArray.put(jsonObject);
+            return jsonArray;
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static JSONArray toPersonalizations(Mail email) {
+        try {
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.append("to", toTos(email));
+            jsonObject.append("subject", email.subject());
+            jsonArray.put(jsonObject);
+            return jsonArray;
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static JSONArray toTos(Mail email) {
+        JSONArray tos = new JSONArray();
+        email.recipients().map(SendGridMailService::toEmail).forEach(tos::put);
+        return tos;
+    }
+
+    private static JSONObject toEmail(String address) {
+        try {
+            return new JSONObject().append("email", address);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    interface SendGrid {
+
+        @Headers("Content-Type: application/json")
+        @RequestLine("POST /mail/send")
+        void sendMail(String body);
     }
 }
