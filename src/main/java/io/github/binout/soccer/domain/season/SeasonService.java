@@ -1,12 +1,15 @@
 package io.github.binout.soccer.domain.season;
 
 import io.github.binout.soccer.domain.date.*;
+import io.github.binout.soccer.domain.event.FriendlyMatchPlanned;
+import io.github.binout.soccer.domain.event.LeagueMatchPlanned;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
 import io.github.binout.soccer.domain.season.match.Match;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
@@ -27,9 +30,17 @@ public class SeasonService {
     @Inject
     LeagueMatchDateRepository leagueMatchDateRepository;
 
+    @Inject
+    Event<FriendlyMatchPlanned> friendlyMatchPlannedEvent;
+
+    @Inject
+    Event<LeagueMatchPlanned> leagueMatchPlannedEvent;
+
     public LeagueMatch planLeagueMatch(Season season, LeagueMatchDate date) {
         TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all().filter(Player::isPlayerLeague));
-        return season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS));
+        LeagueMatch leagueMatch = season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS));
+        leagueMatchPlannedEvent.fire(new LeagueMatchPlanned(leagueMatch, getSubstitutes(season, leagueMatch)));
+        return leagueMatch;
     }
 
     public void substitutePlayer(Season season, Match match, Player player) {
@@ -62,7 +73,9 @@ public class SeasonService {
 
     public FriendlyMatch planFriendlyMatch(Season season, FriendlyMatchDate date) {
         TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all());
-        return season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS));
+        FriendlyMatch friendlyMatch = season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS));
+        friendlyMatchPlannedEvent.fire(new FriendlyMatchPlanned(friendlyMatch, getSubstitutes(season, friendlyMatch)));
+        return friendlyMatch;
     }
 
     private TreeMap<Integer, List<Player>> computeGamesPlayed(Season season, MatchDate date, Stream<Player> players) {
