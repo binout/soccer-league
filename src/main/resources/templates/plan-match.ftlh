@@ -1,6 +1,7 @@
 Bonjour,
 
-Ci-dessous la liste des participants pour la session de ${date} :
+<p>
+Ci-dessous la liste des participants pour la session du ${date} :
 <ul>
     <#list players as player>
     <li>${player}</li>
@@ -15,5 +16,6 @@ Remplaçants :
     </#list>
 <ul>
 </#if>
+</p>
 
 <a href="https://pes5.herokuapp.com/">https://pes5.herokuapp.com/</a>
