@@ -32,6 +32,8 @@ MONGODB_URI:: a uri for a mongo database, if not an im-memory implementation is 
 
 PROD_MODE:: set to true for production mode of fluent-http
 
+SENDGRID_API_KEY:: the api key for https://sendgrid.com/
+
 == Demo
 
 On Heroku:: https://pes5.herokuapp.com/
