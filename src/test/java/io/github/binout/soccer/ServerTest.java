@@ -8,10 +8,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ServerTest {
 
     @Test
-    public void should_start() {
-        Server.main(new String[]{});
+    public void should_start_and_stop() {
+        Server server = new Server();
 
-        assertThat(HttpRequest.get("http://localhost:8080/rest/seasons/current").ok()).isTrue();
+        int port = server.startOnRandomPort();
+        assertThat(HttpRequest.get("http://localhost:" + port + "/rest/seasons/current").ok()).isTrue();
+        server.stop();
     }
 
 }

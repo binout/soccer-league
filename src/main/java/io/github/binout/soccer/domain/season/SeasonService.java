@@ -39,7 +39,7 @@ public class SeasonService {
     public LeagueMatch planLeagueMatch(Season season, LeagueMatchDate date) {
         TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all().filter(Player::isPlayerLeague));
         LeagueMatch leagueMatch = season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS));
-        leagueMatchPlannedEvent.fire(new LeagueMatchPlanned(leagueMatch));
+        leagueMatchPlannedEvent.fire(new LeagueMatchPlanned(leagueMatch, getSubstitutes(season, leagueMatch)));
         return leagueMatch;
     }
 
@@ -74,7 +74,7 @@ public class SeasonService {
     public FriendlyMatch planFriendlyMatch(Season season, FriendlyMatchDate date) {
         TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all());
         FriendlyMatch friendlyMatch = season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS));
-        friendlyMatchPlannedEvent.fire(new FriendlyMatchPlanned(friendlyMatch));
+        friendlyMatchPlannedEvent.fire(new FriendlyMatchPlanned(friendlyMatch, getSubstitutes(season, friendlyMatch)));
         return friendlyMatch;
     }
 

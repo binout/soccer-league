@@ -11,9 +11,30 @@ import org.jboss.weld.environment.se.WeldContainer;
 
 public class Server {
 
+    private final WebServer webServer;
+    private final WeldContainer weld;
+
+    Server() {
+        weld = new Weld().initialize();
+        webServer = new WebServer().configure(new WebConfiguration(new WeldIocAdapter(weld)));
+    }
+
+    void start() {
+        webServer.start();
+    }
+
+    int startOnRandomPort() {
+        webServer.startOnRandomPort();
+        return webServer.port();
+    }
+
+    void stop() {
+        webServer.stop();
+        weld.shutdown();
+    }
+
     public static void main(String[] args) {
-        WeldContainer weld = new Weld().initialize();
-        new WebServer().configure(new WebConfiguration(new WeldIocAdapter(weld))).start();
+        new Server().start();
     }
 
     static class WebConfiguration implements Configuration {
