@@ -11,5 +11,6 @@ public class MongoPlayerMapping extends AggregateMap<Player> {
         property().onField("name");
         property().onField("email");
         property().onField("isPlayerLeague");
+        property().onField("isGoalkeeper");
     }
 }

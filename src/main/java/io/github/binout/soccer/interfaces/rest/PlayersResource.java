@@ -39,6 +39,7 @@ public class PlayersResource {
         if (restPlayer != null) {
             Optional.ofNullable(restPlayer.getEmail()).ifPresent(player::setEmail);
             Optional.ofNullable(restPlayer.isPlayerLeague()).ifPresent(player::playsInLeague);
+            Optional.ofNullable(restPlayer.isGoalkeeper()).ifPresent(player::playsAsGoalkeeper);
         }
         playerRepository.add(player);
         return Payload.ok();
@@ -55,6 +56,7 @@ public class PlayersResource {
     private static RestPlayer toRestModel(Player p) {
         RestPlayer restPlayer = new RestPlayer(p.name());
         restPlayer.setPlayerLeague(p.isPlayerLeague());
+        restPlayer.setGoalkeeper(p.isGoalkeeper());
         p.email().ifPresent(restPlayer::setEmail);
         return restPlayer;
     }
