@@ -38,7 +38,7 @@ public class SeasonService {
 
     public LeagueMatch planLeagueMatch(Season season, LeagueMatchDate date) {
         TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all().filter(Player::isPlayerLeague));
-        LeagueMatch leagueMatch = season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS));
+        LeagueMatch leagueMatch = season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS, true));
         leagueMatchPlannedEvent.fire(new LeagueMatchPlanned(leagueMatch, getSubstitutes(season, leagueMatch)));
         return leagueMatch;
     }
@@ -73,7 +73,7 @@ public class SeasonService {
 
     public FriendlyMatch planFriendlyMatch(Season season, FriendlyMatchDate date) {
         TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all());
-        FriendlyMatch friendlyMatch = season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS));
+        FriendlyMatch friendlyMatch = season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS, false));
         friendlyMatchPlannedEvent.fire(new FriendlyMatchPlanned(friendlyMatch, getSubstitutes(season, friendlyMatch)));
         return friendlyMatch;
     }
@@ -86,8 +86,11 @@ public class SeasonService {
         return new TreeMap<>(playersByGamesPlayed);
     }
 
-    private Set<Player> extractPlayers(TreeMap<Integer, List<Player>> treeMap, int maxPlayers) {
+    private Set<Player> extractPlayers(TreeMap<Integer, List<Player>> treeMap, int maxPlayers, boolean goalPriority) {
         Set<Player> players = new HashSet<>();
+        if (goalPriority) {
+            treeMap.values().stream().flatMap(Collection::stream).filter(Player::isGoalkeeper).forEach(players::add);
+        }
         Iterator<Map.Entry<Integer, List<Player>>> iterator = treeMap.entrySet().iterator();
         while (iterator.hasNext() && teamIsNotFull(players, maxPlayers)) {
             Map.Entry<Integer, List<Player>> entry = iterator.next();
