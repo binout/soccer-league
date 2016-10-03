@@ -51,4 +51,19 @@ public class MongoPlayerRepositoryTest {
         assertThat(benoit.get().isPlayerLeague()).isTrue();
     }
 
+    @Test
+    public void should_persist_goalkeeper() {
+        Player leaguePlayer = new Player("thomas", "mail@google.com");
+        leaguePlayer.playsInLeague(true);
+        leaguePlayer.playsAsGoalkeeper(true);
+        persistPlayer(leaguePlayer);
+
+        Optional<Player> thomas = repository.byName("thomas");
+        assertThat(thomas).isPresent();
+        assertThat(thomas.get().id()).isNotNull();
+        assertThat(thomas.get().email()).contains("mail@google.com");
+        assertThat(thomas.get().isPlayerLeague()).isTrue();
+        assertThat(thomas.get().isGoalkeeper()).isTrue();
+    }
+
 }

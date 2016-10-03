@@ -10,6 +10,7 @@ public class Player {
     private String name;
     private String email;
     private boolean isPlayerLeague;
+    private boolean isGoalkeeper;
 
     Player() {
         this.id = UUID.randomUUID().toString();
@@ -19,6 +20,7 @@ public class Player {
         this();
         this.name = Objects.requireNonNull(name);
         this.isPlayerLeague = false;
+        this.isGoalkeeper = false;
     }
 
     public Player(String name, String email) {
@@ -48,6 +50,14 @@ public class Player {
 
     public void playsInLeague(boolean playerLeague) {
         this.isPlayerLeague = playerLeague;
+    }
+
+    public boolean isGoalkeeper() {
+        return isGoalkeeper;
+    }
+
+    public void playsAsGoalkeeper(boolean isGoalkeeper) {
+        this.isGoalkeeper = isGoalkeeper;
     }
 
     @Override

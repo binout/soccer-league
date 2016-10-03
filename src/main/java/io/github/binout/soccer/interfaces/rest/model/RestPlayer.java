@@ -5,6 +5,7 @@ public class RestPlayer extends RestModel {
     private String name;
     private String email;
     private Boolean isPlayerLeague;
+    private Boolean isGoalkeeper;
 
     RestPlayer(){}
 
@@ -35,5 +36,13 @@ public class RestPlayer extends RestModel {
 
     public void setPlayerLeague(Boolean playerLeague) {
         isPlayerLeague = playerLeague;
+    }
+
+    public Boolean isGoalkeeper() {
+        return isGoalkeeper;
+    }
+
+    public void setGoalkeeper(Boolean goalkeeper) {
+        isGoalkeeper = goalkeeper;
     }
 }
