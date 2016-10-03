@@ -97,7 +97,7 @@ const Season = React.createClass({
             type: 'DELETE',
             contentType : 'application/json',
             data : {}
-        }).done(data => {this.fetchFriendlyMatchStates();this.fetchStats()});
+        }).done(data => {this.fetchLeagueMatchStates();this.fetchStats()});
     },
 
     handleLeaguePlan(date) {
