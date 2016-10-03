@@ -19,9 +19,8 @@ import org.mockito.Mockito;
 
 import javax.enterprise.event.Event;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
@@ -81,6 +80,20 @@ public class SeasonServicePropertyTest {
         LeagueMatch leagueMatch = seasonService.planLeagueMatch(EMPTY_SEASON, DATE_FOR_LEAGUE);
 
         assertThat(leagueMatch.players().count()).isBetween(5L, 7L);
+    }
+
+    @Property
+    public void goalkeeper_priority_for_league_match(List<@From(Players.class) Player> nbPlayers, List<@From(LeaguePlayers.class) Player> nbLeaguePlayers) {
+        assumeTrue(nbLeaguePlayers.size() >= 4);
+        String goalName = UUID.randomUUID().toString();
+        Player goalKeeper = new Player(goalName);
+        goalKeeper.playsInLeague(true);
+        goalKeeper.playsAsGoalkeeper(true);
+        addToRepository(nbPlayers, nbLeaguePlayers, Collections.singletonList(goalKeeper));
+
+        LeagueMatch leagueMatch = seasonService.planLeagueMatch(EMPTY_SEASON, DATE_FOR_LEAGUE);
+
+        assertThat(leagueMatch.players().collect(Collectors.toList())).contains(goalName);
     }
 
     @Property
