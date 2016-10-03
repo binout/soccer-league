@@ -1,5 +1,6 @@
 var webpack = require('webpack');
 var path = require('path');
+require( 'es6-promise' ).polyfill()
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
