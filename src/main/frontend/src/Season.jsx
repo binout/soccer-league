@@ -31,12 +31,12 @@ const Season = React.createClass({
     },
 
     fetchFriendlyMatchStates() {
-        $.get('/rest/seasons/current/matches/friendly').done(data => this.setState({friendlyMatches : data}));
+        $.get('/rest/seasons/current/matches/friendly/next').done(data => this.setState({friendlyMatches : data}));
         $.get('/rest/seasons/current/matches/friendly/to-plan').done(data => this.setState({friendlyMatchesToPlan : data}));
     },
 
     fetchLeagueMatchStates() {
-        $.get('/rest/seasons/current/matches/league').done(data => this.setState({leagueMatches : data}));
+        $.get('/rest/seasons/current/matches/league/next').done(data => this.setState({leagueMatches : data}));
         $.get('/rest/seasons/current/matches/league/to-plan').done(data => this.setState({leagueMatchesToPlan : data}));
     },
 
