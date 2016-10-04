@@ -39,4 +39,9 @@ public interface Match {
     static FriendlyMatch newFriendlyMatch(FriendlyMatchDate date, Set<Player> players) {
         return new FriendlyMatch(date, players);
     }
+
+    default boolean isNowOrFuture() {
+        LocalDate now = LocalDate.now();
+        return date().isAfter(now) || date().isEqual(now);
+    }
 }

@@ -37,4 +37,9 @@ public interface MatchDate {
     static FriendlyMatchDate newDateForFriendly(int year, Month month, int dayOfMonth) {
         return new FriendlyMatchDate(LocalDate.of(year, month, dayOfMonth));
     }
+
+    default boolean isNowOrFuture() {
+        LocalDate now = LocalDate.now();
+        return date().isAfter(now) || date().isEqual(now);
+    }
 }

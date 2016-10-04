@@ -42,9 +42,8 @@ public class FriendlyMatchDateResource {
 
     @Get("next")
     public List<RestMatchDate> next(Context context) {
-        LocalDate now = LocalDate.now();
         return repository.all()
-                .filter(d -> d.date().isAfter(now) || d.date().isEqual(now))
+                .filter(FriendlyMatchDate::isNowOrFuture)
                 .map(m -> toRestModel(context.uri(), m))
                 .collect(Collectors.toList());
     }

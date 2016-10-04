@@ -21,7 +21,9 @@ import net.codestory.http.annotations.Put;
 import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Prefix("seasons/:name/matches")
@@ -45,15 +47,25 @@ public class SeasonMatchesResource {
 
     @Get("friendly")
     public Payload getFriendly(String name) {
+        return getFriendlyMatches(name, d -> true);
+    }
+
+    private Payload getFriendlyMatches(String name, Predicate<FriendlyMatch> filter) {
         String seasonName = new SeasonName(name).name();
         Optional<Season> season = seasonRepository.byName(seasonName);
         if (!season.isPresent()) {
             return Payload.badRequest();
         } else {
             return new Payload(season.get().friendlyMatches()
+                    .filter(filter)
                     .map(m -> toRestMatch(season.get(), m))
                     .collect(Collectors.toList()));
         }
+    }
+
+    @Get("friendly/next")
+    public Payload getNextFriendly(String name) {
+        return getFriendlyMatches(name, FriendlyMatch::isNowOrFuture);
     }
 
     private RestMatch toRestMatch(Season s, FriendlyMatch m) {
@@ -109,15 +121,26 @@ public class SeasonMatchesResource {
 
     @Get("league")
     public Payload getLeague(String name) {
+        return getLeagueMatches(name, d -> true);
+    }
+
+    private Payload getLeagueMatches(String name, Predicate<LeagueMatch> filter) {
         String seasonName = new SeasonName(name).name();
         Optional<Season> season = seasonRepository.byName(seasonName);
         if (!season.isPresent()) {
             return Payload.badRequest();
         } else {
             return new Payload(season.get().leagueMatches()
+                    .filter(filter)
                     .map(m -> toRestMatch(season.get(), m))
                     .collect(Collectors.toList()));
         }
+    }
+
+    @Get("league/next")
+    public Payload getNextLeague(String name) {
+        LocalDate now = LocalDate.now();
+        return getLeagueMatches(name, LeagueMatch::isNowOrFuture);
     }
 
     @Get("league/to-plan")
