@@ -122,6 +122,8 @@ const Season = React.createClass({
         return (
           <tr>
               <td>{stat.player}</td>
+              <td>{stat.nbFriendlyMatches}</td>
+              <td>{stat.nbLeagueMatches}</td>
               <td>{stat.nbMatches}</td>
           </tr>
         );
@@ -156,7 +158,9 @@ const Season = React.createClass({
                             <thead>
                                 <tr>
                                     <th>Player</th>
-                                    <th>Matches Played</th>
+                                    <th>Friendly</th>
+                                    <th>League</th>
+                                    <th>Total Matches Played</th>
                                 </tr>
                                 {this.state.stats.map(s => this.renderStatLine(s))}
                             </thead>

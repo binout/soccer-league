@@ -82,7 +82,7 @@ public class SeasonService {
         SeasonStatistics statistics = season.statistics();
         Map<Integer, List<Player>> playersByGamesPlayed = players
                 .filter(date::isPresent)
-                .collect(Collectors.groupingBy(statistics::gamesPlayed));
+                .collect(Collectors.groupingBy(statistics::matchPlayed));
         return new TreeMap<>(playersByGamesPlayed);
     }
 
@@ -112,7 +112,7 @@ public class SeasonService {
         SeasonStatistics statistics = season.statistics();
         MatchDate date = getMatchDate(match).orElseThrow(() -> new IllegalArgumentException("Unknown match date"));
         List<String> players = match.players().collect(Collectors.toList());
-        Comparator<Player> gamesPlayedComparator = (p1, p2) -> Integer.compare(statistics.gamesPlayed(p1), statistics.gamesPlayed(p2));
+        Comparator<Player> gamesPlayedComparator = (p1, p2) -> Integer.compare(statistics.matchPlayed(p1), statistics.matchPlayed(p2));
         return playerRepository.all()
                 .filter(date::isPresent)
                 .filter(p -> !players.contains(p.name()))

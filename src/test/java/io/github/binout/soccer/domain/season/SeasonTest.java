@@ -4,7 +4,6 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.MatchDate;
 import io.github.binout.soccer.domain.player.Player;
-import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import org.junit.Test;
 
 import java.time.Month;
@@ -29,11 +28,11 @@ public class SeasonTest {
         SeasonStatistics stats = season.statistics();
 
         assertThat(stats.nbPlayers()).isEqualTo(5);
-        assertThat(stats.gamesPlayed(new Player("benoit"))).isEqualTo(1);
-        assertThat(stats.gamesPlayed(new Player("nicolas"))).isEqualTo(1);
-        assertThat(stats.gamesPlayed(new Player("julien"))).isEqualTo(1);
-        assertThat(stats.gamesPlayed(new Player("pierre"))).isEqualTo(1);
-        assertThat(stats.gamesPlayed(new Player("mat"))).isEqualTo(1);
+        assertThat(stats.matchPlayed(new Player("benoit"))).isEqualTo(1);
+        assertThat(stats.matchPlayed(new Player("nicolas"))).isEqualTo(1);
+        assertThat(stats.matchPlayed(new Player("julien"))).isEqualTo(1);
+        assertThat(stats.matchPlayed(new Player("pierre"))).isEqualTo(1);
+        assertThat(stats.matchPlayed(new Player("mat"))).isEqualTo(1);
     }
 
     public void addLeagueMatch(Season season, LeagueMatchDate date, Set<Player> players) {
@@ -61,16 +60,16 @@ public class SeasonTest {
         SeasonStatistics stats = season.statistics();
 
         assertThat(stats.nbPlayers()).isEqualTo(10);
-        assertThat(stats.gamesPlayed(new Player("benoit"))).isEqualTo(2);
-        assertThat(stats.gamesPlayed(new Player("nicolas"))).isEqualTo(2);
-        assertThat(stats.gamesPlayed(new Player("julien"))).isEqualTo(2);
-        assertThat(stats.gamesPlayed(new Player("pierre"))).isEqualTo(2);
-        assertThat(stats.gamesPlayed(new Player("mat"))).isEqualTo(2);
+        assertThat(stats.matchPlayed(new Player("benoit"))).isEqualTo(2);
+        assertThat(stats.matchPlayed(new Player("nicolas"))).isEqualTo(2);
+        assertThat(stats.matchPlayed(new Player("julien"))).isEqualTo(2);
+        assertThat(stats.matchPlayed(new Player("pierre"))).isEqualTo(2);
+        assertThat(stats.matchPlayed(new Player("mat"))).isEqualTo(2);
 
-        assertThat(stats.gamesPlayed(new Player("flo"))).isEqualTo(1);
-        assertThat(stats.gamesPlayed(new Player("gauthier"))).isEqualTo(1);
-        assertThat(stats.gamesPlayed(new Player("fabien"))).isEqualTo(1);
-        assertThat(stats.gamesPlayed(new Player("guillaume"))).isEqualTo(1);
-        assertThat(stats.gamesPlayed(new Player("sebastien"))).isEqualTo(1);
+        assertThat(stats.matchPlayed(new Player("flo"))).isEqualTo(1);
+        assertThat(stats.matchPlayed(new Player("gauthier"))).isEqualTo(1);
+        assertThat(stats.matchPlayed(new Player("fabien"))).isEqualTo(1);
+        assertThat(stats.matchPlayed(new Player("guillaume"))).isEqualTo(1);
+        assertThat(stats.matchPlayed(new Player("sebastien"))).isEqualTo(1);
     }
 }

@@ -4,6 +4,7 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
+import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
@@ -131,7 +132,18 @@ public class SeasonsResource {
     }
 
     private List<RestStat> toRestStatList(SeasonStatistics s) {
-        return playerRepository.all().map(p -> new RestStat(p.name(), s.gamesPlayed(p))).sorted(Comparator.comparing(RestStat::getNbMatches).reversed()).collect(Collectors.toList());
+        return playerRepository.all()
+                .map(p -> toRestStat(s, p))
+                .sorted(Comparator.comparing(RestStat::getNbMatches).reversed())
+                .collect(Collectors.toList());
+    }
+
+    private RestStat toRestStat(SeasonStatistics s, Player p) {
+        RestStat restStat = new RestStat(p.name());
+        restStat.setNbFriendlyMatches(s.friendlyMatchPlayed(p));
+        restStat.setNbLeagueMatches(s.leagueMatchPlayed(p));
+        restStat.setNbMatches(s.matchPlayed(p));
+        return restStat;
     }
 
     private static RestSeason toRestModel(String baseUri, Season s) {
