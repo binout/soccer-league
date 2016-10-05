@@ -62,13 +62,7 @@ public class Season {
     }
 
     public SeasonStatistics statistics() {
-        List<String> allPlayerGames = this.friendlyMatches.stream().flatMap(FriendlyMatch::players).collect(Collectors.toList());
-        allPlayerGames.addAll(this.leagueMatches.stream().flatMap(LeagueMatch::players).collect(Collectors.toList()));
-
-        return new SeasonStatistics(allPlayerGames.stream().distinct().collect(Collectors.toMap(
-                Function.identity(),
-                p -> allPlayerGames.stream().filter(p::equals).count()
-        )));
+        return new SeasonStatistics(this);
     }
 
     public static String currentSeasonName() {

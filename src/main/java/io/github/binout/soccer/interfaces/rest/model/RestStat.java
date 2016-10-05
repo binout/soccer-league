@@ -4,13 +4,14 @@ public class RestStat {
 
     private String player;
     private int nbMatches;
+    private int nbFriendlyMatches;
+    private int nbLeagueMatches;
 
     RestStat(){}
 
-    public RestStat(String player, int nbMatches) {
+    public RestStat(String player) {
         this();
         this.player = player;
-        this.nbMatches = nbMatches;
     }
 
     public String getPlayer() {
@@ -27,5 +28,21 @@ public class RestStat {
 
     public void setNbMatches(int nbMatches) {
         this.nbMatches = nbMatches;
+    }
+
+    public int getNbLeagueMatches() {
+        return nbLeagueMatches;
+    }
+
+    public void setNbLeagueMatches(int nbLeagueMatches) {
+        this.nbLeagueMatches = nbLeagueMatches;
+    }
+
+    public int getNbFriendlyMatches() {
+        return nbFriendlyMatches;
+    }
+
+    public void setNbFriendlyMatches(int nbFriendlyMatches) {
+        this.nbFriendlyMatches = nbFriendlyMatches;
     }
 }
