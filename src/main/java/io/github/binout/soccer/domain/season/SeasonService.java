@@ -13,6 +13,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,7 +38,7 @@ public class SeasonService {
     Event<LeagueMatchPlanned> leagueMatchPlannedEvent;
 
     public LeagueMatch planLeagueMatch(Season season, LeagueMatchDate date) {
-        TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all().filter(Player::isPlayerLeague));
+        TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(date, playerRepository.all().filter(Player::isPlayerLeague), p -> season.statistics().leagueMatchPlayed(p));
         LeagueMatch leagueMatch = season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS, true));
         leagueMatchPlannedEvent.fire(new LeagueMatchPlanned(leagueMatch, getSubstitutes(season, leagueMatch)));
         return leagueMatch;
@@ -72,17 +73,14 @@ public class SeasonService {
     }
 
     public FriendlyMatch planFriendlyMatch(Season season, FriendlyMatchDate date) {
-        TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(season, date, playerRepository.all());
+        TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(date, playerRepository.all(), p -> season.statistics().matchPlayed(p));
         FriendlyMatch friendlyMatch = season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS, false));
         friendlyMatchPlannedEvent.fire(new FriendlyMatchPlanned(friendlyMatch, getSubstitutes(season, friendlyMatch)));
         return friendlyMatch;
     }
 
-    private TreeMap<Integer, List<Player>> computeGamesPlayed(Season season, MatchDate date, Stream<Player> players) {
-        SeasonStatistics statistics = season.statistics();
-        Map<Integer, List<Player>> playersByGamesPlayed = players
-                .filter(date::isPresent)
-                .collect(Collectors.groupingBy(statistics::matchPlayed));
+    private TreeMap<Integer, List<Player>> computeGamesPlayed(MatchDate date, Stream<Player> players, Function<Player, Integer> counter) {
+        Map<Integer, List<Player>> playersByGamesPlayed = players.filter(date::isPresent).collect(Collectors.groupingBy(counter));
         return new TreeMap<>(playersByGamesPlayed);
     }
 
