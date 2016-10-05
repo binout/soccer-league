@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 
 class SendGridMailService implements MailService {
 
@@ -20,10 +21,16 @@ class SendGridMailService implements MailService {
         String apiKey = System.getenv("SENDGRID_API_KEY");
         if (apiKey != null) {
             if (email.hasRecipients()) {
-                Feign.builder()
-                        .requestInterceptor(r -> r.header("Authorization", "Bearer " + apiKey))
-                        .target(SendGrid.class, SENDGRID_API)
-                        .sendMail(toSendGridMail(email));
+                String jsonMail = toSendGridMail(email);
+                try {
+                    Feign.builder()
+                            .requestInterceptor(r -> r.header("Authorization", "Bearer " + apiKey))
+                            .target(SendGrid.class, SENDGRID_API)
+                            .sendMail(jsonMail);
+                } catch (Throwable e) {
+                    loggerService.log(this.getClass(), "Cannot send mail to sendgrid api : " + jsonMail);
+                    loggerService.log(this.getClass(), Arrays.toString(e.getStackTrace()));
+                }
             }
         } else {
             loggerService.log(this.getClass(), "No SendGrid Configuration");

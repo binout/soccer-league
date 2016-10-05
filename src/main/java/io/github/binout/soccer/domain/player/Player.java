@@ -37,7 +37,7 @@ public class Player {
     }
 
     public Optional<String> email() {
-        return Optional.ofNullable(email);
+        return Optional.ofNullable(email).filter(s -> !s.isEmpty());
     }
 
     public void setEmail(String email) {
