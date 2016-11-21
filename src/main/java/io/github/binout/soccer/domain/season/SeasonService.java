@@ -38,7 +38,7 @@ public class SeasonService {
     Event<LeagueMatchPlanned> leagueMatchPlannedEvent;
 
     public LeagueMatch planLeagueMatch(Season season, LeagueMatchDate date) {
-        TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(date, playerRepository.all().filter(Player::isPlayerLeague), p -> season.statistics().leagueMatchPlayed(p));
+        TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(date, playerRepository.all().filter(Player::isPlayerLeague), leagueCounter(season));
         LeagueMatch leagueMatch = season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS, true));
         leagueMatchPlannedEvent.fire(new LeagueMatchPlanned(leagueMatch, getSubstitutes(season, leagueMatch)));
         return leagueMatch;
@@ -73,7 +73,7 @@ public class SeasonService {
     }
 
     public FriendlyMatch planFriendlyMatch(Season season, FriendlyMatchDate date) {
-        TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(date, playerRepository.all(), p -> season.statistics().matchPlayed(p));
+        TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(date, playerRepository.all(), globalCounter(season));
         FriendlyMatch friendlyMatch = season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS, false));
         friendlyMatchPlannedEvent.fire(new FriendlyMatchPlanned(friendlyMatch, getSubstitutes(season, friendlyMatch)));
         return friendlyMatch;
@@ -110,12 +110,17 @@ public class SeasonService {
         SeasonStatistics statistics = season.statistics();
         MatchDate date = getMatchDate(match).orElseThrow(() -> new IllegalArgumentException("Unknown match date"));
         List<String> players = match.players().collect(Collectors.toList());
-        Comparator<Player> gamesPlayedComparator = (p1, p2) -> Integer.compare(statistics.matchPlayed(p1), statistics.matchPlayed(p2));
+        Comparator<Player> gamesPlayedComparator = getPlayerComparator(season, match);
         return playerRepository.all()
                 .filter(date::isPresent)
                 .filter(p -> !players.contains(p.name()))
                 .sorted(gamesPlayedComparator)
                 .collect(Collectors.toList());
+    }
+
+    private Comparator<Player> getPlayerComparator(Season season, Match match) {
+        Function<Player, Integer> counter = match instanceof LeagueMatch ? leagueCounter(season) : globalCounter(season);
+        return (p1, p2) -> Integer.compare(counter.apply(p1), counter.apply(p2));
     }
 
     public List<FriendlyMatchDate> friendlyMatchDatesToPlan(Season season) {
@@ -135,5 +140,13 @@ public class SeasonService {
                 .filter(d -> !dates.contains(d.date()))
                 .filter(MatchDate::canBePlanned)
                 .collect(Collectors.toList());
+    }
+
+    private static Function<Player, Integer> leagueCounter(Season season) {
+        return p -> season.statistics().leagueMatchPlayed(p);
+    }
+
+    private static Function<Player, Integer> globalCounter(Season season) {
+        return p -> season.statistics().matchPlayed(p);
     }
 }
