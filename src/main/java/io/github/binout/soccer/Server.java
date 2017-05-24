@@ -3,8 +3,13 @@ package io.github.binout.soccer;
 import io.github.binout.soccer.infrastructure.ioc.WeldIocAdapter;
 import io.github.binout.soccer.interfaces.rest.*;
 import net.codestory.http.Configuration;
+import net.codestory.http.Context;
 import net.codestory.http.WebServer;
+import net.codestory.http.constants.Methods;
+import net.codestory.http.filters.Filter;
+import net.codestory.http.filters.PayloadSupplier;
 import net.codestory.http.injection.IocAdapter;
+import net.codestory.http.payload.Payload;
 import net.codestory.http.routes.Routes;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
@@ -47,12 +52,30 @@ public class Server {
         @Override
         public void configure(Routes routes) {
             routes.setIocAdapter(iocAdapter);
+            routes.filter(new CorsFilter());
             routes.add("rest", SeasonsResource.class);
             routes.add("rest", SeasonMatchesResource.class);
             routes.add("rest", PlayersResource.class);
             routes.add("rest", FriendlyMatchDateResource.class);
             routes.add("rest", LeagueMatchDateResource.class);
             routes.add(FakerResource.class);
+        }
+    }
+
+    static class CorsFilter implements Filter {
+        @Override
+        public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
+            Payload payload;
+            if (context.method().equals(Methods.OPTIONS)) {
+                payload = Payload.ok();
+            } else {
+                payload = nextFilter.get();
+            }
+            return payload
+                    .withHeader("Access-Control-Allow-Origin", "*")
+                    .withHeader("Access-Control-Allow-Credentials", "true")
+                    .withHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                    .withHeader("Access-Control-Max-Age", "3600");
         }
     }
 }
