@@ -6,6 +6,7 @@ import io.github.binout.soccer.domain.date.MatchDate;
 import io.github.binout.soccer.domain.player.Player;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.Set;
@@ -17,6 +18,16 @@ public class SeasonTest {
 
     private Set<Player> players(String... names) {
         return Arrays.stream(names).map(Player::new).collect(Collectors.toSet());
+    }
+
+    private void addLeagueMatch(Season season, LeagueMatchDate date, Set<Player> players) {
+        players.forEach(date::present);
+        season.addLeagueMatch(date, players);
+    }
+
+    private void addFriendlyMatch(Season season, FriendlyMatchDate date, Set<Player> players) {
+        players.forEach(date::present);
+        season.addFriendlyMatch(date, players);
     }
 
     @Test
@@ -33,16 +44,6 @@ public class SeasonTest {
         assertThat(stats.matchPlayed(new Player("julien"))).isEqualTo(1);
         assertThat(stats.matchPlayed(new Player("pierre"))).isEqualTo(1);
         assertThat(stats.matchPlayed(new Player("mat"))).isEqualTo(1);
-    }
-
-    public void addLeagueMatch(Season season, LeagueMatchDate date, Set<Player> players) {
-        players.forEach(date::present);
-        season.addLeagueMatch(date, players);
-    }
-
-    public void addFriendlyMatch(Season season, FriendlyMatchDate date, Set<Player> players) {
-        players.forEach(date::present);
-        season.addFriendlyMatch(date, players);
     }
 
     @Test
@@ -71,5 +72,15 @@ public class SeasonTest {
         assertThat(stats.matchPlayed(new Player("fabien"))).isEqualTo(1);
         assertThat(stats.matchPlayed(new Player("guillaume"))).isEqualTo(1);
         assertThat(stats.matchPlayed(new Player("sebastien"))).isEqualTo(1);
+    }
+
+    @Test
+    public void compute_season_before_30_september() {
+        assertThat(Season.computeSeason(LocalDate.of(2017, 9, 20))).isEqualTo("2016-2017");
+    }
+
+    @Test
+    public void compute_season_after_30_september() {
+        assertThat(Season.computeSeason(LocalDate.of(2017, 10, 1))).isEqualTo("2017-2018");
     }
 }

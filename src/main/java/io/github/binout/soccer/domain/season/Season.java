@@ -66,10 +66,13 @@ public class Season {
     }
 
     public static String currentSeasonName() {
-        LocalDate now = LocalDate.now();
+        return computeSeason(LocalDate.now());
+    }
+
+    static String computeSeason(LocalDate now) {
         int month = now.get(ChronoField.MONTH_OF_YEAR);
         int year = now.get(ChronoField.YEAR);
-        if (month > Month.AUGUST.getValue()) {
+        if (month > Month.SEPTEMBER.getValue()) {
             return year + "-" + (year+1);
         } else {
             return (year - 1) + "-" + year;
