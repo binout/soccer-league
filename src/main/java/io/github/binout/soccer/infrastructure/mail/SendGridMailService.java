@@ -1,6 +1,7 @@
 package io.github.binout.soccer.infrastructure.mail;
 
 import feign.*;
+import io.github.binout.soccer.domain.notification.MailService;
 import io.github.binout.soccer.infrastructure.log.LoggerService;
 import org.json.JSONArray;
 import org.json.JSONException;

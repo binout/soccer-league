@@ -18,6 +18,7 @@ package io.github.binout.soccer.infrastructure.template;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import io.github.binout.soccer.domain.notification.TemplateEngine;
 import io.github.binout.soccer.infrastructure.log.LoggerService;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -27,19 +28,20 @@ import java.io.StringWriter;
 import java.util.Map;
 
 @ApplicationScoped
-public class TemplateEngine {
+public class FreemarkerTemplateEngine implements TemplateEngine {
 
     @Inject
     LoggerService loggerService;
 
     private final Configuration configuration;
 
-    public TemplateEngine() {
+    public FreemarkerTemplateEngine() {
         configuration = new Configuration();
         configuration.setClassForTemplateLoading(this.getClass(), "/templates");
     }
 
-    public String render(String templateName, Map<String,Object> params) {
+    @Override
+    public String render(String templateName, Map<String, Object> params) {
         try {
             Template template = configuration.getTemplate(templateName);
             StringWriter writer = new StringWriter();

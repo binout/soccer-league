@@ -1,11 +1,9 @@
-package io.github.binout.soccer.domain;
+package io.github.binout.soccer.domain.notification;
 
 import io.github.binout.soccer.domain.event.FriendlyMatchPlanned;
 import io.github.binout.soccer.domain.event.LeagueMatchPlanned;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
-import io.github.binout.soccer.infrastructure.mail.MailService;
-import io.github.binout.soccer.infrastructure.template.TemplateEngine;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;

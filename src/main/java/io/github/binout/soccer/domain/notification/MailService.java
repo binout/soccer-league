@@ -1,4 +1,4 @@
-package io.github.binout.soccer.infrastructure.mail;
+package io.github.binout.soccer.domain.notification;
 
 import java.util.ArrayList;
 import java.util.List;
