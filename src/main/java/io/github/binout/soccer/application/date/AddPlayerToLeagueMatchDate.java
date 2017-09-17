@@ -15,17 +15,17 @@
  */
 package io.github.binout.soccer.application.date;
 
-import io.github.binout.soccer.domain.date.FriendlyMatchDateRegistration;
+import io.github.binout.soccer.domain.date.LeagueMatchDateRegistration;
 
 import javax.inject.Inject;
 import java.time.Month;
 
-public class RemovePlayerToFriendlyMatchDate {
+public class AddPlayerToLeagueMatchDate {
 
     @Inject
-    private FriendlyMatchDateRegistration friendlyMatchDateRegistration;
+    private LeagueMatchDateRegistration leagueMatchDateRegistration;
 
     public void execute(String playerName, int year, Month month, int day) {
-        friendlyMatchDateRegistration.removePlayer(playerName, year, month, day);
+        leagueMatchDateRegistration.addPlayer(playerName, year, month, day);
     }
 }

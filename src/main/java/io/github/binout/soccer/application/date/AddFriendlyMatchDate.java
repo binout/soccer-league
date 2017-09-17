@@ -29,8 +29,8 @@ public class AddFriendlyMatchDate {
     FriendlyMatchDateRepository repository;
 
     public void execute(int year, Month month, int day) {
-        Optional<FriendlyMatchDate> leagueMatchDate = repository.byDate(year, month, day);
-        if (!leagueMatchDate.isPresent()) {
+        Optional<FriendlyMatchDate> friendlyMatchDate = repository.byDate(year, month, day);
+        if (!friendlyMatchDate.isPresent()) {
             repository.add(MatchDate.newDateForFriendly(year, month, day));
         }
     }

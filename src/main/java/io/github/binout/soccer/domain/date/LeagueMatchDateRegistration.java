@@ -23,27 +23,27 @@ import java.time.Month;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
-public class PlayerInscription {
+public class LeagueMatchDateRegistration {
 
     @Inject
-    FriendlyMatchDateRepository repository;
+    LeagueMatchDateRepository repository;
 
     @Inject
     PlayerRepository playerRepository;
 
     public void addPlayer(String playerName, int year, Month month, int day) {
-        managePlayers(playerName, year, month, day, FriendlyMatchDate::present);
+        managePlayers(playerName, year, month, day, LeagueMatchDate::present);
     }
 
     public void removePlayer(String playerName, int year, Month month, int day) {
-        managePlayers(playerName, year, month, day, FriendlyMatchDate::absent);
+        managePlayers(playerName, year, month, day, LeagueMatchDate::absent);
     }
 
-    private void managePlayers(String playerName, int year, Month month, int day, BiConsumer<FriendlyMatchDate, Player> inscription) {
-        Optional<FriendlyMatchDate> leagueMatchDate = repository.byDate(year, month, day);
+    private void managePlayers(String playerName, int year, Month month, int day, BiConsumer<LeagueMatchDate, Player> inscription) {
+        Optional<LeagueMatchDate> friendlyMatchDate = repository.byDate(year, month, day);
         Optional<Player> player = playerRepository.byName(playerName);
-        if (player.isPresent() && leagueMatchDate.isPresent()) {
-            inscription.accept(leagueMatchDate.get(), player.get());
+        if (player.isPresent() && friendlyMatchDate.isPresent()) {
+            inscription.accept(friendlyMatchDate.get(), player.get());
         } else {
             throw new IllegalArgumentException("Player or date is invalid");
         }

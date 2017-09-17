@@ -15,7 +15,7 @@
  */
 package io.github.binout.soccer.application.date;
 
-import io.github.binout.soccer.domain.date.PlayerInscription;
+import io.github.binout.soccer.domain.date.FriendlyMatchDateRegistration;
 
 import javax.inject.Inject;
 import java.time.Month;
@@ -23,9 +23,9 @@ import java.time.Month;
 public class AddPlayerToFriendlyMatchDate {
 
     @Inject
-    private PlayerInscription playerInscription;
+    private FriendlyMatchDateRegistration friendlyMatchDateRegistration;
 
     public void execute(String playerName, int year, Month month, int day) {
-        playerInscription.addPlayer(playerName, year, month, day);
+        friendlyMatchDateRegistration.addPlayer(playerName, year, month, day);
     }
 }
