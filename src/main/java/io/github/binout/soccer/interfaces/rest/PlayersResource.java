@@ -1,7 +1,10 @@
 package io.github.binout.soccer.interfaces.rest;
 
+import io.github.binout.soccer.application.player.GetAllLeaguePlayers;
+import io.github.binout.soccer.application.player.GetAllPlayers;
+import io.github.binout.soccer.application.player.GetPlayer;
+import io.github.binout.soccer.application.player.ReplacePlayer;
 import io.github.binout.soccer.domain.player.Player;
-import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestPlayer;
@@ -13,7 +16,6 @@ import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Prefix("players")
@@ -21,33 +23,36 @@ import java.util.stream.Collectors;
 public class PlayersResource {
 
     @Inject
-    PlayerRepository playerRepository;
+    GetAllPlayers getAllPlayers;
+
+    @Inject
+    GetAllLeaguePlayers getAllLeaguePlayers;
+
+    @Inject
+    ReplacePlayer replacePlayer;
+
+    @Inject
+    GetPlayer getPlayer;
 
     @Get
     public List<RestPlayer> getAll(Context context) {
-        return playerRepository.all().map(p -> toRestModel(context.uri(), p)).collect(Collectors.toList());
+        return getAllPlayers.execute().map(p -> toRestModel(context.uri(), p)).collect(Collectors.toList());
     }
 
     @Get("league")
     public List<RestPlayer> getAllLeague(Context context) {
-        return playerRepository.all().filter(Player::isPlayerLeague).map(p -> toRestModel(context.uri(), p)).collect(Collectors.toList());
+        return getAllLeaguePlayers.execute().map(p -> toRestModel(context.uri(), p)).collect(Collectors.toList());
     }
 
     @Put(":name")
     public Payload put(String name, RestPlayer restPlayer) {
-        Player player = playerRepository.byName(name).orElse(new Player(name));
-        if (restPlayer != null) {
-            Optional.ofNullable(restPlayer.getEmail()).ifPresent(player::setEmail);
-            Optional.ofNullable(restPlayer.isPlayerLeague()).ifPresent(player::playsInLeague);
-            Optional.ofNullable(restPlayer.isGoalkeeper()).ifPresent(player::playsAsGoalkeeper);
-        }
-        playerRepository.add(player);
+        replacePlayer.execute(name, restPlayer.getEmail(), restPlayer.isPlayerLeague(), restPlayer.isGoalkeeper());
         return Payload.ok();
     }
 
     @Get(":name")
     public Payload get(String name) {
-        return playerRepository.byName(name)
+        return getPlayer.execute(name)
                 .map(PlayersResource::toRestModel)
                 .map(Payload::new)
                 .orElse(Payload.notFound());
