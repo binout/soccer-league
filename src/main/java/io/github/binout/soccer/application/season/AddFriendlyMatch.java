@@ -20,7 +20,6 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
 import io.github.binout.soccer.domain.season.SeasonService;
-import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
 import java.time.Month;

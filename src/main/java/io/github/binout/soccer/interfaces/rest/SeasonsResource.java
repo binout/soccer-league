@@ -30,13 +30,13 @@ public class SeasonsResource {
     AddSeason addSeason;
 
     @Inject
-    GetFriendlyMatch getFriendlyMatch;
+    GetFriendlyMatches getFriendlyMatches;
 
     @Inject
     AddFriendlyMatch addFriendlyMatch;
 
     @Inject
-    GetLeagueMatch getLeagueMatch;
+    GetLeagueMatches getLeagueMatches;
 
     @Inject
     AddLeagueMatch addLeagueMatch;
@@ -65,7 +65,7 @@ public class SeasonsResource {
     @Get(":name/matches/friendly")
     public Payload getFriendlyMatch(String name) {
         String seasonName = new SeasonName(name).name();
-        return getFriendlyMatch.execute(seasonName)
+        return getFriendlyMatches.execute(seasonName)
                 .map(s -> s.map(SeasonsResource::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
                 .orElse(Payload.badRequest());
@@ -82,7 +82,7 @@ public class SeasonsResource {
     @Get(":name/matches/league")
     public Payload getLeagueMatch(String name) {
         String seasonName = new SeasonName(name).name();
-        return getLeagueMatch.execute(seasonName)
+        return getLeagueMatches.execute(seasonName)
                 .map(s -> s.map(SeasonsResource::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
                 .orElse(Payload.badRequest());
