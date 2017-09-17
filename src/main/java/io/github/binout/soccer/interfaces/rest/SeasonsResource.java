@@ -1,14 +1,9 @@
 package io.github.binout.soccer.interfaces.rest;
 
-import io.github.binout.soccer.domain.date.FriendlyMatchDate;
-import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
-import io.github.binout.soccer.domain.date.LeagueMatchDate;
-import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
+import io.github.binout.soccer.application.player.GetAllPlayers;
+import io.github.binout.soccer.application.season.*;
 import io.github.binout.soccer.domain.player.Player;
-import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.Season;
-import io.github.binout.soccer.domain.season.SeasonRepository;
-import io.github.binout.soccer.domain.season.SeasonService;
 import io.github.binout.soccer.domain.season.SeasonStatistics;
 import io.github.binout.soccer.domain.season.match.Match;
 import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
@@ -22,7 +17,6 @@ import net.codestory.http.payload.Payload;
 import javax.inject.Inject;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Prefix("seasons")
@@ -30,39 +24,48 @@ import java.util.stream.Collectors;
 public class SeasonsResource {
 
     @Inject
-    SeasonRepository seasonRepository;
+    GetAllSeasons getAllSeasons;
 
     @Inject
-    PlayerRepository playerRepository;
+    AddSeason addSeason;
 
     @Inject
-    SeasonService seasonService;
+    GetFriendlyMatch getFriendlyMatch;
 
     @Inject
-    FriendlyMatchDateRepository friendlyMatchDateRepository;
+    AddFriendlyMatch addFriendlyMatch;
 
     @Inject
-    LeagueMatchDateRepository leagueMatchDateRepository;
+    GetLeagueMatch getLeagueMatch;
+
+    @Inject
+    AddLeagueMatch addLeagueMatch;
+
+    @Inject
+    GetSeason getSeason;
+
+    @Inject
+    GetSeasonStats getSeasonStats;
+
+    @Inject
+    GetAllPlayers getAllPlayers;
 
     @Get
     public List<RestSeason> getAll(Context context) {
-        return seasonRepository.all().map(s -> toRestModel(context.uri(), s)).collect(Collectors.toList());
+        return getAllSeasons.execute().map(s -> toRestModel(context.uri(), s)).collect(Collectors.toList());
     }
 
     @Put(":name")
     public Payload put(String name) {
         String seasonName = new SeasonName(name).name();
-        if (!seasonRepository.byName(seasonName).isPresent()) {
-            seasonRepository.add(new Season(seasonName));
-        }
+        addSeason.execute(seasonName);
         return Payload.ok();
     }
 
     @Get(":name/matches/friendly")
     public Payload getFriendlyMatch(String name) {
         String seasonName = new SeasonName(name).name();
-        return seasonRepository.byName(seasonName)
-                .map(Season::friendlyMatches)
+        return getFriendlyMatch.execute(seasonName)
                 .map(s -> s.map(SeasonsResource::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
                 .orElse(Payload.badRequest());
@@ -71,22 +74,15 @@ public class SeasonsResource {
     @Put(":name/matches/friendly/:dateParam")
     public Payload putFriendlyMatch(String name, String dateParam) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = seasonRepository.byName(seasonName);
         RestDate date = new RestDate(dateParam);
-        Optional<FriendlyMatchDate> matchDate = friendlyMatchDateRepository.byDate(date.year(), date.month(), date.day());
-        if (season.isPresent() && matchDate.isPresent()) {
-            seasonService.planFriendlyMatch(season.get(), matchDate.get());
-            return Payload.ok();
-        } else {
-            return Payload.badRequest();
-        }
+        addFriendlyMatch.execute(seasonName, date.year(), date.month(), date.day());
+        return Payload.ok();
     }
 
     @Get(":name/matches/league")
     public Payload getLeagueMatch(String name) {
         String seasonName = new SeasonName(name).name();
-        return seasonRepository.byName(seasonName)
-                .map(Season::leagueMatches)
+        return getLeagueMatch.execute(seasonName)
                 .map(s -> s.map(SeasonsResource::toRestMatch).collect(Collectors.toList()))
                 .map(Payload::new)
                 .orElse(Payload.badRequest());
@@ -95,21 +91,15 @@ public class SeasonsResource {
     @Put(":name/matches/league/:dateParam")
     public Payload putLeagueMatch(String name, String dateParam) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = seasonRepository.byName(seasonName);
         RestDate date = new RestDate(dateParam);
-        Optional<LeagueMatchDate> matchDate = leagueMatchDateRepository.byDate(date.year(), date.month(), date.day());
-        if (season.isPresent() && matchDate.isPresent()) {
-            seasonService.planLeagueMatch(season.get(), matchDate.get());
-            return Payload.ok();
-        } else {
-            return Payload.badRequest();
-        }
+        addLeagueMatch.execute(seasonName, date.year(), date.month(), date.day());
+        return Payload.ok();
     }
 
     @Get(":name")
     public Payload get(String name) {
         String seasonName = new SeasonName(name).name();
-        return seasonRepository.byName(seasonName)
+        return getSeason.execute(seasonName)
                 .map(s -> new RestSeason(s.name()))
                 .map(Payload::new)
                 .orElse(Payload.notFound());
@@ -118,8 +108,7 @@ public class SeasonsResource {
     @Get(":name/stats")
     public Payload stats(String name) {
         String seasonName = new SeasonName(name).name();
-        return seasonRepository.byName(seasonName)
-                .map(Season::statistics)
+        return getSeasonStats.execute(seasonName)
                 .map(this::toRestStatList)
                 .map(Payload::new)
                 .orElse(Payload.notFound());
@@ -132,7 +121,7 @@ public class SeasonsResource {
     }
 
     private List<RestStat> toRestStatList(SeasonStatistics s) {
-        return playerRepository.all()
+        return getAllPlayers.execute()
                 .map(p -> toRestStat(s, p))
                 .sorted(Comparator.comparing(RestStat::getNbMatches).reversed())
                 .collect(Collectors.toList());
