@@ -30,18 +30,6 @@ public class SeasonsResource {
     AddSeason addSeason;
 
     @Inject
-    GetFriendlyMatches getFriendlyMatches;
-
-    @Inject
-    AddFriendlyMatch addFriendlyMatch;
-
-    @Inject
-    GetLeagueMatches getLeagueMatches;
-
-    @Inject
-    AddLeagueMatch addLeagueMatch;
-
-    @Inject
     GetSeason getSeason;
 
     @Inject
@@ -62,39 +50,6 @@ public class SeasonsResource {
         return Payload.ok();
     }
 
-    @Get(":name/matches/friendly")
-    public Payload getFriendlyMatch(String name) {
-        String seasonName = new SeasonName(name).name();
-        return getFriendlyMatches.execute(seasonName)
-                .map(s -> s.map(SeasonsResource::toRestMatch).collect(Collectors.toList()))
-                .map(Payload::new)
-                .orElse(Payload.badRequest());
-    }
-
-    @Put(":name/matches/friendly/:dateParam")
-    public Payload putFriendlyMatch(String name, String dateParam) {
-        String seasonName = new SeasonName(name).name();
-        RestDate date = new RestDate(dateParam);
-        addFriendlyMatch.execute(seasonName, date.year(), date.month(), date.day());
-        return Payload.ok();
-    }
-
-    @Get(":name/matches/league")
-    public Payload getLeagueMatch(String name) {
-        String seasonName = new SeasonName(name).name();
-        return getLeagueMatches.execute(seasonName)
-                .map(s -> s.map(SeasonsResource::toRestMatch).collect(Collectors.toList()))
-                .map(Payload::new)
-                .orElse(Payload.badRequest());
-    }
-
-    @Put(":name/matches/league/:dateParam")
-    public Payload putLeagueMatch(String name, String dateParam) {
-        String seasonName = new SeasonName(name).name();
-        RestDate date = new RestDate(dateParam);
-        addLeagueMatch.execute(seasonName, date.year(), date.month(), date.day());
-        return Payload.ok();
-    }
 
     @Get(":name")
     public Payload get(String name) {
@@ -112,12 +67,6 @@ public class SeasonsResource {
                 .map(this::toRestStatList)
                 .map(Payload::new)
                 .orElse(Payload.notFound());
-    }
-
-    private static RestMatch toRestMatch(Match m) {
-        RestMatch restMatch = new RestMatch(m.date());
-        m.players().forEach(restMatch::addPlayer);
-        return restMatch;
     }
 
     private List<RestStat> toRestStatList(SeasonStatistics s) {

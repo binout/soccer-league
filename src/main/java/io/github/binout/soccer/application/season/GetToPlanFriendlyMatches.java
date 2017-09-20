@@ -15,22 +15,25 @@
  */
 package io.github.binout.soccer.application.season;
 
-import io.github.binout.soccer.domain.season.Season;
+import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.season.SeasonRepository;
+import io.github.binout.soccer.domain.season.SeasonService;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 
 import javax.inject.Inject;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-public class GetFriendlyMatches {
+public class GetToPlanFriendlyMatches {
 
     @Inject
     SeasonRepository seasonRepository;
 
-    public Stream<FriendlyMatch> execute(String seasonName) {
+    @Inject
+    SeasonService seasonService;
+
+    public Stream<FriendlyMatchDate> execute(String seasonName) {
         return seasonRepository.byName(seasonName)
-                .map(Season::friendlyMatches)
+                .map(s -> seasonService.friendlyMatchDatesToPlan(s).stream())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid season"));
     }
 }

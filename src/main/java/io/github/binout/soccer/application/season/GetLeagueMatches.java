@@ -29,7 +29,9 @@ public class GetLeagueMatches {
     @Inject
     SeasonRepository seasonRepository;
 
-    public Optional<Stream<LeagueMatch>> execute(String seasonName) {
-        return seasonRepository.byName(seasonName).map(Season::leagueMatches);
+    public Stream<LeagueMatch> execute(String seasonName) {
+        return seasonRepository.byName(seasonName)
+                .map(Season::leagueMatches)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid season"));
     }
 }
