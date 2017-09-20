@@ -16,17 +16,16 @@
 package io.github.binout.soccer.application.season;
 
 import io.github.binout.soccer.domain.player.Player;
+import io.github.binout.soccer.domain.season.MatchPlanning;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
-import io.github.binout.soccer.domain.season.SeasonService;
-import io.github.binout.soccer.domain.season.match.FriendlyMatch;
+import io.github.binout.soccer.domain.season.SeasonPlanning;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 public class GetLeagueMatches {
@@ -35,10 +34,10 @@ public class GetLeagueMatches {
     SeasonRepository seasonRepository;
 
     @Inject
-    SeasonService seasonService;
+    MatchPlanning matchPlanning;
 
     public Stream<Tuple2<LeagueMatch, List<Player>>> execute(String seasonName) {
         Season season = seasonRepository.byName(seasonName).orElseThrow(() -> new IllegalArgumentException("Invalid season"));
-        return season.leagueMatches().map(m -> Tuple.of(m, seasonService.getSubstitutes(season, m)));
+        return season.leagueMatches().map(m -> Tuple.of(m, matchPlanning.getSubstitutes(season, m)));
     }
 }

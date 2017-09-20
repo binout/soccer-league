@@ -16,10 +16,10 @@
 package io.github.binout.soccer.application.season;
 
 import io.github.binout.soccer.domain.player.Player;
+import io.github.binout.soccer.domain.season.MatchPlanning;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
-import io.github.binout.soccer.domain.season.SeasonService;
-import io.github.binout.soccer.domain.season.match.FriendlyMatch;
+import io.github.binout.soccer.domain.season.SeasonPlanning;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
@@ -34,12 +34,12 @@ public class GetNextLeagueMatches {
     SeasonRepository seasonRepository;
 
     @Inject
-    SeasonService seasonService;
+    MatchPlanning matchPlanning;
 
     public Stream<Tuple2<LeagueMatch,List<Player>>> execute(String seasonName) {
         Season season = seasonRepository.byName(seasonName).orElseThrow(() -> new IllegalArgumentException("Invalid season"));
         return season.leagueMatches()
                 .filter(LeagueMatch::isNowOrFuture)
-                .map(m -> Tuple.of(m, seasonService.getSubstitutes(season, m)));
+                .map(m -> Tuple.of(m, matchPlanning.getSubstitutes(season, m)));
     }
 }

@@ -19,7 +19,7 @@ import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
-import io.github.binout.soccer.domain.season.SeasonService;
+import io.github.binout.soccer.domain.season.SeasonPlanning;
 
 import javax.inject.Inject;
 import java.time.Month;
@@ -34,13 +34,13 @@ public class AddLeagueMatch {
     LeagueMatchDateRepository leagueMatchDateRepository;
 
     @Inject
-    SeasonService seasonService;
+    SeasonPlanning seasonPlanning;
 
     public void execute(String seasonName, int year, Month month, int day) {
         Optional<Season> season = seasonRepository.byName(seasonName);
         Optional<LeagueMatchDate> matchDate = leagueMatchDateRepository.byDate(year, month, day);
         if (season.isPresent() && matchDate.isPresent()) {
-            seasonService.planLeagueMatch(season.get(), matchDate.get());
+            seasonPlanning.planLeagueMatch(season.get(), matchDate.get());
         } else {
             throw new IllegalArgumentException("Can not add match to season");
         }

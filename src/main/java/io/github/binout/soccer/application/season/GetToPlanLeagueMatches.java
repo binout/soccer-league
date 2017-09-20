@@ -17,7 +17,7 @@ package io.github.binout.soccer.application.season;
 
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.season.SeasonRepository;
-import io.github.binout.soccer.domain.season.SeasonService;
+import io.github.binout.soccer.domain.season.SeasonPlanning;
 
 import javax.inject.Inject;
 import java.util.stream.Stream;
@@ -28,11 +28,11 @@ public class GetToPlanLeagueMatches {
     SeasonRepository seasonRepository;
 
     @Inject
-    SeasonService seasonService;
+    SeasonPlanning seasonPlanning;
 
     public Stream<LeagueMatchDate> execute(String seasonName) {
         return seasonRepository.byName(seasonName)
-                .map(s -> seasonService.leagueMatchDatesToPlan(s).stream())
+                .map(s -> seasonPlanning.leagueMatchDatesToPlan(s).stream())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid season"));
     }
 }

@@ -17,9 +17,9 @@ package io.github.binout.soccer.application.season;
 
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import io.github.binout.soccer.domain.season.MatchPlanning;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
-import io.github.binout.soccer.domain.season.SeasonService;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 
 import javax.inject.Inject;
@@ -34,7 +34,7 @@ public class SubstitutePlayerInFriendlyMatches {
     SeasonRepository seasonRepository;
 
     @Inject
-    SeasonService seasonService;
+    MatchPlanning matchPlanning;
 
     public void execute(String seasonName, LocalDate date, String playerName)  {
         Season season = seasonRepository.byName(seasonName).orElseThrow(() -> new IllegalArgumentException("Invalid season"));
@@ -45,6 +45,6 @@ public class SubstitutePlayerInFriendlyMatches {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Invalid date"));
 
-        seasonService.substitutePlayer(season, match, player);
+        matchPlanning.substitutePlayer(season, match, player);
     }
 }
