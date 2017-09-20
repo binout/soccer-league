@@ -23,9 +23,6 @@ public class SeasonService {
     PlayerRepository playerRepository;
 
     @Inject
-    SeasonRepository seasonRepository;
-
-    @Inject
     FriendlyMatchDateRepository friendlyMatchDateRepository;
 
     @Inject

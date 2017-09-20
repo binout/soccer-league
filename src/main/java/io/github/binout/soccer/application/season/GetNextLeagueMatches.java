@@ -15,11 +15,17 @@
  */
 package io.github.binout.soccer.application.season;
 
+import io.github.binout.soccer.domain.player.Player;
+import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
+import io.github.binout.soccer.domain.season.SeasonService;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class GetNextLeagueMatches {
@@ -27,9 +33,13 @@ public class GetNextLeagueMatches {
     @Inject
     SeasonRepository seasonRepository;
 
-    public Stream<LeagueMatch> execute(String seasonName) {
-        return seasonRepository.byName(seasonName)
-                .map(season -> season.leagueMatches().filter(LeagueMatch::isNowOrFuture))
-                .orElseThrow(() -> new IllegalArgumentException("Invalid season"));
+    @Inject
+    SeasonService seasonService;
+
+    public Stream<Tuple2<LeagueMatch,List<Player>>> execute(String seasonName) {
+        Season season = seasonRepository.byName(seasonName).orElseThrow(() -> new IllegalArgumentException("Invalid season"));
+        return season.leagueMatches()
+                .filter(LeagueMatch::isNowOrFuture)
+                .map(m -> Tuple.of(m, seasonService.getSubstitutes(season, m)));
     }
 }

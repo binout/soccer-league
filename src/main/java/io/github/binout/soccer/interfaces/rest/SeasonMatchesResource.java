@@ -4,13 +4,11 @@ import io.github.binout.soccer.application.season.*;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.player.Player;
-import io.github.binout.soccer.domain.season.Season;
-import io.github.binout.soccer.domain.season.SeasonService;
-import io.github.binout.soccer.domain.season.match.FriendlyMatch;
-import io.github.binout.soccer.domain.season.match.LeagueMatch;
+import io.github.binout.soccer.domain.season.match.Match;
 import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.RestDate;
 import io.github.binout.soccer.interfaces.rest.model.RestMatch;
+import io.vavr.Tuple2;
 import net.codestory.http.annotations.Delete;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Prefix;
@@ -18,15 +16,12 @@ import net.codestory.http.annotations.Put;
 import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Prefix("seasons/:name/matches")
 @TransactedScopeEnabled
 public class SeasonMatchesResource {
-
-    @Inject
-    GetSeason getSeason;
 
     @Inject
     GetFriendlyMatches getFriendlyMatches;
@@ -47,9 +42,6 @@ public class SeasonMatchesResource {
     AddLeagueMatch addLeagueMatch;
 
     @Inject
-    SeasonService seasonService;
-
-    @Inject
     GetToPlanFriendlyMatches getToPlanFriendlyMatches;
 
     @Inject
@@ -64,10 +56,7 @@ public class SeasonMatchesResource {
     @Get("friendly")
     public Payload getFriendlyMatch(String name) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = getSeason.execute(name);
-        return season.map(s -> getFriendlyMatches.execute(seasonName).map(m -> toRestMatch(s, m)).collect(Collectors.toList()))
-                .map(Payload::new)
-                .orElseGet(Payload::badRequest);
+        return new Payload(getFriendlyMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @Put("friendly/:dateParam")
@@ -81,10 +70,7 @@ public class SeasonMatchesResource {
     @Get("friendly/next")
     public Payload getNextFriendly(String name) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = getSeason.execute(seasonName);
-        return season.map(s -> getNextFriendlyMatches.execute(s.name()).map(m -> toRestMatch(s, m)).collect(Collectors.toList()))
-                .map(Payload::new)
-                .orElseGet(Payload::badRequest);
+        return new Payload(getNextFriendlyMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @Get("friendly/to-plan")
@@ -105,20 +91,10 @@ public class SeasonMatchesResource {
     }
 
 
-    private RestMatch toRestMatch(Season s, FriendlyMatch m) {
-        RestMatch restMatch = new RestMatch(m.date());
-        m.players().forEach(restMatch::addPlayer);
-        seasonService.getSubstitutes(s, m).stream().map(Player::name).forEach(restMatch::addSub);
-        return restMatch;
-    }
-
     @Get("league")
     public Payload getLeagueMatch(String name) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = getSeason.execute(name);
-        return season.map(s -> getLeagueMatches.execute(seasonName).map(m -> toRestMatch(s, m)).collect(Collectors.toList()))
-                .map(Payload::new)
-                .orElseGet(Payload::badRequest);
+        return new Payload(getLeagueMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @Put("league/:dateParam")
@@ -132,10 +108,7 @@ public class SeasonMatchesResource {
     @Get("league/next")
     public Payload getNextLeague(String name) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = getSeason.execute(seasonName);
-        return season.map(s -> getNextLeagueMatches.execute(s.name()).map(m -> toRestMatch(s, m)).collect(Collectors.toList()))
-                .map(Payload::new)
-                .orElseGet(Payload::badRequest);
+        return new Payload(getNextLeagueMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @Get("league/to-plan")
@@ -155,11 +128,11 @@ public class SeasonMatchesResource {
         return Payload.ok();
     }
 
-    private RestMatch toRestMatch(Season s, LeagueMatch m) {
-        RestMatch restMatch = new RestMatch(m.date());
-        m.players().forEach(restMatch::addPlayer);
-        seasonService.getSubstitutes(s, m).stream().map(Player::name).forEach(restMatch::addSub);
+
+    private RestMatch toRestMatch(Tuple2<? extends Match,List<Player>> m) {
+        RestMatch restMatch = new RestMatch(m._1.date());
+        m._1.players().forEach(restMatch::addPlayer);
+        m._2.stream().map(Player::name).forEach(restMatch::addSub);
         return restMatch;
     }
-
 }
