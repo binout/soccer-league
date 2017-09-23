@@ -58,7 +58,6 @@ public class Server {
             routes.add("rest", PlayersResource.class);
             routes.add("rest", FriendlyMatchDateResource.class);
             routes.add("rest", LeagueMatchDateResource.class);
-            routes.add(FakerResource.class);
         }
     }
 
