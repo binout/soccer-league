@@ -16,14 +16,20 @@
 package io.github.binout.soccer.application.date;
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRegistration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.Month;
 
+@Component
 public class RemovePlayerToFriendlyMatchDate {
 
-    @Inject
-    private FriendlyMatchDateRegistration friendlyMatchDateRegistration;
+    private final FriendlyMatchDateRegistration friendlyMatchDateRegistration;
+
+    @Autowired
+    public RemovePlayerToFriendlyMatchDate(FriendlyMatchDateRegistration friendlyMatchDateRegistration) {
+        this.friendlyMatchDateRegistration = friendlyMatchDateRegistration;
+    }
 
     public void execute(String playerName, int year, Month month, int day) {
         friendlyMatchDateRegistration.removePlayer(playerName, year, month, day);

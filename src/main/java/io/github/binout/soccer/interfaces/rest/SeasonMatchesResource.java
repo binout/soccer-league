@@ -5,127 +5,126 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.season.match.Match;
-import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.RestDate;
 import io.github.binout.soccer.interfaces.rest.model.RestMatch;
 import io.vavr.Tuple2;
-import net.codestory.http.annotations.Delete;
-import net.codestory.http.annotations.Get;
-import net.codestory.http.annotations.Prefix;
-import net.codestory.http.annotations.Put;
-import net.codestory.http.payload.Payload;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Prefix("seasons/:name/matches")
-@TransactedScopeEnabled
+@RestController("seasons/{name}/matches")
 public class SeasonMatchesResource {
 
-    @Inject
+    @Autowired
     GetFriendlyMatches getFriendlyMatches;
 
-    @Inject
+    @Autowired
     GetNextFriendlyMatches getNextFriendlyMatches;
 
-    @Inject
+    @Autowired
     AddFriendlyMatch addFriendlyMatch;
 
-    @Inject
+    @Autowired
     GetLeagueMatches getLeagueMatches;
 
-    @Inject
+    @Autowired
     GetNextLeagueMatches getNextLeagueMatches;
 
-    @Inject
+    @Autowired
     AddLeagueMatch addLeagueMatch;
 
-    @Inject
+    @Autowired
     GetToPlanFriendlyMatches getToPlanFriendlyMatches;
 
-    @Inject
+    @Autowired
     GetToPlanLeagueMatches getToPlanLeagueMatches;
 
-    @Inject
+    @Autowired
     SubstitutePlayerInFriendlyMatches substitutePlayerInFriendlyMatches;
 
-    @Inject
+    @Autowired
     SubstitutePlayerInLeagueMatches substitutePlayerInLeagueMatches;
 
-    @Get("friendly")
-    public Payload getFriendlyMatch(String name) {
+    @GetMapping("friendly")
+    public ResponseEntity getFriendlyMatch(@PathParam("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return new Payload(getFriendlyMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
+        return ResponseEntity.ok(getFriendlyMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
-    @Put("friendly/:dateParam")
-    public Payload putFriendlyMatch(String name, String dateParam) {
+    @PutMapping("friendly/{dateParam}")
+    public ResponseEntity putFriendlyMatch(@PathParam("name") String name, @PathParam("dateParam") String dateParam) {
         String seasonName = new SeasonName(name).name();
         RestDate date = new RestDate(dateParam);
         addFriendlyMatch.execute(seasonName, date.year(), date.month(), date.day());
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
-    @Get("friendly/next")
-    public Payload getNextFriendly(String name) {
+    @GetMapping("friendly/next")
+    public ResponseEntity getNextFriendly(@PathParam("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return new Payload(getNextFriendlyMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
+        return ResponseEntity.ok(getNextFriendlyMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
-    @Get("friendly/to-plan")
-    public Payload friendlyToPlan(String name) {
+    @GetMapping("friendly/to-plan")
+    public ResponseEntity friendlyToPlan(@PathParam("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return new Payload(getToPlanFriendlyMatches.execute(seasonName)
+        return ResponseEntity.ok(getToPlanFriendlyMatches.execute(seasonName)
                         .map(FriendlyMatchDate::date)
                         .map(RestMatch::new)
                         .collect(Collectors.toList()));
     }
 
-    @Delete("friendly/:dateParam/players/:playerName")
-    public Payload susbstitutePlayerFriendly(String name, String dateParam, String playerName) {
+    @DeleteMapping("friendly/{dateParam}/players/{playerName}")
+    public ResponseEntity susbstitutePlayerFriendly(@PathParam("name") String name, @PathParam("dateParam") String dateParam, @PathParam("playerName") String playerName) {
         String seasonName = new SeasonName(name).name();
         RestDate date = new RestDate(dateParam);
         substitutePlayerInFriendlyMatches.execute(seasonName, date.asLocalDate(), playerName);
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
 
-    @Get("league")
-    public Payload getLeagueMatch(String name) {
+    @GetMapping("league")
+    public ResponseEntity getLeagueMatch(@PathParam("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return new Payload(getLeagueMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
+        return ResponseEntity.ok(getLeagueMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
-    @Put("league/:dateParam")
-    public Payload putLeagueMatch(String name, String dateParam) {
+    @PutMapping("league/{dateParam}")
+    public ResponseEntity putLeagueMatch(@PathParam("name") String name, @PathParam("dateParam") String dateParam) {
         String seasonName = new SeasonName(name).name();
         RestDate date = new RestDate(dateParam);
         addLeagueMatch.execute(seasonName, date.year(), date.month(), date.day());
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
-    @Get("league/next")
-    public Payload getNextLeague(String name) {
+    @GetMapping("league/next")
+    public ResponseEntity getNextLeague(@PathParam("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return new Payload(getNextLeagueMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
+        return ResponseEntity.ok(getNextLeagueMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
-    @Get("league/to-plan")
-    public Payload leagueToPlan(String name) {
+    @GetMapping("league/to-plan")
+    public ResponseEntity leagueToPlan(@PathParam("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return new Payload(getToPlanLeagueMatches.execute(seasonName)
+        return ResponseEntity.ok(getToPlanLeagueMatches.execute(seasonName)
                 .map(LeagueMatchDate::date)
                 .map(RestMatch::new)
                 .collect(Collectors.toList()));
     }
 
-    @Delete("league/:dateParam/players/:playerName")
-    public Payload susbstitutePlayerLeague(String name, String dateParam, String playerName) {
+    @DeleteMapping("league/{dateParam}/players/{playerName}")
+    public ResponseEntity susbstitutePlayerLeague(@PathParam("name") String name, @PathParam("dateParam") String dateParam, @PathParam("playerName") String playerName) {
         String seasonName = new SeasonName(name).name();
         RestDate date = new RestDate(dateParam);
         substitutePlayerInLeagueMatches.execute(seasonName, date.asLocalDate(), playerName);
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
 

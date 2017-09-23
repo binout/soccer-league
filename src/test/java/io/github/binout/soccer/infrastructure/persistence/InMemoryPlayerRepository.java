@@ -3,16 +3,12 @@ package io.github.binout.soccer.infrastructure.persistence;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Vetoed;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-@ApplicationScoped
-@Vetoed
 public class InMemoryPlayerRepository implements PlayerRepository {
 
     private Map<String, Player> players;

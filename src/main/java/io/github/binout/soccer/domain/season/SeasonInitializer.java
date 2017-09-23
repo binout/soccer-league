@@ -1,20 +1,24 @@
 package io.github.binout.soccer.domain.season;
 
-import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import java.util.Optional;
 
-@TransactedScopeEnabled
+@Component
 public class SeasonInitializer {
 
-    @Inject
-    SeasonRepository seasonRepository;
+    private final SeasonRepository seasonRepository;
 
-    public void initCurrentSeason(@Observes @Initialized(ApplicationScoped.class) Object init) {
+    @Autowired
+    public SeasonInitializer(SeasonRepository seasonRepository) {
+        this.seasonRepository = seasonRepository;
+    }
+
+    @EventListener(ContextRefreshedEvent.class)
+    public void initCurrentSeason() {
         String currentSeason = Season.currentSeasonName();
         Optional<Season> optSeason = seasonRepository.all().filter(s -> s.name().equals(currentSeason)).findFirst();
         if (!optSeason.isPresent()) {

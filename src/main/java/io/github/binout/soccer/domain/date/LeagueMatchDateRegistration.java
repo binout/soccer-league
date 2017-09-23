@@ -17,19 +17,24 @@ package io.github.binout.soccer.domain.date;
 
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.Month;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
+@Component
 public class LeagueMatchDateRegistration {
 
-    @Inject
-    LeagueMatchDateRepository repository;
+    private final LeagueMatchDateRepository repository;
+    private final PlayerRepository playerRepository;
 
-    @Inject
-    PlayerRepository playerRepository;
+    @Autowired
+    public LeagueMatchDateRegistration(LeagueMatchDateRepository repository, PlayerRepository playerRepository) {
+        this.repository = repository;
+        this.playerRepository = playerRepository;
+    }
 
     public void addPlayer(String playerName, int year, Month month, int day) {
         managePlayers(playerName, year, month, day, LeagueMatchDate::present);

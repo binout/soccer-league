@@ -17,14 +17,20 @@ package io.github.binout.soccer.application.season;
 
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Optional;
 
+@Component
 public class GetSeason {
 
-    @Inject
-    SeasonRepository seasonRepository;
+    private final SeasonRepository seasonRepository;
+
+    @Autowired
+    public GetSeason(SeasonRepository seasonRepository) {
+        this.seasonRepository = seasonRepository;
+    }
 
     public Optional<Season> execute(String name) {
         return seasonRepository.byName(name);

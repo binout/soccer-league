@@ -21,20 +21,26 @@ import io.github.binout.soccer.domain.season.MatchPlanning;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 
+@Component
 public class SubstitutePlayerInFriendlyMatches {
 
-    @Inject
-    PlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
+    private final SeasonRepository seasonRepository;
+    private final MatchPlanning matchPlanning;
 
-    @Inject
-    SeasonRepository seasonRepository;
-
-    @Inject
-    MatchPlanning matchPlanning;
+    @Autowired
+    public SubstitutePlayerInFriendlyMatches(PlayerRepository playerRepository,
+                                             SeasonRepository seasonRepository,
+                                             MatchPlanning matchPlanning) {
+        this.playerRepository = playerRepository;
+        this.seasonRepository = seasonRepository;
+        this.matchPlanning = matchPlanning;
+    }
 
     public void execute(String seasonName, LocalDate date, String playerName)  {
         Season season = seasonRepository.byName(seasonName).orElseThrow(() -> new IllegalArgumentException("Invalid season"));

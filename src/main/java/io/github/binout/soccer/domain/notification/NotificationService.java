@@ -4,9 +4,10 @@ import io.github.binout.soccer.domain.event.FriendlyMatchPlanned;
 import io.github.binout.soccer.domain.event.LeagueMatchPlanned;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -14,25 +15,32 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Component
 public class NotificationService {
 
     private static final String NO_REPLY = "no-reply@pes5.com";
 
-    @Inject
-    MailService mailService;
+    private final MailService mailService;
+    private final PlayerRepository playerRepository;
+    private final TemplateEngine templateEngine;
 
-    @Inject
-    PlayerRepository playerRepository;
+    @Autowired
+    public NotificationService(MailService mailService,
+                               PlayerRepository playerRepository,
+                               TemplateEngine templateEngine) {
+        this.mailService = mailService;
+        this.playerRepository = playerRepository;
+        this.templateEngine = templateEngine;
+    }
 
-    @Inject
-    TemplateEngine templateEngine;
-
-    public void newLeagueMatchPlanned(@Observes LeagueMatchPlanned event){
+    @EventListener
+    public void newLeagueMatchPlanned(LeagueMatchPlanned event){
         String date = DateTimeFormatter.ISO_DATE.format(event.date());
         sendMail("ASL Soccer 5 League : " + date, date, event.players().collect(Collectors.toList()), event.substitutes().collect(Collectors.toList()));
     }
 
-    public void newFriendlyMatchPlanned(@Observes FriendlyMatchPlanned event){
+    @EventListener
+    public void newFriendlyMatchPlanned(FriendlyMatchPlanned event){
         String date = DateTimeFormatter.ISO_DATE.format(event.date());
         sendMail("ASL Soccer 5 : " + date, date, event.players().collect(Collectors.toList()), event.substitutes().collect(Collectors.toList()));
     }

@@ -5,57 +5,55 @@ import io.github.binout.soccer.application.player.GetAllPlayers;
 import io.github.binout.soccer.application.player.GetPlayer;
 import io.github.binout.soccer.application.player.ReplacePlayer;
 import io.github.binout.soccer.domain.player.Player;
-import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestPlayer;
-import net.codestory.http.Context;
-import net.codestory.http.annotations.Get;
-import net.codestory.http.annotations.Prefix;
-import net.codestory.http.annotations.Put;
-import net.codestory.http.payload.Payload;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Prefix("players")
-@TransactedScopeEnabled
+@RestController("players")
 public class PlayersResource {
 
-    @Inject
+    @Autowired
     GetAllPlayers getAllPlayers;
 
-    @Inject
+    @Autowired
     GetAllLeaguePlayers getAllLeaguePlayers;
 
-    @Inject
+    @Autowired
     ReplacePlayer replacePlayer;
 
-    @Inject
+    @Autowired
     GetPlayer getPlayer;
 
-    @Get
-    public List<RestPlayer> getAll(Context context) {
-        return getAllPlayers.execute().map(p -> toRestModel(context.uri(), p)).collect(Collectors.toList());
+    @GetMapping
+    public List<RestPlayer> getAll() {
+        return getAllPlayers.execute().map(p -> toRestModel(p)).collect(Collectors.toList());
     }
 
-    @Get("league")
-    public List<RestPlayer> getAllLeague(Context context) {
-        return getAllLeaguePlayers.execute().map(p -> toRestModel(context.uri(), p)).collect(Collectors.toList());
+    @GetMapping("league")
+    public List<RestPlayer> getAllLeague() {
+        return getAllLeaguePlayers.execute().map(p -> toRestModel(p)).collect(Collectors.toList());
     }
 
-    @Put(":name")
-    public Payload put(String name, RestPlayer restPlayer) {
+    @PutMapping("{name}")
+    public ResponseEntity put(@PathParam("name") String name, RestPlayer restPlayer) {
         replacePlayer.execute(name, restPlayer.getEmail(), restPlayer.isPlayerLeague(), restPlayer.isGoalkeeper());
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
-    @Get(":name")
-    public Payload get(String name) {
+    @GetMapping("{name}")
+    public ResponseEntity get(String name) {
         return getPlayer.execute(name)
                 .map(PlayersResource::toRestModel)
-                .map(Payload::new)
-                .orElse(Payload.notFound());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     private static RestPlayer toRestModel(Player p) {

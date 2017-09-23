@@ -20,21 +20,27 @@ import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
 import io.github.binout.soccer.domain.season.SeasonPlanning;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.Month;
 import java.util.Optional;
 
+@Component
 public class AddLeagueMatch {
 
-    @Inject
-    SeasonRepository seasonRepository;
+    private final SeasonRepository seasonRepository;
+    private final LeagueMatchDateRepository leagueMatchDateRepository;
+    private final SeasonPlanning seasonPlanning;
 
-    @Inject
-    LeagueMatchDateRepository leagueMatchDateRepository;
-
-    @Inject
-    SeasonPlanning seasonPlanning;
+    @Autowired
+    public AddLeagueMatch(SeasonRepository seasonRepository,
+                          LeagueMatchDateRepository leagueMatchDateRepository,
+                          SeasonPlanning seasonPlanning) {
+        this.seasonRepository = seasonRepository;
+        this.leagueMatchDateRepository = leagueMatchDateRepository;
+        this.seasonPlanning = seasonPlanning;
+    }
 
     public void execute(String seasonName, int year, Month month, int day) {
         Optional<Season> season = seasonRepository.byName(seasonName);

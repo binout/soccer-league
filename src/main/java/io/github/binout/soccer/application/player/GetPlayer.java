@@ -17,15 +17,20 @@ package io.github.binout.soccer.application.player;
 
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Optional;
-import java.util.stream.Stream;
 
+@Component
 public class GetPlayer {
 
-    @Inject
-    PlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
+
+    @Autowired
+    public GetPlayer(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
 
     public Optional<Player> execute(String name) {
         return playerRepository.byName(name);

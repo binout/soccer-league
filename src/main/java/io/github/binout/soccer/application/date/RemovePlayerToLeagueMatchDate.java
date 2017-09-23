@@ -16,14 +16,20 @@
 package io.github.binout.soccer.application.date;
 
 import io.github.binout.soccer.domain.date.LeagueMatchDateRegistration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.Month;
 
+@Component
 public class RemovePlayerToLeagueMatchDate {
 
-    @Inject
-    private LeagueMatchDateRegistration leagueMatchDateRegistration;
+    private final LeagueMatchDateRegistration leagueMatchDateRegistration;
+
+    @Autowired
+    public RemovePlayerToLeagueMatchDate(LeagueMatchDateRegistration leagueMatchDateRegistration) {
+        this.leagueMatchDateRegistration = leagueMatchDateRegistration;
+    }
 
     public void execute(String playerName, int year, Month month, int day) {
         leagueMatchDateRegistration.removePlayer(playerName, year, month, day);

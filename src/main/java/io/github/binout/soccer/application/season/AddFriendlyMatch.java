@@ -20,21 +20,27 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
 import io.github.binout.soccer.domain.season.SeasonPlanning;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.Month;
 import java.util.Optional;
 
+@Component
 public class AddFriendlyMatch {
 
-    @Inject
-    SeasonRepository seasonRepository;
+    private final SeasonRepository seasonRepository;
+    private final FriendlyMatchDateRepository friendlyMatchDateRepository;
+    private final SeasonPlanning seasonPlanning;
 
-    @Inject
-    FriendlyMatchDateRepository friendlyMatchDateRepository;
-
-    @Inject
-    SeasonPlanning seasonPlanning;
+    @Autowired
+    public AddFriendlyMatch(SeasonRepository seasonRepository,
+                            FriendlyMatchDateRepository friendlyMatchDateRepository,
+                            SeasonPlanning seasonPlanning) {
+        this.seasonRepository = seasonRepository;
+        this.friendlyMatchDateRepository = friendlyMatchDateRepository;
+        this.seasonPlanning = seasonPlanning;
+    }
 
     public void execute(String seasonName, int year, Month month, int day) {
         Optional<Season> season = seasonRepository.byName(seasonName);

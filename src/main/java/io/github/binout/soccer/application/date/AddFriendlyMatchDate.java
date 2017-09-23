@@ -18,15 +18,21 @@ package io.github.binout.soccer.application.date;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import io.github.binout.soccer.domain.date.MatchDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.Month;
 import java.util.Optional;
 
+@Component
 public class AddFriendlyMatchDate {
 
-    @Inject
-    FriendlyMatchDateRepository repository;
+    private final FriendlyMatchDateRepository repository;
+
+    @Autowired
+    public AddFriendlyMatchDate(FriendlyMatchDateRepository repository) {
+        this.repository = repository;
+    }
 
     public void execute(int year, Month month, int day) {
         Optional<FriendlyMatchDate> friendlyMatchDate = repository.byDate(year, month, day);

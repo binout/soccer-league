@@ -6,16 +6,22 @@ import io.github.binout.soccer.infrastructure.log.LoggerService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 
-class SendGridMailService implements MailService {
+@Component
+public class SendGridMailService implements MailService {
 
     private static final String SENDGRID_API = "https://api.sendgrid.com/v3";
 
-    @Inject
-    LoggerService loggerService;
+    private final LoggerService loggerService;
+
+    @Autowired
+    public SendGridMailService(LoggerService loggerService) {
+        this.loggerService = loggerService;
+    }
 
     @Override
     public void sendMail(Mail email) {

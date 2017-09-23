@@ -17,14 +17,20 @@ package io.github.binout.soccer.application.date;
 
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.stream.Stream;
 
+@Component
 public class GetNextLeagueMatchDates {
 
-    @Inject
-    LeagueMatchDateRepository repository;
+    private final LeagueMatchDateRepository repository;
+
+    @Autowired
+    public GetNextLeagueMatchDates(LeagueMatchDateRepository repository) {
+        this.repository = repository;
+    }
 
     public Stream<LeagueMatchDate> execute() {
         return repository.all().filter(LeagueMatchDate::isNowOrFuture);

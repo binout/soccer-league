@@ -19,22 +19,26 @@ import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.season.MatchPlanning;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
-import io.github.binout.soccer.domain.season.SeasonPlanning;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Component
 public class GetNextLeagueMatches {
 
-    @Inject
-    SeasonRepository seasonRepository;
+    private final SeasonRepository seasonRepository;
+    private final MatchPlanning matchPlanning;
 
-    @Inject
-    MatchPlanning matchPlanning;
+    @Autowired
+    public GetNextLeagueMatches(SeasonRepository seasonRepository, MatchPlanning matchPlanning) {
+        this.seasonRepository = seasonRepository;
+        this.matchPlanning = matchPlanning;
+    }
 
     public Stream<Tuple2<LeagueMatch,List<Player>>> execute(String seasonName) {
         Season season = seasonRepository.byName(seasonName).orElseThrow(() -> new IllegalArgumentException("Invalid season"));

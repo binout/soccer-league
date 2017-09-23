@@ -3,77 +3,71 @@ package io.github.binout.soccer.interfaces.rest;
 import io.github.binout.soccer.application.date.*;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.MatchDate;
-import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.RestDate;
-import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestMatchDate;
-import net.codestory.http.Context;
-import net.codestory.http.annotations.Delete;
-import net.codestory.http.annotations.Get;
-import net.codestory.http.annotations.Prefix;
-import net.codestory.http.annotations.Put;
-import net.codestory.http.payload.Payload;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
+import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Prefix("match-dates/friendly")
-@TransactedScopeEnabled
+@RestController("match-dates/friendly")
 public class FriendlyMatchDateResource {
 
-    @Inject
+    @Autowired
     GetAllFriendlyMatchDates allFriendlyMatchDates;
 
-    @Inject
+    @Autowired
     GetNextFriendlyMatchDates nextFriendlyMatchDates;
 
-    @Inject
+    @Autowired
     AddFriendlyMatchDate addFriendlyMatchDate;
 
-    @Inject
+    @Autowired
     GetFriendlyMatchDate getFriendlyMatchDate;
 
-    @Inject
+    @Autowired
     AddPlayerToFriendlyMatchDate addPlayerToFriendlyMatchDate;
 
-    @Inject
+    @Autowired
     RemovePlayerToFriendlyMatchDate removePlayerToFriendlyMatchDate;
 
-    @Get
-    public List<RestMatchDate> all(Context context) {
+    @GetMapping
+    public List<RestMatchDate> all() {
         return allFriendlyMatchDates.execute()
-                .map(m -> toRestModel(context.uri(), m))
+                .map(this::toRestModel)
                 .collect(Collectors.toList());
     }
 
-    @Get("next")
-    public List<RestMatchDate> next(Context context) {
+    @GetMapping("next")
+    public List<RestMatchDate> next() {
         return nextFriendlyMatchDates.execute()
-                .map(m -> toRestModel(context.uri(), m))
+                .map(this::toRestModel)
                 .collect(Collectors.toList());
     }
 
-    private RestMatchDate toRestModel(String baseUri, FriendlyMatchDate m) {
+    private RestMatchDate toRestModel(FriendlyMatchDate m) {
         RestMatchDate restMatchDate = toRestModel(m);
-        restMatchDate.addLinks(new RestLink(baseUri + "/" + restMatchDate.getDate()));
+        //restMatchDate.addLinks(new RestLink(baseUri + "/" + restMatchDate.getDate()));
         return restMatchDate;
     }
 
-    @Put(":dateParam")
-    public Payload put(String dateParam) {
+    @PutMapping("{dateParam}")
+    public ResponseEntity put(@PathParam("dateParam") String dateParam) {
         RestDate date = new RestDate(dateParam);
         addFriendlyMatchDate.execute(date.year(), date.month(), date.day());
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
-    @Get(":dateParam")
-    public Payload get(String dateParam) {
+    @GetMapping("{dateParam}")
+    public ResponseEntity get(@PathParam("dateParam") String dateParam) {
         RestDate date = new RestDate(dateParam);
         return getFriendlyMatchDate.execute(date.year(), date.month(), date.day())
                 .map(this::toRestModel)
-                .map(Payload::new)
-                .orElse(Payload.notFound());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     private RestMatchDate toRestModel(MatchDate m) {
@@ -83,18 +77,18 @@ public class FriendlyMatchDateResource {
         return restMatchDate;
     }
 
-    @Put(":dateParam/players/:name")
-    public Payload putPlayers(String dateParam, String name) {
+    @PutMapping("{dateParam}/players/{name}")
+    public ResponseEntity putPlayers(@PathParam("dateParam") String dateParam, @PathParam("name") String name) {
         RestDate date = new RestDate(dateParam);
         addPlayerToFriendlyMatchDate.execute(name, date.year(), date.month(), date.day());
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
-    @Delete(":dateParam/players/:name")
-    public Payload deletePlayers(String dateParam, String name) {
+    @DeleteMapping("{dateParam}/players/{name}")
+    public ResponseEntity deletePlayers(@PathParam("dateParam") String dateParam, @PathParam("name") String name) {
         RestDate date = new RestDate(dateParam);
         removePlayerToFriendlyMatchDate.execute(name, date.year(), date.month(), date.day());
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
 }

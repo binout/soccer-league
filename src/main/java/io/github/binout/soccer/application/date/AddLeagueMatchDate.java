@@ -16,15 +16,21 @@
 package io.github.binout.soccer.application.date;
 
 import io.github.binout.soccer.domain.date.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.Month;
 import java.util.Optional;
 
+@Component
 public class AddLeagueMatchDate {
 
-    @Inject
-    LeagueMatchDateRepository repository;
+    private final LeagueMatchDateRepository repository;
+
+    @Autowired
+    public AddLeagueMatchDate(LeagueMatchDateRepository repository) {
+        this.repository = repository;
+    }
 
     public void execute(int year, Month month, int day) {
         Optional<LeagueMatchDate> leagueMatchDate = repository.byDate(year, month, day);

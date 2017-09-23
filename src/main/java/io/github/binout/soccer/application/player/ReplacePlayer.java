@@ -17,14 +17,20 @@ package io.github.binout.soccer.application.player;
 
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Optional;
 
+@Component
 public class ReplacePlayer {
 
-    @Inject
-    PlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
+
+    @Autowired
+    public ReplacePlayer(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
 
     public void execute(String name, String email, Boolean playerLeague, Boolean goalkeeper) {
         Player player = playerRepository.byName(name).orElse(new Player(name));

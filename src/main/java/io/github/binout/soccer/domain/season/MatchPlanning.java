@@ -23,8 +23,9 @@ import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
 import io.github.binout.soccer.domain.season.match.Match;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -32,16 +33,22 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Component
 public class MatchPlanning {
 
-    @Inject
-    PlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
+    private final FriendlyMatchDateRepository friendlyMatchDateRepository;
+    private final LeagueMatchDateRepository leagueMatchDateRepository;
 
-    @Inject
-    FriendlyMatchDateRepository friendlyMatchDateRepository;
+    @Autowired
+    public MatchPlanning(PlayerRepository playerRepository,
+                         FriendlyMatchDateRepository friendlyMatchDateRepository,
+                         LeagueMatchDateRepository leagueMatchDateRepository) {
+        this.playerRepository = playerRepository;
+        this.friendlyMatchDateRepository = friendlyMatchDateRepository;
+        this.leagueMatchDateRepository = leagueMatchDateRepository;
+    }
 
-    @Inject
-    LeagueMatchDateRepository leagueMatchDateRepository;
 
     public void substitutePlayer(Season season, Match match, Player player) {
         Player by = getSubstitute(season, match);

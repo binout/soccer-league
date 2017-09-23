@@ -3,78 +3,72 @@ package io.github.binout.soccer.interfaces.rest;
 import io.github.binout.soccer.application.date.*;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.MatchDate;
-import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
 import io.github.binout.soccer.interfaces.rest.model.RestDate;
-import io.github.binout.soccer.interfaces.rest.model.RestLink;
 import io.github.binout.soccer.interfaces.rest.model.RestMatchDate;
-import net.codestory.http.Context;
-import net.codestory.http.annotations.Delete;
-import net.codestory.http.annotations.Get;
-import net.codestory.http.annotations.Prefix;
-import net.codestory.http.annotations.Put;
-import net.codestory.http.payload.Payload;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
+import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Prefix("match-dates/league")
-@TransactedScopeEnabled
+@RestController("match-dates/league")
 public class LeagueMatchDateResource {
 
-    @Inject
+    @Autowired
     GetAllLeagueMatchDates allLeagueMatchDates;
 
-    @Inject
+    @Autowired
     GetNextLeagueMatchDates nextLeagueMatchDates;
 
-    @Inject
+    @Autowired
     AddLeagueMatchDate addLeagueMatchDate;
 
-    @Inject
+    @Autowired
     GetLeagueMatchDate getLeagueMatchDate;
 
-    @Inject
+    @Autowired
     AddPlayerToLeagueMatchDate addPlayerToLeagueMatchDate;
 
-    @Inject
+    @Autowired
     RemovePlayerToLeagueMatchDate removePlayerToLeagueMatchDate;
 
-    @Get
-    public List<RestMatchDate> all(Context context) {
+    @GetMapping
+    public List<RestMatchDate> all() {
         return allLeagueMatchDates.execute()
-                .map(m -> toRestModel(context.uri(), m))
+                .map(this::toRestModel)
                 .collect(Collectors.toList());
     }
 
-    @Get("next")
-    public List<RestMatchDate> next(Context context) {
+    @GetMapping("next")
+    public List<RestMatchDate> next() {
         return nextLeagueMatchDates.execute()
                 .filter(LeagueMatchDate::isNowOrFuture)
-                .map(m -> toRestModel(context.uri(), m))
+                .map(this::toRestModel)
                 .collect(Collectors.toList());
     }
 
-    public RestMatchDate toRestModel(String baseUri, LeagueMatchDate m) {
+    public RestMatchDate toRestModel(LeagueMatchDate m) {
         RestMatchDate restMatchDate = toRestModel(m);
-        restMatchDate.addLinks(new RestLink(baseUri + restMatchDate.getDate()));
+        //restMatchDate.addLinks(new RestLink(baseUri + restMatchDate.getDate()));
         return restMatchDate;
     }
 
-    @Put(":dateParam")
-    public Payload put(String dateParam) {
+    @PutMapping("{dateParam}")
+    public ResponseEntity put(@PathParam("dateParam") String dateParam) {
         RestDate date = new RestDate(dateParam);
         addLeagueMatchDate.execute(date.year(), date.month(), date.day());
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
-    @Get(":dateParam")
-    public Payload get(String dateParam) {
+    @GetMapping("{dateParam}")
+    public ResponseEntity get(@PathParam("dateParam") String dateParam) {
         RestDate date = new RestDate(dateParam);
         return getLeagueMatchDate.execute(date.year(), date.month(), date.day())
                 .map(this::toRestModel)
-                .map(Payload::new)
-                .orElse(Payload.notFound());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     private RestMatchDate toRestModel(MatchDate m) {
@@ -84,16 +78,17 @@ public class LeagueMatchDateResource {
         return restMatchDate;
     }
 
-    @Put(":dateParam/players/:name")
-    public Payload putPlayers(String dateParam, String name) {
+    @PutMapping("{dateParam}/players/{name}")
+    public ResponseEntity putPlayers(@PathParam("dateParam") String dateParam, @PathParam("name") String name) {
         RestDate date = new RestDate(dateParam);
         addPlayerToLeagueMatchDate.execute(name, date.year(), date.month(), date.day());
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
-    @Delete(":dateParam/players/:name")
-    public Payload deletePlayers(String dateParam, String name) {
+    @DeleteMapping("{dateParam}/players/{name}")
+    public ResponseEntity deletePlayers(@PathParam("dateParam") String dateParam, @PathParam("name") String name) {
         RestDate date = new RestDate(dateParam);
         removePlayerToLeagueMatchDate.execute(name, date.year(), date.month(), date.day());
-        return Payload.ok();    }
+        return ResponseEntity.ok().build();
+    }
 }

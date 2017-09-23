@@ -4,17 +4,19 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import org.mongolink.MongoSession;
 import org.mongolink.domain.criteria.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+@Component
 public class MongoFriendlyMatchDateRepository extends MongoRepository<FriendlyMatchDate> implements FriendlyMatchDateRepository {
 
-    @Inject
+    @Autowired
     MongoFriendlyMatchDateRepository(MongoSession mongoSession) {
         super(mongoSession);
     }

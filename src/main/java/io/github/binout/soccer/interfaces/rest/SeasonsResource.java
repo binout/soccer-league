@@ -1,72 +1,73 @@
 package io.github.binout.soccer.interfaces.rest;
 
 import io.github.binout.soccer.application.player.GetAllPlayers;
-import io.github.binout.soccer.application.season.*;
+import io.github.binout.soccer.application.season.AddSeason;
+import io.github.binout.soccer.application.season.GetAllSeasons;
+import io.github.binout.soccer.application.season.GetSeason;
+import io.github.binout.soccer.application.season.GetSeasonStats;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonStatistics;
-import io.github.binout.soccer.domain.season.match.Match;
-import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
-import io.github.binout.soccer.interfaces.rest.model.*;
-import net.codestory.http.Context;
-import net.codestory.http.annotations.Get;
-import net.codestory.http.annotations.Prefix;
-import net.codestory.http.annotations.Put;
-import net.codestory.http.payload.Payload;
+import io.github.binout.soccer.interfaces.rest.model.RestSeason;
+import io.github.binout.soccer.interfaces.rest.model.RestStat;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import javax.websocket.server.PathParam;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Prefix("seasons")
-@TransactedScopeEnabled
+@RestController("seasons")
 public class SeasonsResource {
 
-    @Inject
+    @Autowired
     GetAllSeasons getAllSeasons;
 
-    @Inject
+    @Autowired
     AddSeason addSeason;
 
-    @Inject
+    @Autowired
     GetSeason getSeason;
 
-    @Inject
+    @Autowired
     GetSeasonStats getSeasonStats;
 
-    @Inject
+    @Autowired
     GetAllPlayers getAllPlayers;
 
-    @Get
-    public List<RestSeason> getAll(Context context) {
-        return getAllSeasons.execute().map(s -> toRestModel(context.uri(), s)).collect(Collectors.toList());
+    @GetMapping
+    public List<RestSeason> getAll() {
+        return getAllSeasons.execute().map(s -> toRestModel(s)).collect(Collectors.toList());
     }
 
-    @Put(":name")
-    public Payload put(String name) {
+    @PutMapping("{name}")
+    public ResponseEntity put(@PathParam("name") String name) {
         String seasonName = new SeasonName(name).name();
         addSeason.execute(seasonName);
-        return Payload.ok();
+        return ResponseEntity.ok().build();
     }
 
 
-    @Get(":name")
-    public Payload get(String name) {
+    @GetMapping("{name}")
+    public ResponseEntity get(@PathParam("name") String name) {
         String seasonName = new SeasonName(name).name();
         return getSeason.execute(seasonName)
                 .map(s -> new RestSeason(s.name()))
-                .map(Payload::new)
-                .orElse(Payload.notFound());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @Get(":name/stats")
-    public Payload stats(String name) {
+    @GetMapping("{name}/stats")
+    public ResponseEntity stats(@PathParam("name") String name) {
         String seasonName = new SeasonName(name).name();
         return getSeasonStats.execute(seasonName)
                 .map(this::toRestStatList)
-                .map(Payload::new)
-                .orElse(Payload.notFound());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     private List<RestStat> toRestStatList(SeasonStatistics s) {
@@ -84,9 +85,9 @@ public class SeasonsResource {
         return restStat;
     }
 
-    private static RestSeason toRestModel(String baseUri, Season s) {
+    private static RestSeason toRestModel(Season s) {
         RestSeason restSeason = new RestSeason(s.name());
-        restSeason.addLinks(new RestLink(baseUri + "/" + s.name()));
+        //restSeason.addLinks(new RestLink(baseUri + "/" + s.name()));
         return restSeason;
     }
 

@@ -18,17 +18,22 @@ package io.github.binout.soccer.application.season;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.season.SeasonRepository;
 import io.github.binout.soccer.domain.season.SeasonPlanning;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.stream.Stream;
 
+@Component
 public class GetToPlanFriendlyMatches {
 
-    @Inject
-    SeasonRepository seasonRepository;
+    private final SeasonRepository seasonRepository;
+    private final SeasonPlanning seasonPlanning;
 
-    @Inject
-    SeasonPlanning seasonPlanning;
+    @Autowired
+    public GetToPlanFriendlyMatches(SeasonRepository seasonRepository, SeasonPlanning seasonPlanning) {
+        this.seasonRepository = seasonRepository;
+        this.seasonPlanning = seasonPlanning;
+    }
 
     public Stream<FriendlyMatchDate> execute(String seasonName) {
         return seasonRepository.byName(seasonName)

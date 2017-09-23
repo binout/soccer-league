@@ -16,8 +16,8 @@ import io.github.binout.soccer.infrastructure.persistence.InMemoryPlayerReposito
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.context.ApplicationEventPublisher;
 
-import javax.enterprise.event.Event;
 import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,25 +38,16 @@ public class SeasonPlanningPropertyTest {
 
     @Before
     public void init() {
-        matchPlanning = new MatchPlanning();
-        seasonPlanning = new SeasonPlanning();
-        seasonPlanning.matchPlanning = matchPlanning;
         playerRepository = new InMemoryPlayerRepository();
-        seasonPlanning.playerRepository = playerRepository;
-        matchPlanning.playerRepository = playerRepository;
 
         LeagueMatchDateRepository leagueMatchDateRepository = new InMemoryLeagueMatchDateRepository();
         leagueMatchDateRepository.add(DATE_FOR_LEAGUE);
-        seasonPlanning.leagueMatchDateRepository = leagueMatchDateRepository;
-        matchPlanning.leagueMatchDateRepository = leagueMatchDateRepository;
 
         FriendlyMatchDateRepository friendlyMatchDateRepository = new InMemoryFriendlyMatchDateRepository();
         friendlyMatchDateRepository.add(DATE_FOR_FRIENDLY);
-        seasonPlanning.friendlyMatchDateRepository = friendlyMatchDateRepository;
-        matchPlanning.friendlyMatchDateRepository = friendlyMatchDateRepository;
 
-        seasonPlanning.friendlyMatchPlannedEvent = Mockito.mock(Event.class);
-        seasonPlanning.leagueMatchPlannedEvent = Mockito.mock(Event.class);
+        matchPlanning = new MatchPlanning(playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository);
+        seasonPlanning = new SeasonPlanning(playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository, matchPlanning, Mockito.mock(ApplicationEventPublisher.class));
     }
 
     private void addToRepository(List<Player>... nbPlayers) {

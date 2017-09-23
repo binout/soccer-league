@@ -7,46 +7,49 @@ import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
 import io.github.binout.soccer.domain.season.match.FriendlyMatch;
 import io.github.binout.soccer.domain.season.match.LeagueMatch;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
 
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Component
 public class SeasonPlanning {
 
-    @Inject
-    PlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
+    private final FriendlyMatchDateRepository friendlyMatchDateRepository;
+    private final LeagueMatchDateRepository leagueMatchDateRepository;
+    private final MatchPlanning matchPlanning;
+    private final ApplicationEventPublisher publisher;
 
-    @Inject
-    FriendlyMatchDateRepository friendlyMatchDateRepository;
-
-    @Inject
-    LeagueMatchDateRepository leagueMatchDateRepository;
-
-    @Inject
-    Event<FriendlyMatchPlanned> friendlyMatchPlannedEvent;
-
-    @Inject
-    Event<LeagueMatchPlanned> leagueMatchPlannedEvent;
-
-    @Inject
-    MatchPlanning matchPlanning;
+    @Autowired
+    public SeasonPlanning(PlayerRepository playerRepository,
+                          FriendlyMatchDateRepository friendlyMatchDateRepository,
+                          LeagueMatchDateRepository leagueMatchDateRepository,
+                          MatchPlanning matchPlanning,
+                          ApplicationEventPublisher publisher) {
+        this.playerRepository = playerRepository;
+        this.friendlyMatchDateRepository = friendlyMatchDateRepository;
+        this.leagueMatchDateRepository = leagueMatchDateRepository;
+        this.matchPlanning = matchPlanning;
+        this.publisher = publisher;
+    }
 
     public LeagueMatch planLeagueMatch(Season season, LeagueMatchDate date) {
         TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(date, playerRepository.all().filter(Player::isPlayerLeague), MatchPlanning.leagueCounter(season));
         LeagueMatch leagueMatch = season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS, true));
-        leagueMatchPlannedEvent.fire(new LeagueMatchPlanned(leagueMatch, matchPlanning.getSubstitutes(season, leagueMatch)));
+        publisher.publishEvent(new LeagueMatchPlanned(leagueMatch, matchPlanning.getSubstitutes(season, leagueMatch)));
         return leagueMatch;
     }
 
     public FriendlyMatch planFriendlyMatch(Season season, FriendlyMatchDate date) {
         TreeMap<Integer, List<Player>> treeMap = computeGamesPlayed(date, playerRepository.all(), MatchPlanning.globalCounter(season));
         FriendlyMatch friendlyMatch = season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS, false));
-        friendlyMatchPlannedEvent.fire(new FriendlyMatchPlanned(friendlyMatch, matchPlanning.getSubstitutes(season, friendlyMatch)));
+        publisher.publishEvent(new FriendlyMatchPlanned(friendlyMatch, matchPlanning.getSubstitutes(season, friendlyMatch)));
         return friendlyMatch;
     }
 

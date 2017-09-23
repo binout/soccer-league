@@ -17,14 +17,20 @@ package io.github.binout.soccer.application.date;
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.stream.Stream;
 
+@Component
 public class GetNextFriendlyMatchDates {
 
-    @Inject
-    FriendlyMatchDateRepository repository;
+    private final FriendlyMatchDateRepository repository;
+
+    @Autowired
+    public GetNextFriendlyMatchDates(FriendlyMatchDateRepository repository) {
+        this.repository = repository;
+    }
 
     public Stream<FriendlyMatchDate> execute() {
         return repository.all().filter(FriendlyMatchDate::isNowOrFuture);

@@ -20,24 +20,24 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import io.github.binout.soccer.domain.notification.TemplateEngine;
 import io.github.binout.soccer.infrastructure.log.LoggerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
-@ApplicationScoped
+@Component
 public class FreemarkerTemplateEngine implements TemplateEngine {
 
-    @Inject
-    LoggerService loggerService;
-
+    private final LoggerService loggerService;
     private final Configuration configuration;
 
-    public FreemarkerTemplateEngine() {
-        configuration = new Configuration();
-        configuration.setClassForTemplateLoading(this.getClass(), "/templates");
+    @Autowired
+    public FreemarkerTemplateEngine(LoggerService loggerService) {
+        this.loggerService = loggerService;
+        this.configuration = new Configuration();
+        this.configuration.setClassForTemplateLoading(this.getClass(), "/templates");
     }
 
     @Override
