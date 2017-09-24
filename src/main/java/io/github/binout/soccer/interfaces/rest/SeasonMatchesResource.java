@@ -52,7 +52,7 @@ public class SeasonMatchesResource {
     @GetMapping("friendly")
     public ResponseEntity getFriendlyMatch(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return ResponseEntity.ok(getFriendlyMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
+        return ResponseEntity.ok(getFriendlyMatches.execute(seasonName).stream().map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @PutMapping("friendly/{dateParam}")
@@ -66,13 +66,13 @@ public class SeasonMatchesResource {
     @GetMapping("friendly/next")
     public ResponseEntity getNextFriendly(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return ResponseEntity.ok(getNextFriendlyMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
+        return ResponseEntity.ok(getNextFriendlyMatches.execute(seasonName).stream().map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @GetMapping("friendly/to-plan")
     public ResponseEntity friendlyToPlan(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return ResponseEntity.ok(getToPlanFriendlyMatches.execute(seasonName)
+        return ResponseEntity.ok(getToPlanFriendlyMatches.execute(seasonName).stream()
                         .map(FriendlyMatchDate::date)
                         .map(RestMatch::new)
                         .collect(Collectors.toList()));
@@ -90,7 +90,7 @@ public class SeasonMatchesResource {
     @GetMapping("league")
     public ResponseEntity getLeagueMatch(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return ResponseEntity.ok(getLeagueMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
+        return ResponseEntity.ok(getLeagueMatches.execute(seasonName).stream().map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @PutMapping("league/{dateParam}")
@@ -104,13 +104,13 @@ public class SeasonMatchesResource {
     @GetMapping("league/next")
     public ResponseEntity getNextLeague(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return ResponseEntity.ok(getNextLeagueMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
+        return ResponseEntity.ok(getNextLeagueMatches.execute(seasonName).stream().map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @GetMapping("league/to-plan")
     public ResponseEntity leagueToPlan(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
-        return ResponseEntity.ok(getToPlanLeagueMatches.execute(seasonName)
+        return ResponseEntity.ok(getToPlanLeagueMatches.execute(seasonName).stream()
                 .map(LeagueMatchDate::date)
                 .map(RestMatch::new)
                 .collect(Collectors.toList()));

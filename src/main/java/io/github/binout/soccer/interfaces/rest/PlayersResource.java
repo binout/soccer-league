@@ -32,12 +32,12 @@ public class PlayersResource {
 
     @GetMapping
     public List<RestPlayer> getAll() {
-        return getAllPlayers.execute().map(p -> toRestModel(p)).collect(Collectors.toList());
+        return getAllPlayers.execute().stream().map(p -> toRestModel(p)).collect(Collectors.toList());
     }
 
     @GetMapping("league")
     public List<RestPlayer> getAllLeague() {
-        return getAllLeaguePlayers.execute().map(p -> toRestModel(p)).collect(Collectors.toList());
+        return getAllLeaguePlayers.execute().stream().map(p -> toRestModel(p)).collect(Collectors.toList());
     }
 
     @PutMapping("{name}")

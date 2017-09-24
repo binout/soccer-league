@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -37,9 +39,10 @@ public class GetToPlanFriendlyMatches {
     }
 
     @Transactional
-    public Stream<FriendlyMatchDate> execute(String seasonName) {
+    public List<FriendlyMatchDate> execute(String seasonName) {
         return seasonRepository.byName(seasonName)
                 .map(s -> seasonPlanning.friendlyMatchDatesToPlan(s).stream())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid season"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid season"))
+                .collect(Collectors.toList());
     }
 }

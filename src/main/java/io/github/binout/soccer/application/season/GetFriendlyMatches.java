@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -42,8 +43,8 @@ public class GetFriendlyMatches {
     }
 
     @Transactional
-    public Stream<Tuple2<FriendlyMatch, List<Player>>> execute(String seasonName) {
+    public List<Tuple2<FriendlyMatch, List<Player>>> execute(String seasonName) {
         Season season = seasonRepository.byName(seasonName).orElseThrow(() -> new IllegalArgumentException("Invalid season"));
-        return season.friendlyMatches().map(m -> Tuple.of(m, matchPlanning.getSubstitutes(season, m)));
+        return season.friendlyMatches().map(m -> Tuple.of(m, matchPlanning.getSubstitutes(season, m))).collect(Collectors.toList());
     }
 }

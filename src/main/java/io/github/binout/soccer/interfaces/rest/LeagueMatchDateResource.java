@@ -36,15 +36,14 @@ public class LeagueMatchDateResource {
 
     @GetMapping
     public List<RestMatchDate> all() {
-        return allLeagueMatchDates.execute()
+        return allLeagueMatchDates.execute().stream()
                 .map(this::toRestModel)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("next")
     public List<RestMatchDate> next() {
-        return nextLeagueMatchDates.execute()
-                .filter(LeagueMatchDate::isNowOrFuture)
+        return nextLeagueMatchDates.execute().stream()
                 .map(this::toRestModel)
                 .collect(Collectors.toList());
     }

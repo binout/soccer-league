@@ -39,7 +39,7 @@ public class SeasonsResource {
 
     @GetMapping
     public List<RestSeason> getAll() {
-        return getAllSeasons.execute().map(s -> toRestModel(s)).collect(Collectors.toList());
+        return getAllSeasons.execute().stream().map(s -> toRestModel(s)).collect(Collectors.toList());
     }
 
     @PutMapping("{name}")
@@ -69,7 +69,7 @@ public class SeasonsResource {
     }
 
     private List<RestStat> toRestStatList(SeasonStatistics s) {
-        return getAllPlayers.execute()
+        return getAllPlayers.execute().stream()
                 .map(p -> toRestStat(s, p))
                 .sorted(Comparator.comparing(RestStat::getNbMatches).reversed())
                 .collect(Collectors.toList());

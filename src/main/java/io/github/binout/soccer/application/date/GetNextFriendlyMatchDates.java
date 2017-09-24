@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -34,7 +36,7 @@ public class GetNextFriendlyMatchDates {
     }
 
     @Transactional
-    public Stream<FriendlyMatchDate> execute() {
-        return repository.all().filter(FriendlyMatchDate::isNowOrFuture);
+    public List<FriendlyMatchDate> execute() {
+        return repository.all().filter(FriendlyMatchDate::isNowOrFuture).collect(Collectors.toList());
     }
 }

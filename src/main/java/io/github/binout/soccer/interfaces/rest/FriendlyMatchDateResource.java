@@ -36,14 +36,14 @@ public class FriendlyMatchDateResource {
 
     @GetMapping
     public List<RestMatchDate> all() {
-        return allFriendlyMatchDates.execute()
+        return allFriendlyMatchDates.execute().stream()
                 .map(this::toRestModel)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("next")
     public List<RestMatchDate> next() {
-        return nextFriendlyMatchDates.execute()
+        return nextFriendlyMatchDates.execute().stream()
                 .map(this::toRestModel)
                 .collect(Collectors.toList());
     }

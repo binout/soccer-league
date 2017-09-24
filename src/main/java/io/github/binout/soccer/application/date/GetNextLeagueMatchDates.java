@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -34,7 +36,7 @@ public class GetNextLeagueMatchDates {
     }
 
     @Transactional
-    public Stream<LeagueMatchDate> execute() {
-        return repository.all().filter(LeagueMatchDate::isNowOrFuture);
+    public List<LeagueMatchDate> execute() {
+        return repository.all().filter(LeagueMatchDate::isNowOrFuture).collect(Collectors.toList());
     }
 }
