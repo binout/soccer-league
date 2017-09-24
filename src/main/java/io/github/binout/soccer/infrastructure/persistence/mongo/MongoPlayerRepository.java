@@ -9,14 +9,19 @@ import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Component
 public class MongoPlayerRepository extends MongoRepository<Player> implements PlayerRepository {
 
     @Autowired
-    MongoPlayerRepository(MongoSession mongoSession) {
-        super(mongoSession);
+    MongoPlayerRepository(MongoSessionTransactionManager transactionManager) {
+        super(() -> transactionManager.doGetTransaction());
+    }
+
+    MongoPlayerRepository(Supplier<MongoSession> mongoSessionSupplier) {
+        super(mongoSessionSupplier);
     }
 
     @Override

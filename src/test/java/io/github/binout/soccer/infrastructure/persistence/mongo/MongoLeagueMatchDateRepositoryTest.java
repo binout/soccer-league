@@ -23,8 +23,8 @@ public class MongoLeagueMatchDateRepositoryTest {
 
     @Before
     public void initRepository() {
-        playerRepository = new MongoPlayerRepository(mongolinkRule.getCurrentSession());
-        repository = new MongoLeagueMatchDateRepository(mongolinkRule.getCurrentSession());
+        playerRepository = new MongoPlayerRepository(() -> mongolinkRule.getCurrentSession());
+        repository = new MongoLeagueMatchDateRepository(() -> mongolinkRule.getCurrentSession());
     }
 
     @Test

@@ -23,6 +23,7 @@ import io.github.binout.soccer.domain.season.SeasonPlanning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.Month;
 import java.util.Optional;
 
@@ -42,6 +43,7 @@ public class AddFriendlyMatch {
         this.seasonPlanning = seasonPlanning;
     }
 
+    @Transactional
     public void execute(String seasonName, int year, Month month, int day) {
         Optional<Season> season = seasonRepository.byName(seasonName);
         Optional<FriendlyMatchDate> matchDate = friendlyMatchDateRepository.byDate(year, month, day);

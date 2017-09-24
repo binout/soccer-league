@@ -24,6 +24,7 @@ import io.github.binout.soccer.domain.season.match.LeagueMatch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 @Component
@@ -42,6 +43,7 @@ public class SubstitutePlayerInLeagueMatches {
         this.matchPlanning = matchPlanning;
     }
 
+    @Transactional
     public void execute(String seasonName, LocalDate date, String playerName)  {
         Season season = seasonRepository.byName(seasonName).orElseThrow(() -> new IllegalArgumentException("Invalid season"));
         Player player = playerRepository.byName(playerName).orElseThrow(() -> new IllegalArgumentException("Invalid player"));

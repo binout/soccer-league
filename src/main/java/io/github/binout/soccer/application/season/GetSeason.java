@@ -20,6 +20,7 @@ import io.github.binout.soccer.domain.season.SeasonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Component
@@ -32,6 +33,7 @@ public class GetSeason {
         this.seasonRepository = seasonRepository;
     }
 
+    @Transactional
     public Optional<Season> execute(String name) {
         return seasonRepository.byName(name);
     }

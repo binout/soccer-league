@@ -11,14 +11,19 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Component
 public class MongoFriendlyMatchDateRepository extends MongoRepository<FriendlyMatchDate> implements FriendlyMatchDateRepository {
 
     @Autowired
-    MongoFriendlyMatchDateRepository(MongoSession mongoSession) {
-        super(mongoSession);
+    MongoFriendlyMatchDateRepository(MongoSessionTransactionManager transactionManager) {
+        super(() -> transactionManager.doGetTransaction());
+    }
+
+    MongoFriendlyMatchDateRepository(Supplier<MongoSession> mongoSessionSupplier) {
+        super(mongoSessionSupplier);
     }
 
     @Override

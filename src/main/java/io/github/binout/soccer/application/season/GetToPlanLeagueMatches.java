@@ -21,6 +21,7 @@ import io.github.binout.soccer.domain.season.SeasonPlanning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.stream.Stream;
 
 @Component
@@ -35,6 +36,7 @@ public class GetToPlanLeagueMatches {
         this.seasonPlanning = seasonPlanning;
     }
 
+    @Transactional
     public Stream<LeagueMatchDate> execute(String seasonName) {
         return seasonRepository.byName(seasonName)
                 .map(s -> seasonPlanning.leagueMatchDatesToPlan(s).stream())

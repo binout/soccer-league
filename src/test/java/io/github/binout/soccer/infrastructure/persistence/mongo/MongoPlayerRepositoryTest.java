@@ -19,7 +19,7 @@ public class MongoPlayerRepositoryTest {
 
     @Before
     public void initRepository() {
-        repository = new MongoPlayerRepository(mongolinkRule.getCurrentSession());
+        repository = new MongoPlayerRepository(() -> mongolinkRule.getCurrentSession());
     }
 
     private void persistPlayer(Player leaguePlayer) {

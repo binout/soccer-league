@@ -25,6 +25,7 @@ import io.vavr.Tuple2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,6 +41,7 @@ public class GetLeagueMatches {
         this.matchPlanning = matchPlanning;
     }
 
+    @Transactional
     public Stream<Tuple2<LeagueMatch, List<Player>>> execute(String seasonName) {
         Season season = seasonRepository.byName(seasonName).orElseThrow(() -> new IllegalArgumentException("Invalid season"));
         return season.leagueMatches().map(m -> Tuple.of(m, matchPlanning.getSubstitutes(season, m)));

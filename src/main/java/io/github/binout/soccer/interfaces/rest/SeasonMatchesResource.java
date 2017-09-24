@@ -12,12 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("seasons/{name}/matches")
+@RequestMapping("rest/seasons/{name}/matches")
 public class SeasonMatchesResource {
 
     @Autowired
@@ -51,13 +50,13 @@ public class SeasonMatchesResource {
     SubstitutePlayerInLeagueMatches substitutePlayerInLeagueMatches;
 
     @GetMapping("friendly")
-    public ResponseEntity getFriendlyMatch(@PathParam("name") String name) {
+    public ResponseEntity getFriendlyMatch(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
         return ResponseEntity.ok(getFriendlyMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @PutMapping("friendly/{dateParam}")
-    public ResponseEntity putFriendlyMatch(@PathParam("name") String name, @PathParam("dateParam") String dateParam) {
+    public ResponseEntity putFriendlyMatch(@PathVariable("name") String name, @PathVariable("dateParam") String dateParam) {
         String seasonName = new SeasonName(name).name();
         RestDate date = new RestDate(dateParam);
         addFriendlyMatch.execute(seasonName, date.year(), date.month(), date.day());
@@ -65,13 +64,13 @@ public class SeasonMatchesResource {
     }
 
     @GetMapping("friendly/next")
-    public ResponseEntity getNextFriendly(@PathParam("name") String name) {
+    public ResponseEntity getNextFriendly(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
         return ResponseEntity.ok(getNextFriendlyMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @GetMapping("friendly/to-plan")
-    public ResponseEntity friendlyToPlan(@PathParam("name") String name) {
+    public ResponseEntity friendlyToPlan(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
         return ResponseEntity.ok(getToPlanFriendlyMatches.execute(seasonName)
                         .map(FriendlyMatchDate::date)
@@ -80,7 +79,7 @@ public class SeasonMatchesResource {
     }
 
     @DeleteMapping("friendly/{dateParam}/players/{playerName}")
-    public ResponseEntity susbstitutePlayerFriendly(@PathParam("name") String name, @PathParam("dateParam") String dateParam, @PathParam("playerName") String playerName) {
+    public ResponseEntity susbstitutePlayerFriendly(@PathVariable("name") String name, @PathVariable("dateParam") String dateParam, @PathVariable("playerName") String playerName) {
         String seasonName = new SeasonName(name).name();
         RestDate date = new RestDate(dateParam);
         substitutePlayerInFriendlyMatches.execute(seasonName, date.asLocalDate(), playerName);
@@ -89,13 +88,13 @@ public class SeasonMatchesResource {
 
 
     @GetMapping("league")
-    public ResponseEntity getLeagueMatch(@PathParam("name") String name) {
+    public ResponseEntity getLeagueMatch(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
         return ResponseEntity.ok(getLeagueMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @PutMapping("league/{dateParam}")
-    public ResponseEntity putLeagueMatch(@PathParam("name") String name, @PathParam("dateParam") String dateParam) {
+    public ResponseEntity putLeagueMatch(@PathVariable("name") String name, @PathVariable("dateParam") String dateParam) {
         String seasonName = new SeasonName(name).name();
         RestDate date = new RestDate(dateParam);
         addLeagueMatch.execute(seasonName, date.year(), date.month(), date.day());
@@ -103,13 +102,13 @@ public class SeasonMatchesResource {
     }
 
     @GetMapping("league/next")
-    public ResponseEntity getNextLeague(@PathParam("name") String name) {
+    public ResponseEntity getNextLeague(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
         return ResponseEntity.ok(getNextLeagueMatches.execute(seasonName).map(this::toRestMatch).collect(Collectors.toList()));
     }
 
     @GetMapping("league/to-plan")
-    public ResponseEntity leagueToPlan(@PathParam("name") String name) {
+    public ResponseEntity leagueToPlan(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
         return ResponseEntity.ok(getToPlanLeagueMatches.execute(seasonName)
                 .map(LeagueMatchDate::date)
@@ -118,7 +117,7 @@ public class SeasonMatchesResource {
     }
 
     @DeleteMapping("league/{dateParam}/players/{playerName}")
-    public ResponseEntity susbstitutePlayerLeague(@PathParam("name") String name, @PathParam("dateParam") String dateParam, @PathParam("playerName") String playerName) {
+    public ResponseEntity susbstitutePlayerLeague(@PathVariable("name") String name, @PathVariable("dateParam") String dateParam, @PathVariable("playerName") String playerName) {
         String seasonName = new SeasonName(name).name();
         RestDate date = new RestDate(dateParam);
         substitutePlayerInLeagueMatches.execute(seasonName, date.asLocalDate(), playerName);

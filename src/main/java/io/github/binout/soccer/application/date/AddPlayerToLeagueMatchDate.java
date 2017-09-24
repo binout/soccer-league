@@ -19,6 +19,7 @@ import io.github.binout.soccer.domain.date.LeagueMatchDateRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.Month;
 
 @Component
@@ -31,6 +32,7 @@ public class AddPlayerToLeagueMatchDate {
         this.leagueMatchDateRegistration = leagueMatchDateRegistration;
     }
 
+    @Transactional
     public void execute(String playerName, int year, Month month, int day) {
         leagueMatchDateRegistration.addPlayer(playerName, year, month, day);
     }

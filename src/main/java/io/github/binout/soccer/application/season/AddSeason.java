@@ -20,6 +20,8 @@ import io.github.binout.soccer.domain.season.SeasonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
+
 @Component
 public class AddSeason {
 
@@ -30,6 +32,7 @@ public class AddSeason {
         this.seasonRepository = seasonRepository;
     }
 
+    @Transactional
     public void execute(String seasonName) {
         if (!seasonRepository.byName(seasonName).isPresent()) {
             seasonRepository.add(new Season(seasonName));

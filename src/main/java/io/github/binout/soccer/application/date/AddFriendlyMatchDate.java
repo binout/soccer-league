@@ -21,6 +21,7 @@ import io.github.binout.soccer.domain.date.MatchDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.Month;
 import java.util.Optional;
 
@@ -34,6 +35,7 @@ public class AddFriendlyMatchDate {
         this.repository = repository;
     }
 
+    @Transactional
     public void execute(int year, Month month, int day) {
         Optional<FriendlyMatchDate> friendlyMatchDate = repository.byDate(year, month, day);
         if (!friendlyMatchDate.isPresent()) {

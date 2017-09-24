@@ -19,6 +19,7 @@ import io.github.binout.soccer.domain.date.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.Month;
 import java.util.Optional;
 
@@ -32,6 +33,7 @@ public class AddLeagueMatchDate {
         this.repository = repository;
     }
 
+    @Transactional
     public void execute(int year, Month month, int day) {
         Optional<LeagueMatchDate> leagueMatchDate = repository.byDate(year, month, day);
         if (!leagueMatchDate.isPresent()) {

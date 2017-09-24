@@ -11,14 +11,19 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Component
 public class MongoLeagueMatchDateRepository extends MongoRepository<LeagueMatchDate> implements LeagueMatchDateRepository {
 
     @Autowired
-    MongoLeagueMatchDateRepository(MongoSession mongoSession) {
-        super(mongoSession);
+    MongoLeagueMatchDateRepository(MongoSessionTransactionManager transactionManager) {
+        super(() -> transactionManager.doGetTransaction());
+    }
+
+    MongoLeagueMatchDateRepository(Supplier<MongoSession> mongoSessionSupplier) {
+        super(mongoSessionSupplier);
     }
 
     @Override

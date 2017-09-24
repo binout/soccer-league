@@ -12,18 +12,14 @@ import io.github.binout.soccer.interfaces.rest.model.RestSeason;
 import io.github.binout.soccer.interfaces.rest.model.RestStat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("seasons")
+@RequestMapping("rest/seasons")
 public class SeasonsResource {
 
     @Autowired
@@ -47,7 +43,7 @@ public class SeasonsResource {
     }
 
     @PutMapping("{name}")
-    public ResponseEntity put(@PathParam("name") String name) {
+    public ResponseEntity put(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
         addSeason.execute(seasonName);
         return ResponseEntity.ok().build();
@@ -55,7 +51,7 @@ public class SeasonsResource {
 
 
     @GetMapping("{name}")
-    public ResponseEntity get(@PathParam("name") String name) {
+    public ResponseEntity get(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
         return getSeason.execute(seasonName)
                 .map(s -> new RestSeason(s.name()))
@@ -64,7 +60,7 @@ public class SeasonsResource {
     }
 
     @GetMapping("{name}/stats")
-    public ResponseEntity stats(@PathParam("name") String name) {
+    public ResponseEntity stats(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
         return getSeasonStats.execute(seasonName)
                 .map(this::toRestStatList)

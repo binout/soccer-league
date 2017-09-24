@@ -20,6 +20,7 @@ import io.github.binout.soccer.domain.player.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Component
@@ -32,6 +33,7 @@ public class ReplacePlayer {
         this.playerRepository = playerRepository;
     }
 
+    @Transactional
     public void execute(String name, String email, Boolean playerLeague, Boolean goalkeeper) {
         Player player = playerRepository.byName(name).orElse(new Player(name));
         Optional.ofNullable(email).ifPresent(player::setEmail);

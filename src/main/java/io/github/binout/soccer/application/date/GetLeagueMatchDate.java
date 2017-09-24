@@ -20,6 +20,7 @@ import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.Month;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class GetLeagueMatchDate {
         this.repository = repository;
     }
 
+    @Transactional
     public Optional<LeagueMatchDate> execute(int year, Month month, int day) {
         return repository.byDate(year, month, day);
     }

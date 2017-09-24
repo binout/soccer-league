@@ -20,6 +20,7 @@ import io.github.binout.soccer.domain.player.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.stream.Stream;
 
 @Component
@@ -32,6 +33,7 @@ public class GetAllPlayers {
         this.playerRepository = playerRepository;
     }
 
+    @Transactional
     public Stream<Player> execute() {
         return playerRepository.all();
     }

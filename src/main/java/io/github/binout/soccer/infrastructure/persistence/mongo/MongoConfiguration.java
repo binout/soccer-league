@@ -4,7 +4,6 @@ import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
-import org.mongolink.MongoSession;
 import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
 import org.mongolink.domain.mapper.ContextBuilder;
@@ -34,8 +33,4 @@ public class MongoConfiguration {
         return MongoSessionManager.create(contextBuilder, Settings.defaultInstance().withDatabase(database));
     }
 
-    @Bean
-    public MongoSession session(MongoSessionManager sessionManager) {
-        return sessionManager.createSession();
-    }
 }
