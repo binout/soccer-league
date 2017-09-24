@@ -13,7 +13,8 @@ import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController("match-dates/friendly")
+@RestController
+@RequestMapping("match-dates/friendly")
 public class FriendlyMatchDateResource {
 
     @Autowired
