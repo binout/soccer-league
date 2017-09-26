@@ -1,1 +1,1 @@
-web:    java -jar -DPROD_MODE=true target/soccer-league.jar
+web:    java -jar target/soccer-league.jar
