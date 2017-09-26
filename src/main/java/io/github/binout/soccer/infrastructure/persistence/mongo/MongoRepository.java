@@ -10,31 +10,34 @@ import java.util.stream.Stream;
 
 public abstract class MongoRepository<T> {
 
-    private final MongoSession mongoSession;
+    private final Supplier<MongoSession> mongoSessionSupplier;
 
-    protected MongoRepository(MongoSession mongoSession) {
-        this.mongoSession = mongoSession;
+    protected MongoRepository(Supplier<MongoSession> mongoSessionSupplier) {
+        this.mongoSessionSupplier = mongoSessionSupplier;
     }
 
     protected abstract Class<T> clazz();
 
     public MongoSession session() {
-        return mongoSession;
+        return mongoSessionSupplier.get();
     }
 
     protected void add(T object, Supplier<Object> idSupplier) {
-        if (mongoSession.get(idSupplier.get(), clazz()) == null) {
+        MongoSession mongoSession = session();
+        if (mongoSessionSupplier.get().get(idSupplier.get(), clazz()) == null) {
             mongoSession.save(object);
         }
     }
 
     protected Stream<T> findBy(Restriction... restrictions) {
+        MongoSession mongoSession = session();
         Criteria criteria = mongoSession.createCriteria(clazz());
         Arrays.stream(restrictions).forEach(criteria::add);
         return criteria.list().stream();
     }
 
     protected Stream<T> all() {
+        MongoSession mongoSession = session();
         return mongoSession.createCriteria(clazz()).list().stream();
     }
 }

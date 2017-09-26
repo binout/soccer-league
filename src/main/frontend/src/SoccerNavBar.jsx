@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar,Nav,NavItem } from 'react-bootstrap';
+import { Navbar,Nav,NavItem,Glyphicon } from 'react-bootstrap';
 import {browserHistory} from 'react-router';
 
 const SoccerNavBar = React.createClass({
@@ -13,8 +13,8 @@ const SoccerNavBar = React.createClass({
                     </Navbar.Brand>
                 </Navbar.Header>
                 <Nav>
-                    <NavItem eventKey={1} onClick={() => browserHistory.push('agenda')}>Agenda</NavItem>
-                    <NavItem eventKey={2} onClick={() => browserHistory.push('players')}>Players</NavItem>
+                    <NavItem eventKey={1} onClick={() => browserHistory.push('agenda')}><Glyphicon glyph="calendar"/> Agenda</NavItem>
+                    <NavItem eventKey={2} onClick={() => browserHistory.push('players')}><Glyphicon glyph="user"/> Players</NavItem>
                 </Nav>
             </Navbar>
         );

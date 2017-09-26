@@ -1,197 +1,134 @@
 package io.github.binout.soccer.interfaces.rest;
 
+import io.github.binout.soccer.application.season.*;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
-import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 import io.github.binout.soccer.domain.date.LeagueMatchDate;
-import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import io.github.binout.soccer.domain.player.Player;
-import io.github.binout.soccer.domain.player.PlayerRepository;
-import io.github.binout.soccer.domain.season.Season;
-import io.github.binout.soccer.domain.season.SeasonRepository;
-import io.github.binout.soccer.domain.season.SeasonService;
-import io.github.binout.soccer.domain.season.match.FriendlyMatch;
-import io.github.binout.soccer.domain.season.match.LeagueMatch;
-import io.github.binout.soccer.infrastructure.persistence.TransactedScopeEnabled;
+import io.github.binout.soccer.domain.season.match.Match;
 import io.github.binout.soccer.interfaces.rest.model.RestDate;
 import io.github.binout.soccer.interfaces.rest.model.RestMatch;
-import net.codestory.http.annotations.Delete;
-import net.codestory.http.annotations.Get;
-import net.codestory.http.annotations.Prefix;
-import net.codestory.http.annotations.Put;
-import net.codestory.http.payload.Payload;
+import io.vavr.Tuple2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.List;
 import java.util.stream.Collectors;
 
-@Prefix("seasons/:name/matches")
-@TransactedScopeEnabled
+@RestController
+@RequestMapping("rest/seasons/{name}/matches")
 public class SeasonMatchesResource {
 
-    @Inject
-    SeasonRepository seasonRepository;
+    @Autowired
+    GetFriendlyMatches getFriendlyMatches;
 
-    @Inject
-    SeasonService seasonService;
+    @Autowired
+    GetNextFriendlyMatches getNextFriendlyMatches;
 
-    @Inject
-    FriendlyMatchDateRepository friendlyMatchDateRepository;
+    @Autowired
+    AddFriendlyMatch addFriendlyMatch;
 
-    @Inject
-    LeagueMatchDateRepository leagueMatchDateRepository;
+    @Autowired
+    GetLeagueMatches getLeagueMatches;
 
-    @Inject
-    PlayerRepository playerRepository;
+    @Autowired
+    GetNextLeagueMatches getNextLeagueMatches;
 
-    @Get("friendly")
-    public Payload getFriendly(String name) {
-        return getFriendlyMatches(name, d -> true);
-    }
+    @Autowired
+    AddLeagueMatch addLeagueMatch;
 
-    private Payload getFriendlyMatches(String name, Predicate<FriendlyMatch> filter) {
+    @Autowired
+    GetToPlanFriendlyMatches getToPlanFriendlyMatches;
+
+    @Autowired
+    GetToPlanLeagueMatches getToPlanLeagueMatches;
+
+    @Autowired
+    SubstitutePlayerInFriendlyMatches substitutePlayerInFriendlyMatches;
+
+    @Autowired
+    SubstitutePlayerInLeagueMatches substitutePlayerInLeagueMatches;
+
+    @GetMapping("friendly")
+    public ResponseEntity getFriendlyMatch(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = seasonRepository.byName(seasonName);
-        if (!season.isPresent()) {
-            return Payload.badRequest();
-        } else {
-            return new Payload(season.get().friendlyMatches()
-                    .filter(filter)
-                    .map(m -> toRestMatch(season.get(), m))
-                    .collect(Collectors.toList()));
-        }
+        return ResponseEntity.ok(getFriendlyMatches.execute(seasonName).stream().map(this::toRestMatch).collect(Collectors.toList()));
     }
 
-    @Get("friendly/next")
-    public Payload getNextFriendly(String name) {
-        return getFriendlyMatches(name, FriendlyMatch::isNowOrFuture);
-    }
-
-    private RestMatch toRestMatch(Season s, FriendlyMatch m) {
-        RestMatch restMatch = new RestMatch(m.date());
-        m.players().forEach(restMatch::addPlayer);
-        seasonService.getSubstitutes(s, m).stream().map(Player::name).forEach(restMatch::addSub);
-        return restMatch;
-    }
-
-    @Get("friendly/to-plan")
-    public Payload friendlyToPlan(String name) {
+    @PutMapping("friendly/{dateParam}")
+    public ResponseEntity putFriendlyMatch(@PathVariable("name") String name, @PathVariable("dateParam") String dateParam) {
         String seasonName = new SeasonName(name).name();
-        return seasonRepository.byName(seasonName)
-                .map(s -> seasonService.friendlyMatchDatesToPlan(s).stream()
+        RestDate date = new RestDate(dateParam);
+        addFriendlyMatch.execute(seasonName, date.year(), date.month(), date.day());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("friendly/next")
+    public ResponseEntity getNextFriendly(@PathVariable("name") String name) {
+        String seasonName = new SeasonName(name).name();
+        return ResponseEntity.ok(getNextFriendlyMatches.execute(seasonName).stream().map(this::toRestMatch).collect(Collectors.toList()));
+    }
+
+    @GetMapping("friendly/to-plan")
+    public ResponseEntity friendlyToPlan(@PathVariable("name") String name) {
+        String seasonName = new SeasonName(name).name();
+        return ResponseEntity.ok(getToPlanFriendlyMatches.execute(seasonName).stream()
                         .map(FriendlyMatchDate::date)
                         .map(RestMatch::new)
-                        .collect(Collectors.toList()))
-                .map(Payload::new)
-                .orElse(Payload.badRequest());
+                        .collect(Collectors.toList()));
     }
 
-    @Put("friendly/:dateParam")
-    public Payload putFriendly(String name, String dateParam) {
+    @DeleteMapping("friendly/{dateParam}/players/{playerName}")
+    public ResponseEntity susbstitutePlayerFriendly(@PathVariable("name") String name, @PathVariable("dateParam") String dateParam, @PathVariable("playerName") String playerName) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = seasonRepository.byName(seasonName);
         RestDate date = new RestDate(dateParam);
-        Optional<FriendlyMatchDate> matchDate = friendlyMatchDateRepository.byDate(date.year(), date.month(), date.day());
-        if (season.isPresent() && matchDate.isPresent()) {
-            seasonService.planFriendlyMatch(season.get(), matchDate.get());
-            return Payload.ok();
-        } else {
-            return Payload.badRequest();
-        }
+        substitutePlayerInFriendlyMatches.execute(seasonName, date.asLocalDate(), playerName);
+        return ResponseEntity.ok().build();
     }
 
-    @Delete("friendly/:dateParam/players/:playerName")
-    public Payload susbstitutePlayerFriendly(String name, String dateParam, String playerName) {
+
+    @GetMapping("league")
+    public ResponseEntity getLeagueMatch(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = seasonRepository.byName(seasonName);
-        Optional<Player> player = playerRepository.byName(playerName);
-        if (season.isPresent() && player.isPresent()) {
-            RestDate date = new RestDate(dateParam);
-            Optional<FriendlyMatch> match = season.get().friendlyMatches().filter(m -> m.date().equals(date.asLocalDate())).findFirst();
-            if (!match.isPresent()) {
-                return Payload.badRequest();
-            }
-            seasonService.substitutePlayer(season.get(), match.get(), player.get());
-            return Payload.ok();
-        } else {
-            return Payload.badRequest();
-        }
+        return ResponseEntity.ok(getLeagueMatches.execute(seasonName).stream().map(this::toRestMatch).collect(Collectors.toList()));
     }
 
-    @Get("league")
-    public Payload getLeague(String name) {
-        return getLeagueMatches(name, d -> true);
-    }
-
-    private Payload getLeagueMatches(String name, Predicate<LeagueMatch> filter) {
+    @PutMapping("league/{dateParam}")
+    public ResponseEntity putLeagueMatch(@PathVariable("name") String name, @PathVariable("dateParam") String dateParam) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = seasonRepository.byName(seasonName);
-        if (!season.isPresent()) {
-            return Payload.badRequest();
-        } else {
-            return new Payload(season.get().leagueMatches()
-                    .filter(filter)
-                    .map(m -> toRestMatch(season.get(), m))
-                    .collect(Collectors.toList()));
-        }
-    }
-
-    @Get("league/next")
-    public Payload getNextLeague(String name) {
-        LocalDate now = LocalDate.now();
-        return getLeagueMatches(name, LeagueMatch::isNowOrFuture);
-    }
-
-    @Get("league/to-plan")
-    public Payload leagueToPlan(String name) {
-        String seasonName = new SeasonName(name).name();
-        return seasonRepository.byName(seasonName)
-                .map(s -> seasonService.leagueMatchDatesToPlan(s).stream()
-                        .map(LeagueMatchDate::date)
-                        .map(RestMatch::new)
-                        .collect(Collectors.toList()))
-                .map(Payload::new)
-                .orElse(Payload.badRequest());
-    }
-
-    @Put("league/:dateParam")
-    public Payload putLeague(String name, String dateParam) {
-        String seasonName = new SeasonName(name).name();
-        Optional<Season> season = seasonRepository.byName(seasonName);
         RestDate date = new RestDate(dateParam);
-        Optional<LeagueMatchDate> matchDate = leagueMatchDateRepository.byDate(date.year(), date.month(), date.day());
-        if (season.isPresent() && matchDate.isPresent()) {
-            seasonService.planLeagueMatch(season.get(), matchDate.get());
-            return Payload.ok();
-        } else {
-            return Payload.badRequest();
-        }
+        addLeagueMatch.execute(seasonName, date.year(), date.month(), date.day());
+        return ResponseEntity.ok().build();
     }
 
-    @Delete("league/:dateParam/players/:playerName")
-    public Payload susbstitutePlayerLeague(String name, String dateParam, String playerName) {
+    @GetMapping("league/next")
+    public ResponseEntity getNextLeague(@PathVariable("name") String name) {
         String seasonName = new SeasonName(name).name();
-        Optional<Season> season = seasonRepository.byName(seasonName);
-        Optional<Player> player = playerRepository.byName(playerName);
-        if (season.isPresent() && player.isPresent()) {
-            RestDate date = new RestDate(dateParam);
-            Optional<LeagueMatch> match = season.get().leagueMatches().filter(m -> m.date().equals(date.asLocalDate())).findFirst();
-            if (!match.isPresent()) {
-                return Payload.badRequest();
-            }
-            seasonService.substitutePlayer(season.get(), match.get(), player.get());
-            return Payload.ok();
-        } else {
-            return Payload.badRequest();
-        }
+        return ResponseEntity.ok(getNextLeagueMatches.execute(seasonName).stream().map(this::toRestMatch).collect(Collectors.toList()));
     }
 
-    private RestMatch toRestMatch(Season s, LeagueMatch m) {
-        RestMatch restMatch = new RestMatch(m.date());
-        m.players().forEach(restMatch::addPlayer);
-        seasonService.getSubstitutes(s, m).stream().map(Player::name).forEach(restMatch::addSub);
+    @GetMapping("league/to-plan")
+    public ResponseEntity leagueToPlan(@PathVariable("name") String name) {
+        String seasonName = new SeasonName(name).name();
+        return ResponseEntity.ok(getToPlanLeagueMatches.execute(seasonName).stream()
+                .map(LeagueMatchDate::date)
+                .map(RestMatch::new)
+                .collect(Collectors.toList()));
+    }
+
+    @DeleteMapping("league/{dateParam}/players/{playerName}")
+    public ResponseEntity susbstitutePlayerLeague(@PathVariable("name") String name, @PathVariable("dateParam") String dateParam, @PathVariable("playerName") String playerName) {
+        String seasonName = new SeasonName(name).name();
+        RestDate date = new RestDate(dateParam);
+        substitutePlayerInLeagueMatches.execute(seasonName, date.asLocalDate(), playerName);
+        return ResponseEntity.ok().build();
+    }
+
+
+    private RestMatch toRestMatch(Tuple2<? extends Match,List<Player>> m) {
+        RestMatch restMatch = new RestMatch(m._1.date());
+        m._1.players().forEach(restMatch::addPlayer);
+        m._2.stream().map(Player::name).forEach(restMatch::addSub);
         return restMatch;
     }
-
 }

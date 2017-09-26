@@ -4,19 +4,26 @@ import io.github.binout.soccer.domain.date.LeagueMatchDate;
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository;
 import org.mongolink.MongoSession;
 import org.mongolink.domain.criteria.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+@Component
 public class MongoLeagueMatchDateRepository extends MongoRepository<LeagueMatchDate> implements LeagueMatchDateRepository {
 
-    @Inject
-    MongoLeagueMatchDateRepository(MongoSession mongoSession) {
-        super(mongoSession);
+    @Autowired
+    MongoLeagueMatchDateRepository(MongoSessionTransactionManager transactionManager) {
+        super(() -> transactionManager.doGetTransaction());
+    }
+
+    MongoLeagueMatchDateRepository(Supplier<MongoSession> mongoSessionSupplier) {
+        super(mongoSessionSupplier);
     }
 
     @Override

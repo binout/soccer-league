@@ -23,8 +23,8 @@ public class MongoFriendlyMatchDateRepositoryTest {
 
     @Before
     public void initRepository() {
-        playerRepository = new MongoPlayerRepository(mongolinkRule.getCurrentSession());
-        repository = new MongoFriendlyMatchDateRepository(mongolinkRule.getCurrentSession());
+        playerRepository = new MongoPlayerRepository(() -> mongolinkRule.getCurrentSession());
+        repository = new MongoFriendlyMatchDateRepository(() -> mongolinkRule.getCurrentSession());
     }
 
     @Test

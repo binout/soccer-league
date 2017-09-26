@@ -1,31 +1,43 @@
 package io.github.binout.soccer.infrastructure.mail;
 
 import feign.*;
+import io.github.binout.soccer.domain.notification.MailService;
 import io.github.binout.soccer.infrastructure.log.LoggerService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 
-class SendGridMailService implements MailService {
+@Component
+public class SendGridMailService implements MailService {
 
-    private static final String SENDGRID_API = "https://api.sendgrid.com/v3";
+    @Value("${app.mail.sendgrid.url}")
+    private String sendGridUrl;
 
-    @Inject
-    LoggerService loggerService;
+    @Value("${app.mail.sendgrid.api-key}")
+    private String sendGridApiKey;
+
+    private final LoggerService loggerService;
+
+    @Autowired
+    public SendGridMailService(LoggerService loggerService) {
+        this.loggerService = loggerService;
+    }
 
     @Override
     public void sendMail(Mail email) {
-        String apiKey = System.getenv("SENDGRID_API_KEY");
-        if (apiKey != null) {
+        if (!StringUtils.isEmpty(sendGridApiKey)) {
             if (email.hasRecipients()) {
                 String jsonMail = toSendGridMail(email);
                 try {
                     Feign.builder()
-                            .requestInterceptor(r -> r.header("Authorization", "Bearer " + apiKey))
-                            .target(SendGrid.class, SENDGRID_API)
+                            .requestInterceptor(r -> r.header("Authorization", "Bearer " + sendGridApiKey))
+                            .target(SendGrid.class, sendGridUrl)
                             .sendMail(jsonMail);
                 } catch (Throwable e) {
                     loggerService.log(this.getClass(), "Cannot send mail to sendgrid api : " + jsonMail);

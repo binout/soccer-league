@@ -3,8 +3,6 @@ package io.github.binout.soccer.infrastructure.persistence;
 import io.github.binout.soccer.domain.date.FriendlyMatchDate;
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Vetoed;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Comparator;
@@ -13,8 +11,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-@ApplicationScoped
-@Vetoed
 public class InMemoryFriendlyMatchDateRepository implements FriendlyMatchDateRepository {
 
     private Map<LocalDate, FriendlyMatchDate> dates;

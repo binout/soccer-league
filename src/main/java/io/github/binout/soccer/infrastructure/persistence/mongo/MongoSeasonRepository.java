@@ -4,16 +4,23 @@ import io.github.binout.soccer.domain.season.Season;
 import io.github.binout.soccer.domain.season.SeasonRepository;
 import org.mongolink.MongoSession;
 import org.mongolink.domain.criteria.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+@Component
 public class MongoSeasonRepository extends MongoRepository<Season> implements SeasonRepository {
 
-    @Inject
-    MongoSeasonRepository(MongoSession mongoSession) {
-        super(mongoSession);
+    @Autowired
+    MongoSeasonRepository(MongoSessionTransactionManager transactionManager) {
+        super(() -> transactionManager.doGetTransaction());
+    }
+
+    MongoSeasonRepository(Supplier<MongoSession> mongoSessionSupplier) {
+        super(mongoSessionSupplier);
     }
 
     @Override

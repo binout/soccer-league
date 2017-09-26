@@ -19,7 +19,7 @@ public class MongoSeasonRepositoryTest {
 
     @Before
     public void initRepository() {
-        repository = new MongoSeasonRepository(mongolinkRule.getCurrentSession());
+        repository = new MongoSeasonRepository(() -> mongolinkRule.getCurrentSession());
     }
 
     @Test
