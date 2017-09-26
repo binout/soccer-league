@@ -72,7 +72,8 @@ public class Season {
     static String computeSeason(LocalDate now) {
         int month = now.get(ChronoField.MONTH_OF_YEAR);
         int year = now.get(ChronoField.YEAR);
-        if (month > Month.SEPTEMBER.getValue()) {
+        int day = now.getDayOfMonth();
+        if (month >= Month.SEPTEMBER.getValue() && day > 26) {
             return year + "-" + (year+1);
         } else {
             return (year - 1) + "-" + year;
