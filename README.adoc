@@ -4,15 +4,13 @@
 
 This project is a web app to manage a planning for soccer matches between friends.
 
-...and a opportunity to test a technical stack :-)
 
 == Technical Stack
 
 === BackEnd
 
 * JDK 8
-* https://github.com/CodeStory/fluent-http[fluent-http] as web server
-* http://weld.cdi-spec.org/[weld] as dependency injection framework
+* Spring Boot
 * MongoDB as database with http://mongolink.org/[MongoLink] as object document mapper
 
 === FrontEnd
@@ -29,8 +27,6 @@ image:https://travis-ci.org/binout/soccer-league.svg?branch=master["Build Status
 == Environment Variable
 
 MONGODB_URI:: a uri for a mongo database, if not an im-memory implementation is used (https://github.com/fakemongo/fongo[fongo])
-
-PROD_MODE:: set to true for production mode of fluent-http
 
 SENDGRID_API_KEY:: the api key for https://sendgrid.com/
 
