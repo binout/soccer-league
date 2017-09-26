@@ -7,3 +7,5 @@ app:
     sendgrid:
       url: "https://api.sendgrid.com/v3"
       api-key: ${SENDGRID_API_KEY:}
+server:
+  port: ${PORT:8080}
