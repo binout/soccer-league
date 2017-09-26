@@ -5,6 +5,7 @@ import io.github.binout.soccer.domain.event.LeagueMatchPlanned;
 import io.github.binout.soccer.domain.player.Player;
 import io.github.binout.soccer.domain.player.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,11 @@ import java.util.stream.Collectors;
 @Component
 public class NotificationService {
 
-    private static final String NO_REPLY = "no-reply@pes5.com";
+    @Value("${app.mail.no-reply}")
+    private String noReply;
+
+    @Value("${app.mail.title}")
+    private String title;
 
     private final MailService mailService;
     private final PlayerRepository playerRepository;
@@ -36,18 +41,18 @@ public class NotificationService {
     @EventListener
     public void newLeagueMatchPlanned(LeagueMatchPlanned event){
         String date = DateTimeFormatter.ISO_DATE.format(event.date());
-        sendMail("ASL Soccer 5 League : " + date, date, event.players().collect(Collectors.toList()), event.substitutes().collect(Collectors.toList()));
+        sendMail(title + " League : " + date, date, event.players().collect(Collectors.toList()), event.substitutes().collect(Collectors.toList()));
     }
 
     @EventListener
     public void newFriendlyMatchPlanned(FriendlyMatchPlanned event){
         String date = DateTimeFormatter.ISO_DATE.format(event.date());
-        sendMail("ASL Soccer 5 : " + date, date, event.players().collect(Collectors.toList()), event.substitutes().collect(Collectors.toList()));
+        sendMail(title + " : " + date, date, event.players().collect(Collectors.toList()), event.substitutes().collect(Collectors.toList()));
     }
 
     private void sendMail(String title, String date, List<String> players, List<String> subs) {
         String body = body(date, players, subs);
-        MailService.Mail mail = new MailService.Mail(NO_REPLY, title, body);
+        MailService.Mail mail = new MailService.Mail(noReply, title, body);
         addRecipients(mail, players);
         mailService.sendMail(mail);
     }
@@ -61,7 +66,7 @@ public class NotificationService {
     }
 
     private void addRecipients(MailService.Mail mail, List<String> players) {
-        players.stream().map(p -> playerRepository.byName(p))
+        players.stream().map(playerRepository::byName)
                 .filter(Optional::isPresent).map(Optional::get)
                 .map(Player::email)
                 .filter(Optional::isPresent).map(Optional::get)

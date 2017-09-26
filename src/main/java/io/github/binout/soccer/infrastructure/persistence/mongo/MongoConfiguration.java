@@ -7,17 +7,20 @@ import com.mongodb.client.MongoDatabase;
 import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
 import org.mongolink.domain.mapper.ContextBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.util.StringUtils;
 
 @Configuration
 public class MongoConfiguration {
 
+    @Value("${app.mongodb.uri}")
+    private String uri;
+
     @Bean
     public MongoDatabase database() {
-        String uri = System.getenv("MONGODB_URI");
-        if (uri == null) {
+        if (StringUtils.isEmpty(uri)) {
             Fongo fongo = new Fongo("Dev Server");
             return fongo.getDatabase("dev");
         } else {

@@ -7,14 +7,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 
 @Component
 public class SendGridMailService implements MailService {
 
-    private static final String SENDGRID_API = "https://api.sendgrid.com/v3";
+    @Value("${app.mail.sendgrid.url}")
+    private String sendGridUrl;
+
+    @Value("${app.mail.sendgrid.api-key}")
+    private String sendGridApiKey;
 
     private final LoggerService loggerService;
 
@@ -25,14 +31,13 @@ public class SendGridMailService implements MailService {
 
     @Override
     public void sendMail(Mail email) {
-        String apiKey = System.getenv("SENDGRID_API_KEY");
-        if (apiKey != null) {
+        if (!StringUtils.isEmpty(sendGridApiKey)) {
             if (email.hasRecipients()) {
                 String jsonMail = toSendGridMail(email);
                 try {
                     Feign.builder()
-                            .requestInterceptor(r -> r.header("Authorization", "Bearer " + apiKey))
-                            .target(SendGrid.class, SENDGRID_API)
+                            .requestInterceptor(r -> r.header("Authorization", "Bearer " + sendGridApiKey))
+                            .target(SendGrid.class, sendGridUrl)
                             .sendMail(jsonMail);
                 } catch (Throwable e) {
                     loggerService.log(this.getClass(), "Cannot send mail to sendgrid api : " + jsonMail);
