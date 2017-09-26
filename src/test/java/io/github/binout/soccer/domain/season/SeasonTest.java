@@ -76,7 +76,7 @@ public class SeasonTest {
 
     @Test
     public void compute_season_before_30_september() {
-        assertThat(Season.computeSeason(LocalDate.of(2017, 9, 20))).isEqualTo("2016-2017");
+        assertThat(Season.computeSeason(LocalDate.of(2017, 8, 20))).isEqualTo("2016-2017");
     }
 
     @Test
