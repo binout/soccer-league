@@ -11,8 +11,8 @@ const Players = React.createClass({
     },
 
     renderLine(player) {
-        var playerLeague = player.playerLeague ? <Glyphicon glyph="star"/> : '';
-        var goalkeeper = player.goalkeeper ? <Glyphicon glyph="print"/> : '';
+        const playerLeague = player.playerLeague ? <Glyphicon glyph="star"/> : '';
+        const goalkeeper = player.goalkeeper ? <Glyphicon glyph="print"/> : '';
         return (
                 <tr key={player.name}>
                     <td>{player.name}
@@ -25,9 +25,11 @@ const Players = React.createClass({
     },
 
     render() {
+        const nbLeaguePlayers = this.state.players.filter(p => p.playerLeague).length
         return (
             <div>
-                <h2>Players</h2>
+                <h2>{this.state.players.length} Players </h2>
+                <h3>{nbLeaguePlayers} League Players</h3>
                 <Col md={12}>
                 <Table striped bordered condensed>
                     <thead>
