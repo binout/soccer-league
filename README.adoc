@@ -9,7 +9,7 @@ This project is a web app to manage a planning for soccer matches between friend
 
 === BackEnd
 
-* JDK 10
+* JDK 8
 * Spring Boot 2
 * MongoDB as database with http://mongolink.org/[MongoLink] as object document mapper
 
