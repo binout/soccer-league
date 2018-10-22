@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 @Component
 public class NotificationService {
 
+    @Value("${app.url}")
+    private String url;
+
     @Value("${app.mail.no-reply}")
     private String noReply;
 
@@ -60,6 +63,7 @@ public class NotificationService {
     private String body(String date, List<String> players, List<String> subs) {
         Map<String, Object> params = new HashMap<>();
         params.put("date", date);
+        params.put("url", url);
         params.put("players", players);
         params.put("subs", subs);
         return templateEngine.render("plan-match.ftlh", params);

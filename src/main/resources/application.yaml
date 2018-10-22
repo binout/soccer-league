@@ -1,4 +1,5 @@
 app:
+  url: "https://pes5.cleverapps.io"
   mongodb:
     uri: ${MONGODB_URI:}
   mail:
