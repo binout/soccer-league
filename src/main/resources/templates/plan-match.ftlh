@@ -18,4 +18,4 @@ Remplaçants :
 </#if>
 </p>
 
-<a href="https://pes5.herokuapp.com/">https://pes5.cleverapps.io/</a>
+<a href="https://pes5.cleverapps.io/">https://pes5.cleverapps.io/</a>
