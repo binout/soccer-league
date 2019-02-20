@@ -4,7 +4,6 @@ import io.github.binout.soccer.domain.season.Season;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mongolink.test.MongolinkRule;
 
 import java.util.Optional;
 

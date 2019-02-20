@@ -6,7 +6,6 @@ import io.github.binout.soccer.domain.player.Player;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mongolink.test.MongolinkRule;
 
 import java.time.Month;
 import java.util.Optional;
