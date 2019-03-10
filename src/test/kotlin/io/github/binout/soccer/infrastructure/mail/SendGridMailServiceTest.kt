@@ -1,17 +1,17 @@
-package io.github.binout.soccer.infrastructure.mail;
+package io.github.binout.soccer.infrastructure.mail
 
-import io.github.binout.soccer.domain.notification.MailService;
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import io.github.binout.soccer.domain.notification.MailService
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.Test
 
-public class SendGridMailServiceTest {
+class SendGridMailServiceTest {
 
     @Test
-    public void toSendGridMail() {
-        MailService.Mail test = new MailService.Mail("from@google.fr", "Test", "Hello World");
-        test.addRecipient("to@google.fr");
+    fun toSendGridMail() {
+        val test = MailService.Mail("from@google.fr", "Test", "Hello World")
+        test.addRecipient("to@google.fr")
 
-        String json = SendGridMailService.toSendGridMail(test);
+        val json = SendGridMailService.toSendGridMail(test)
 
         Assertions.assertThat(json).isEqualTo("{" +
                 "\"personalizations\":[" +
@@ -34,7 +34,7 @@ public class SendGridMailServiceTest {
                 "\"value\":\"Hello World\"" +
                 "}" +
                 "]" +
-                "}");
+                "}")
     }
 
 }
