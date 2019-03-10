@@ -86,7 +86,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>run-script dev-build</arguments>
+                            <arguments>run-script prod-build</arguments>
                         </configuration>
                     </execution>
                 </executions>
