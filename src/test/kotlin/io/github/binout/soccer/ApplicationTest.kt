@@ -10,10 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ApplicationTest: WithAssertions {
-
-    @LocalServerPort
-    var port: Int = 0
+class ApplicationTest(@LocalServerPort val port: Int): WithAssertions {
 
     @Test
     fun should_start() {
