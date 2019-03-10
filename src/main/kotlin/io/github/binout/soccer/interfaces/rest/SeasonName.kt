@@ -4,17 +4,9 @@ import io.github.binout.soccer.domain.season.Season
 
 internal class SeasonName(param: String) {
 
-    private val name: String
-
-    init {
-        if ("current" == param) {
-            this.name = Season.currentSeasonName()
-        } else {
-            this.name = param
-        }
+    val name: String = when (param) {
+        "current" -> Season.currentSeasonName()
+        else -> param
     }
 
-    fun name(): String {
-        return name
-    }
 }

@@ -5,41 +5,32 @@ import io.github.binout.soccer.application.player.GetAllPlayers
 import io.github.binout.soccer.application.player.GetPlayer
 import io.github.binout.soccer.application.player.ReplacePlayer
 import io.github.binout.soccer.domain.player.Player
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("rest/players")
-class PlayersResource {
-
-    @Autowired
-    internal var getAllPlayers: GetAllPlayers? = null
-
-    @Autowired
-    internal var getAllLeaguePlayers: GetAllLeaguePlayers? = null
-
-    @Autowired
-    internal var replacePlayer: ReplacePlayer? = null
-
-    @Autowired
-    internal var getPlayer: GetPlayer? = null
+class PlayersResource(
+        val getAllPlayers: GetAllPlayers,
+        val getAllLeaguePlayers: GetAllLeaguePlayers,
+        val replacePlayer: ReplacePlayer,
+        val getPlayer: GetPlayer) {
 
     @GetMapping
-    fun all() : List<RestPlayer> = getAllPlayers!!.execute().map { p -> toRestModel(p) }
+    fun all() : List<RestPlayer> = getAllPlayers.execute().map { p -> toRestModel(p) }
 
     @GetMapping("league")
-    fun allLeague() : List<RestPlayer> = getAllLeaguePlayers!!.execute().map { p -> toRestModel(p) }
+    fun allLeague() : List<RestPlayer> = getAllLeaguePlayers.execute().map { p -> toRestModel(p) }
 
     @PutMapping("{name}")
     fun put(@PathVariable("name") name: String, @RequestBody restPlayer: RestPlayer): ResponseEntity<*> {
-        replacePlayer!!.execute(name, restPlayer.email, restPlayer.isPlayerLeague, restPlayer.isGoalkeeper)
+        replacePlayer.execute(name, restPlayer.email, restPlayer.isPlayerLeague, restPlayer.isGoalkeeper)
         return ResponseEntity.ok().build<Any>()
     }
 
     @GetMapping("{name}")
     fun get(name: String): ResponseEntity<*> {
-        return getPlayer!!.execute(name)
+        return getPlayer.execute(name)
                 .map { toRestModel(it) }
                 .map { ResponseEntity.ok(it) }
                 .orElse(ResponseEntity.notFound().build())
