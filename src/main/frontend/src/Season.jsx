@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
-import {Button,Glyphicon,Label,Row,Col,Tabs,Tab,Table} from 'react-bootstrap';
+import {Button,Glyphicon,Row,Col,Tabs,Tab,Table} from 'react-bootstrap';
 
 var moment = require('moment');
 
@@ -19,25 +19,39 @@ const Season = React.createClass({
         }
     },
 
-    componentDidMount() {
-        $.get('/rest/seasons/current').done(data => this.setState({season : data}));
+    async fetchData(url){
+        const response = await fetch(url);
+        const data = await response.json();
+        return data;
+    },
+
+    async componentDidMount() {
+        const data = await this.fetchData('/rest/seasons/current');
+        this.setState({season : data});
         this.fetchFriendlyMatchStates();
         this.fetchLeagueMatchStates();
         this.fetchStats();
     },
 
-    fetchStats() {
-        $.get('/rest/seasons/current/stats').done(data => this.setState({stats : data}));
+    async fetchStats() {
+        const stats = await this.fetchData('/rest/seasons/current/stats');
+        this.setState({stats});
     },
 
-    fetchFriendlyMatchStates() {
-        $.get('/rest/seasons/current/matches/friendly/next').done(data => this.setState({friendlyMatches : data}));
-        $.get('/rest/seasons/current/matches/friendly/to-plan').done(data => this.setState({friendlyMatchesToPlan : data}));
+    async fetchFriendlyMatchStates() {
+        const friendlyMatches = await this.fetchData('/rest/seasons/current/matches/friendly/next');
+        const friendlyMatchesToPlan = await this.fetchData('/rest/seasons/current/matches/friendly/to-plan');
+        this.setState({
+            friendlyMatches, friendlyMatchesToPlan
+        })
     },
 
-    fetchLeagueMatchStates() {
-        $.get('/rest/seasons/current/matches/league/next').done(data => this.setState({leagueMatches : data}));
-        $.get('/rest/seasons/current/matches/league/to-plan').done(data => this.setState({leagueMatchesToPlan : data}));
+    async fetchLeagueMatchStates() {
+        const leagueMatches = await fetchData('/rest/seasons/current/matches/league/next');
+        const leagueMatchesToPlan = await fetchData('/rest/seasons/current/matches/league/to-plan');
+        this.setState({
+            leagueMatches, leagueMatchesToPlan
+        })
     },
 
     renderPlayer(match, player, substituteHandler) {
@@ -82,13 +96,18 @@ const Season = React.createClass({
         }).done(data => {this.fetchFriendlyMatchStates();this.fetchStats()});
     },
 
-    handleFriendlyPlan(date) {
-        $.ajax({
-            url: '/rest/seasons/current/matches/friendly/' + date,
-            type: 'PUT',
+    async handleFriendlyPlan(date) {
+        const url = `/rest/seasons/current/matches/friendly/${date}`;
+        const params = {
+            method: 'PUT',
             contentType : 'application/json',
             data : {}
-        }).done(data => {this.fetchFriendlyMatchStates();this.fetchStats()});
+        }
+        const response = await fetch(url,params);
+        if(response.ok){
+            this.fetchFriendlyMatchStates();
+            this.fetchStats()
+        }
     },
 
     handleLeagueSubstitute(date, player) {
@@ -101,12 +120,17 @@ const Season = React.createClass({
     },
 
     handleLeaguePlan(date) {
-        $.ajax({
-            url: '/rest/seasons/current/matches/league/' + date,
-            type: 'PUT',
+        const url = `/rest/seasons/current/matches/league/${date}`;
+        const params = {
+            method: 'PUT',
             contentType : 'application/json',
             data : {}
-        }).done(data => {this.fetchLeagueMatchStates();this.fetchStats()});
+        }
+        const response = await fetch(url,params);
+        if(response.ok){
+            this.fetchFriendlyMatchStates();
+            this.fetchStats()
+        }
     },
 
     renderMatchToPlan(matchDate, planHanlder) {
