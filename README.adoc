@@ -24,6 +24,13 @@ This project is a web app to manage a planning for soccer matches between friend
 
 image:https://travis-ci.org/binout/soccer-league.svg?branch=master["Build Status", link="https://travis-ci.org/binout/soccer-league"]
 
+=== Dev Mode
+
+* Run server from IDE (Intellij)
+* Run npm in watch mode : `npm run watch`
+** Every time a jsx file is modified, bundle is rebuilt in `target folder`
+** Every time `target` folder is modified, server reloads static files
+
 == Environment Variable
 
 MONGODB_URI:: a uri for a mongo database, if not an im-memory implementation is used (https://github.com/fakemongo/fongo[fongo])
@@ -32,4 +39,4 @@ SENDGRID_API_KEY:: the api key for https://sendgrid.com/
 
 == Demo
 
-On Heroku:: https://pes5.herokuapp.com/
+On Heroku:: https://pes5.cleverapps.io/
