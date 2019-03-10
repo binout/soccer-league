@@ -31,6 +31,8 @@ image:https://travis-ci.org/binout/soccer-league.svg?branch=master["Build Status
 ** Every time a jsx file is modified, bundle is rebuilt in `target folder`
 ** Every time `target` folder is modified, server reloads static files
 
+TIP: you can inject test data with `npm run inject-data`
+
 == Environment Variable
 
 MONGODB_URI:: a uri for a mongo database, if not an im-memory implementation is used (https://github.com/fakemongo/fongo[fongo])

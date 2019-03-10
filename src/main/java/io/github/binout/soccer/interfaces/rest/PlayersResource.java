@@ -41,7 +41,7 @@ public class PlayersResource {
     }
 
     @PutMapping("{name}")
-    public ResponseEntity put(@PathVariable("name") String name, RestPlayer restPlayer) {
+    public ResponseEntity put(@PathVariable("name") String name, @RequestBody RestPlayer restPlayer) {
         replacePlayer.execute(name, restPlayer.getEmail(), restPlayer.isPlayerLeague(), restPlayer.isGoalkeeper());
         return ResponseEntity.ok().build();
     }
