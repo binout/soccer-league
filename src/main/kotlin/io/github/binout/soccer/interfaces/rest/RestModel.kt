@@ -1,158 +1,68 @@
 package io.github.binout.soccer.interfaces.rest
 
-import java.net.URI
+import io.github.binout.soccer.domain.date.MatchDate
+import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.season.Season
+import io.github.binout.soccer.domain.season.SeasonStatistics
 import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoField
-import java.util.ArrayList
 
-open class RestModel {
-
-    private val links: MutableList<RestLink>
-
-    init {
-        links = ArrayList()
-    }
-
-    fun getLinks(): List<RestLink> {
-        return links
-    }
-
-    fun addLinks(link: RestLink) {
-        this.links.add(link)
-    }
+data class RestDate(val year: Int, val month: Month, val day: Int) {
+    fun asLocalDate(): LocalDate = LocalDate.of(year, month, day)
 }
 
-class RestLink internal constructor() {
-
-    var rel: String? = null
-    var href: String? = null
-
-    constructor(rel: String, href: String) : this() {
-        this.rel = rel
-        this.href = href
-    }
-
-    constructor(href: String) : this("self", href) {}
-
-    constructor(uri: URI) : this("self", uri.toString()) {}
+fun String.toRestDate(): RestDate  {
+    val accessor = DateTimeFormatter.ISO_LOCAL_DATE.parse(this)
+    return RestDate(
+            year = accessor.get(ChronoField.YEAR),
+            month = Month.of(accessor.get(ChronoField.MONTH_OF_YEAR)),
+            day = accessor.get(ChronoField.DAY_OF_MONTH))
 }
 
-class RestDate(date: String) {
+data class RestMatch(
+        var date: String,
+        var players: MutableList<String> = mutableListOf(),
+        var subs: MutableList<String> = mutableListOf())
 
-    private val year: Int
-    private val month: Month
-    private val day: Int
+fun LocalDate.toRestMatch() = RestMatch(DateTimeFormatter.ISO_DATE.format(this))
 
-    init {
-        val accessor = DateTimeFormatter.ISO_LOCAL_DATE.parse(date)
-        year = accessor.get(ChronoField.YEAR)
-        month = Month.of(accessor.get(ChronoField.MONTH_OF_YEAR))
-        day = accessor.get(ChronoField.DAY_OF_MONTH)
-    }
 
-    fun year(): Int {
-        return year
-    }
+data class RestMatchDate(
+        var date: String,
+        var presents: MutableList<String> = mutableListOf(),
+        var isCanBePlanned: Boolean = false)
 
-    fun month(): Month {
-        return month
-    }
+fun LocalDate.toRestMatchDate() = RestMatchDate(DateTimeFormatter.ISO_DATE.format(this))
 
-    fun day(): Int {
-        return day
-    }
-
-    fun asLocalDate(): LocalDate {
-        return LocalDate.of(year(), month(), day())
-    }
+fun MatchDate.toRestModel(): RestMatchDate {
+    val restMatchDate = date().toRestMatchDate()
+    presents().forEach { restMatchDate.presents.add(it) }
+    restMatchDate.isCanBePlanned = canBePlanned()
+    return restMatchDate
 }
 
-class RestMatch internal constructor() : RestModel() {
+data class RestPlayer(
+        var name: String,
+        var email: String? = null,
+        var isPlayerLeague: Boolean = false,
+        var isGoalkeeper: Boolean = false)
 
-    var date: String? = null
-    private val players: MutableList<String>
-    private val subs: MutableList<String>
+fun Player.toRestModel() = RestPlayer(name(), email().orElse(null), isPlayerLeague, isGoalkeeper)
 
-    init {
-        players = ArrayList()
-        subs = ArrayList()
-    }
+data class RestSeason(var name: String)
 
-    constructor(date: LocalDate) : this() {
-        this.date = DateTimeFormatter.ISO_DATE.format(date)
-    }
+fun Season.toRestModel() = RestSeason(name())
 
-    fun getPlayers(): List<String> {
-        return players
-    }
+data class RestStat(
+        var player: String,
+        var nbMatches: Int = 0,
+        var nbFriendlyMatches: Int = 0,
+        var nbLeagueMatches: Int = 0)
 
-    fun addPlayer(player: String) {
-        this.players.add(player)
-    }
-
-    fun getSubs(): List<String> {
-        return subs
-    }
-
-    fun addSub(player: String) {
-        this.subs.add(player)
-    }
-}
-
-class RestMatchDate internal constructor() : RestModel() {
-
-    var date: String? = null
-    private val presents: MutableList<String>
-    var isCanBePlanned: Boolean = false
-
-    init {
-        presents = ArrayList()
-    }
-
-    constructor(date: LocalDate) : this() {
-        this.date = DateTimeFormatter.ISO_DATE.format(date)
-    }
-
-    fun getPresents(): List<String> {
-        return presents
-    }
-
-    fun addPresent(player: String) {
-        this.presents.add(player)
-    }
-}
-
-class RestPlayer internal constructor() : RestModel() {
-
-    var name: String? = null
-    var email: String? = null
-    var isPlayerLeague: Boolean? = null
-    var isGoalkeeper: Boolean? = null
-
-    constructor(name: String) : this() {
-        this.name = name
-    }
-}
-
-class RestSeason internal constructor() : RestModel() {
-
-    var name: String? = null
-
-    constructor(name: String) : this() {
-        this.name = name
-    }
-}
-
-class RestStat internal constructor() {
-
-    var player: String? = null
-    var nbMatches: Int = 0
-    var nbFriendlyMatches: Int = 0
-    var nbLeagueMatches: Int = 0
-
-    constructor(player: String) : this() {
-        this.player = player
-    }
-}
+fun SeasonStatistics.toRestStat(p: Player): RestStat = RestStat(
+        player = p.name(),
+        nbFriendlyMatches = friendlyMatchPlayed(p),
+        nbLeagueMatches = leagueMatchPlayed(p),
+        nbMatches = matchPlayed(p))

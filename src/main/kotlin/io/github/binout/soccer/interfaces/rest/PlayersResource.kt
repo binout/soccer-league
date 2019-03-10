@@ -4,7 +4,6 @@ import io.github.binout.soccer.application.player.GetAllLeaguePlayers
 import io.github.binout.soccer.application.player.GetAllPlayers
 import io.github.binout.soccer.application.player.GetPlayer
 import io.github.binout.soccer.application.player.ReplacePlayer
-import io.github.binout.soccer.domain.player.Player
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -17,10 +16,10 @@ class PlayersResource(
         val getPlayer: GetPlayer) {
 
     @GetMapping
-    fun all() : List<RestPlayer> = getAllPlayers.execute().map { p -> toRestModel(p) }
+    fun all() : List<RestPlayer> = getAllPlayers.execute().map { it.toRestModel() }
 
     @GetMapping("league")
-    fun allLeague() : List<RestPlayer> = getAllLeaguePlayers.execute().map { p -> toRestModel(p) }
+    fun allLeague() : List<RestPlayer> = getAllLeaguePlayers.execute().map { it.toRestModel() }
 
     @PutMapping("{name}")
     fun put(@PathVariable("name") name: String, @RequestBody restPlayer: RestPlayer): ResponseEntity<*> {
@@ -31,17 +30,9 @@ class PlayersResource(
     @GetMapping("{name}")
     fun get(name: String): ResponseEntity<*> {
         return getPlayer.execute(name)
-                .map { toRestModel(it) }
+                .map { it.toRestModel() }
                 .map { ResponseEntity.ok(it) }
                 .orElse(ResponseEntity.notFound().build())
-    }
-
-    private fun toRestModel(p: Player): RestPlayer {
-        val restPlayer = RestPlayer(p.name())
-        restPlayer.isPlayerLeague = p.isPlayerLeague
-        restPlayer.isGoalkeeper = p.isGoalkeeper
-        p.email().ifPresent { restPlayer.email = it }
-        return restPlayer
     }
 
 }

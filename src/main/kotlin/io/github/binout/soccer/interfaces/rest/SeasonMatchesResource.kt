@@ -30,8 +30,8 @@ class SeasonMatchesResource(
     @PutMapping("friendly/{dateParam}")
     fun putFriendlyMatch(@PathVariable("name") name: String, @PathVariable("dateParam") dateParam: String): ResponseEntity<*> {
         val seasonName = SeasonName(name).name
-        val date = RestDate(dateParam)
-        addFriendlyMatch.execute(seasonName, date.year(), date.month(), date.day())
+        val date = dateParam.toRestDate()
+        addFriendlyMatch.execute(seasonName, date.year, date.month, date.day)
         return ResponseEntity.ok().build<Any>()
     }
 
@@ -45,14 +45,13 @@ class SeasonMatchesResource(
     fun friendlyToPlan(@PathVariable("name") name: String): ResponseEntity<*> {
         val seasonName = SeasonName(name).name
         return ResponseEntity.ok(getToPlanFriendlyMatches.execute(seasonName)
-                .map { it.date() }
-                .map { RestMatch(it) })
+                .map { it.date().toRestMatch() })
     }
 
     @DeleteMapping("friendly/{dateParam}/players/{playerName}")
     fun susbstitutePlayerFriendly(@PathVariable("name") name: String, @PathVariable("dateParam") dateParam: String, @PathVariable("playerName") playerName: String): ResponseEntity<*> {
         val seasonName = SeasonName(name).name
-        val date = RestDate(dateParam)
+        val date = dateParam.toRestDate()
         substitutePlayerInFriendlyMatches.execute(seasonName, date.asLocalDate(), playerName)
         return ResponseEntity.ok().build<Any>()
     }
@@ -67,8 +66,8 @@ class SeasonMatchesResource(
     @PutMapping("league/{dateParam}")
     fun putLeagueMatch(@PathVariable("name") name: String, @PathVariable("dateParam") dateParam: String): ResponseEntity<*> {
         val seasonName = SeasonName(name).name
-        val date = RestDate(dateParam)
-        addLeagueMatch.execute(seasonName, date.year(), date.month(), date.day())
+        val date = dateParam.toRestDate()
+        addLeagueMatch.execute(seasonName, date.year, date.month, date.day)
         return ResponseEntity.ok().build<Any>()
     }
 
@@ -82,23 +81,21 @@ class SeasonMatchesResource(
     fun leagueToPlan(@PathVariable("name") name: String): ResponseEntity<*> {
         val seasonName = SeasonName(name).name
         return ResponseEntity.ok(getToPlanLeagueMatches.execute(seasonName).stream()
-                .map { it.date() }
-                .map { RestMatch(it) })
+                .map { it.date().toRestMatch() })
     }
 
     @DeleteMapping("league/{dateParam}/players/{playerName}")
     fun susbstitutePlayerLeague(@PathVariable("name") name: String, @PathVariable("dateParam") dateParam: String, @PathVariable("playerName") playerName: String): ResponseEntity<*> {
         val seasonName = SeasonName(name).name
-        val date = RestDate(dateParam)
+        val date = dateParam.toRestDate()
         substitutePlayerInLeagueMatches.execute(seasonName, date.asLocalDate(), playerName)
         return ResponseEntity.ok().build<Any>()
     }
 
-
     private fun toRestMatch(m: Tuple2<out Match, List<Player>>): RestMatch {
-        val restMatch = RestMatch(m._1.date())
-        m._1.players().forEach { restMatch.addPlayer(it) }
-        m._2.stream().map { it.name() }.forEach { restMatch.addSub(it) }
+        val restMatch = m._1.date().toRestMatch()
+        m._1.players().forEach { restMatch.players.add(it) }
+        m._2.stream().map { it.name() }.forEach { restMatch.subs.add(it) }
         return restMatch
     }
 }

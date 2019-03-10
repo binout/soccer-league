@@ -5,8 +5,6 @@ import io.github.binout.soccer.application.season.AddSeason
 import io.github.binout.soccer.application.season.GetAllSeasons
 import io.github.binout.soccer.application.season.GetSeason
 import io.github.binout.soccer.application.season.GetSeasonStats
-import io.github.binout.soccer.domain.player.Player
-import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.domain.season.SeasonStatistics
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,7 +19,7 @@ class SeasonsResource (
         val getAllPlayers: GetAllPlayers) {
 
     @GetMapping
-    fun all(): List<RestSeason> = getAllSeasons.execute().map { s -> toRestModel(s) }
+    fun all(): List<RestSeason> = getAllSeasons.execute().map { it.toRestModel() }
 
     @PutMapping("{name}")
     fun put(@PathVariable("name") name: String): ResponseEntity<*> {
@@ -31,10 +29,10 @@ class SeasonsResource (
     }
 
     @GetMapping("{name}")
-    operator fun get(@PathVariable("name") name: String): ResponseEntity<*> {
+    fun get(@PathVariable("name") name: String): ResponseEntity<*> {
         val seasonName = SeasonName(name).name
         return getSeason.execute(seasonName)
-                .map { s -> RestSeason(s.name()) }
+                .map { RestSeason(it.name()) }
                 .map { ResponseEntity.ok(it) }
                 .orElse(ResponseEntity.notFound().build())
     }
@@ -43,29 +41,15 @@ class SeasonsResource (
     fun stats(@PathVariable("name") name: String): ResponseEntity<*> {
         val seasonName = SeasonName(name).name
         return getSeasonStats.execute(seasonName)
-                .map { this.toRestStatList(it) }
+                .map { toRestStatList(it) }
                 .map { ResponseEntity.ok(it) }
                 .orElse(ResponseEntity.notFound().build())
     }
 
     private fun toRestStatList(s: SeasonStatistics): List<RestStat> {
         return getAllPlayers.execute()
-                .map { p -> toRestStat(s, p) }
+                .map { s.toRestStat(it) }
                 .sortedByDescending { it.nbMatches }
-    }
-
-    private fun toRestStat(s: SeasonStatistics, p: Player): RestStat {
-        val restStat = RestStat(p.name())
-        restStat.nbFriendlyMatches = s.friendlyMatchPlayed(p)
-        restStat.nbLeagueMatches = s.leagueMatchPlayed(p)
-        restStat.nbMatches = s.matchPlayed(p)
-        return restStat
-    }
-
-    private fun toRestModel(s: Season): RestSeason {
-        val restSeason = RestSeason(s.name())
-        //restSeason.addLinks(new RestLink(baseUri + "/" + s.name()));
-        return restSeason
     }
 
 }
