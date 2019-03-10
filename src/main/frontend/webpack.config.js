@@ -1,25 +1,29 @@
 var webpack = require('webpack');
 var path = require('path');
-require( 'es6-promise' ).polyfill()
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+require( "@babel/polyfill")
+var ExtractTextPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    entry: "./src/index.js",
+    entry: ["@babel/polyfill", "./src/index.js"],
     output: {
-        path: '../../../target/classes/public',
+        path: path.resolve(__dirname, '../../../target/classes/public'),
         filename: "bundle.js"
     },
     module: {
-        loaders: [
+        rules: [
             { test: /\.css$/, loader: "style-loader!css-loader" },
             {
                 test: /\.jsx?$/,
+                exclude: /node_module/,
                 include: [
                     path.resolve(__dirname, "./src")
                 ],
-                loader: 'babel',
-                query: {
-                    presets: ['es2015', 'react']
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ["@babel/preset-env", "@babel/preset-react"]
+
+                    }
                 }
             }
         ]

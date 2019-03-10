@@ -1,6 +1,5 @@
-import $ from 'jquery';
 import React from 'react';
-import {Table,Button,Panel,Col,Glyphicon } from 'react-bootstrap';
+import {Table,Col,Glyphicon } from 'react-bootstrap';
 
 const Players = React.createClass({
 
@@ -49,8 +48,10 @@ const Players = React.createClass({
         );
     },
 
-    fetchState() {
-        $.get('/rest/players').done(data => this.setState({players : data}));
+    async fetchState() {
+        const response = await fetch('/rest/players');
+        const players = await response.json();
+        this.setState({players})
     },
 
     componentDidMount() {
