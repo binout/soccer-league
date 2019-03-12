@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import React from 'react';
 import {Button,Glyphicon,Row,Col,Tabs,Tab,Table} from 'react-bootstrap';
 
@@ -19,18 +18,18 @@ const Season = React.createClass({
         }
     },
 
-    async fetchData(url){
-        const response = await fetch(url);
-        const data = await response.json();
-        return data;
-    },
-
     async componentDidMount() {
         const data = await this.fetchData('/rest/seasons/current');
         this.setState({season : data});
         this.fetchFriendlyMatchStates();
         this.fetchLeagueMatchStates();
         this.fetchStats();
+    },
+
+    async fetchData(url){
+        const response = await fetch(url);
+        const data = await response.json();
+        return data;
     },
 
     async fetchStats() {
@@ -47,8 +46,8 @@ const Season = React.createClass({
     },
 
     async fetchLeagueMatchStates() {
-        const leagueMatches = await fetchData('/rest/seasons/current/matches/league/next');
-        const leagueMatchesToPlan = await fetchData('/rest/seasons/current/matches/league/to-plan');
+        const leagueMatches = await this.fetchData('/rest/seasons/current/matches/league/next');
+        const leagueMatchesToPlan = await this.fetchData('/rest/seasons/current/matches/league/to-plan');
         this.setState({
             leagueMatches, leagueMatchesToPlan
         })
@@ -87,13 +86,18 @@ const Season = React.createClass({
             </div>);
     },
 
-    handleFriendlySubstitute(date, player) {
-        $.ajax({
-            url: '/rest/seasons/current/matches/friendly/' + date + '/players/' + player,
-            type: 'DELETE',
+    async handleFriendlySubstitute(date, player) {
+        const url = `/rest/seasons/current/matches/friendly/${date}/players/${player}`;
+        const params = {
+            method: 'DELETE',
             contentType : 'application/json',
             data : {}
-        }).done(data => {this.fetchFriendlyMatchStates();this.fetchStats()});
+        }
+        const response = await fetch(url, params);
+        if(response.ok){
+            this.fetchFriendlyMatchStates();
+            this.fetchStats()
+        }
     },
 
     async handleFriendlyPlan(date) {
@@ -103,32 +107,37 @@ const Season = React.createClass({
             contentType : 'application/json',
             data : {}
         }
-        const response = await fetch(url,params);
+        const response = await fetch(url, params)
         if(response.ok){
             this.fetchFriendlyMatchStates();
             this.fetchStats()
         }
     },
 
-    handleLeagueSubstitute(date, player) {
-        $.ajax({
-            url: '/rest/seasons/current/matches/league/' + date + '/players/' + player,
-            type: 'DELETE',
+    async handleLeagueSubstitute(date, player) {
+        const url = `/rest/seasons/current/matches/league/${date}/players/${player}`;
+        const params = {
+            method: 'DELETE',
             contentType : 'application/json',
             data : {}
-        }).done(data => {this.fetchLeagueMatchStates();this.fetchStats()});
+        }
+        const response = await fetch(url, params);
+        if(response.ok){
+            this.fetchLeagueMatchStates();
+            this.fetchStats()
+        }
     },
 
-    handleLeaguePlan(date) {
+    async handleLeaguePlan(date) {
         const url = `/rest/seasons/current/matches/league/${date}`;
         const params = {
             method: 'PUT',
             contentType : 'application/json',
             data : {}
         }
-        const response = await fetch(url,params);
+        const response = await fetch(url, params);
         if(response.ok){
-            this.fetchFriendlyMatchStates();
+            this.fetchLeagueMatchStates();
             this.fetchStats()
         }
     },

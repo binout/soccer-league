@@ -1,6 +1,5 @@
-import $ from 'jquery';
 import React from 'react';
-import {Table,Tabs,Tab} from 'react-bootstrap';
+import {Tabs,Tab} from 'react-bootstrap';
 
 import PlayersAgenda from './PlayersAgenda.jsx';
 
@@ -15,77 +14,82 @@ const Agenda = React.createClass({
         }
     },
 
-    componentDidMount() {
-        $.get('/rest/players').done(data => this.setState({players : data}));
+    async fetchData(url){
+        const response = await fetch(url);
+        const data = await response.json();
+        return data;
+    },
+
+    async componentDidMount() {
+        const players = await this.fetchData('/rest/players');
+        const leaguePlayers = await this.fetchData('/rest/players/league');
+        this.setState({players, leaguePlayers});
         this.fetchFriendlyMatchState();
-        $.get('/rest/players/league').done(data => this.setState({leaguePlayers : data}));
         this.fetchLeagueMatchState();
     },
 
     //// LeagueMatch
-    fetchLeagueMatchState() {
-        $.get('/rest/match-dates/league/next').done(data => this.setState({leagueMatchDates : data}));
-    },
-
-    handleNewLeagueMatch(date) {
-        const newMatchDate = date.format('YYYY-MM-DD');
-        $.ajax({
-            url: '/rest/match-dates/league/' + newMatchDate,
-            type: 'PUT',
-            contentType : 'application/json',
-            data : {}
-        }).done(data => this.fetchLeagueMatchState());
-    },
-
-    handleLeagueMatchPresent(date, player) {
-        $.ajax({
-            url: '/rest/match-dates/league/' + date + '/players/' + player,
-            type: 'PUT',
-            contentType : 'application/json',
-            data : {}
-        }).done(data => this.fetchLeagueMatchState());
-    },
-
-    handleLeagueMatchAbsent(date, player) {
-        $.ajax({
-            url: '/rest/match-dates/league/' + date + '/players/' + player,
-            type: 'DELETE',
-            contentType : 'application/json',
-            data : {}
-        }).done(data => this.fetchLeagueMatchState());
+    async fetchLeagueMatchState() {
+        const leagueMatchDates = await this.fetchData('/rest/match-dates/league/next');
+        this.setState({leagueMatchDates})
     },
 
     //// FriendlyMatch
-    fetchFriendlyMatchState() {
-        $.get('/rest/match-dates/friendly/next').done(data => this.setState({friendlyMatchDates : data}));
+    async fetchFriendlyMatchState() {
+        const friendlyMatchDates = await this.fetchData('/rest/match-dates/friendly/next');
+        this.setState({friendlyMatchDates});
     },
 
-    handleNewFriendlyMatch(date) {
+    async handleNewMatch(date, matchType) {
         const newMatchDate = date.format('YYYY-MM-DD');
-        $.ajax({
-            url: '/rest/match-dates/friendly/' + newMatchDate,
-            type: 'PUT',
+        const url = `/rest/match-dates/${matchType}/${newMatchDate}`;
+        const params = {
+            method: 'PUT',
             contentType : 'application/json',
             data : {}
-        }).done(data => this.fetchFriendlyMatchState());
+        }
+        const response = await fetch(url, params);
+        if(response.ok){
+            if(matchType === 'league'){
+                this.fetchLeagueMatchState()
+            }else {
+                this.fetchFriendlyMatchState()
+            }
+        }
     },
 
-    handleFriendlyMatchPresent(date, player) {
-        $.ajax({
-            url: '/rest/match-dates/friendly/' + date + '/players/' + player,
-            type: 'PUT',
+    async handleMatchPresent(matchType, date, player) {
+        const url = `/rest/match-dates/${matchType}/${date}/players/${player}`;
+        const params = {
+            method: 'PUT',
             contentType : 'application/json',
             data : {}
-        }).done(data => this.fetchFriendlyMatchState());
+        }
+        const response = await fetch(url, params);
+        if(response.ok){
+            if(matchType === 'league'){
+                this.fetchLeagueMatchState();
+            }else{
+                this.fetchFriendlyMatchState();
+            }
+        }
     },
 
-    handleFriendlyMatchAbsent(date, player) {
-        $.ajax({
-            url: '/rest/match-dates/friendly/' + date + '/players/' + player,
-            type: 'DELETE',
+    async handleMatchAbsent(matchType, date, player) {
+        const url = `/rest/match-dates/${matchType}/${date}/players/${player}`;
+        const params = {
+            method: 'DELETE',
             contentType : 'application/json',
             data : {}
-        }).done(data => this.fetchFriendlyMatchState());
+        }
+        const response = await fetch(url, params);
+        if(response.ok){
+            if(matchType === 'league'){
+                this.fetchLeagueMatchState();
+            }else{
+                this.fetchFriendlyMatchState();
+            }
+        }
     },
 
     render() {
@@ -96,18 +100,18 @@ const Agenda = React.createClass({
                     <PlayersAgenda
                         players={this.state.players}
                         matchDates={this.state.friendlyMatchDates}
-                        matchDateHandler={this.handleNewFriendlyMatch}
-                        presentHandler={this.handleFriendlyMatchPresent}
-                        absentHandler={this.handleFriendlyMatchAbsent}
+                        matchDateHandler={date => this.handleNewMatch(date, 'friendly')}
+                        presentHandler={(date, player) => this.handleMatchPresent('friendly', date, player)}
+                        absentHandler={(date, player) => this.handleMatchAbsent('friendly', date, player)}
                     />
                 </Tab>
                 <Tab eventKey={2} title="League">
                     <PlayersAgenda
                         players={this.state.leaguePlayers}
                         matchDates={this.state.leagueMatchDates}
-                        matchDateHandler={this.handleNewLeagueMatch}
-                        presentHandler={this.handleLeagueMatchPresent}
-                        absentHandler={this.handleLeagueMatchAbsent}
+                        matchDateHandler={date => this.handleNewMatch(date, 'league')}
+                        presentHandler={(date, player) => this.handleMatchPresent('league', date, player)}
+                        absentHandler={(date, player) => this.handleMatchAbsent('league', date, player)}
                     />
                 </Tab>
             </Tabs>
