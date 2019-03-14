@@ -1,3 +1,18 @@
+/*
+ * Copyright 2016 Benoît Prioux
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.binout.soccer.interfaces.rest
 
 import io.github.binout.soccer.domain.date.MatchDate
@@ -37,7 +52,7 @@ data class RestMatchDate(
 fun LocalDate.toRestMatchDate() = RestMatchDate(DateTimeFormatter.ISO_DATE.format(this))
 
 fun MatchDate.toRestModel(): RestMatchDate {
-    val restMatchDate = date().toRestMatchDate()
+    val restMatchDate = date.toRestMatchDate()
     presents().forEach { restMatchDate.presents.add(it) }
     restMatchDate.isCanBePlanned = canBePlanned()
     return restMatchDate
@@ -49,11 +64,11 @@ data class RestPlayer(
         var isPlayerLeague: Boolean = false,
         var isGoalkeeper: Boolean = false)
 
-fun Player.toRestModel() = RestPlayer(name(), email().orElse(null), isPlayerLeague, isGoalkeeper)
+fun Player.toRestModel() = RestPlayer(name, email, isPlayerLeague, isGoalkeeper)
 
 data class RestSeason(var name: String)
 
-fun Season.toRestModel() = RestSeason(name())
+fun Season.toRestModel() = RestSeason(name)
 
 data class RestStat(
         var player: String,
@@ -62,7 +77,7 @@ data class RestStat(
         var nbLeagueMatches: Int = 0)
 
 fun SeasonStatistics.toRestStat(p: Player): RestStat = RestStat(
-        player = p.name(),
+        player = p.name,
         nbFriendlyMatches = friendlyMatchPlayed(p),
         nbLeagueMatches = leagueMatchPlayed(p),
         nbMatches = matchPlayed(p))
