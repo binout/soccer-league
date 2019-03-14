@@ -24,7 +24,7 @@ import java.util.Objects
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
-class FriendlyMatch(matchDate: FriendlyMatchDate, players: Set<Player>) : Match {
+open class FriendlyMatch(matchDate: FriendlyMatchDate, players: Set<Player>) : Match {
 
     companion object {
         const val MAX_PLAYERS = 10

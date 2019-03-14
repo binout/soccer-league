@@ -23,10 +23,10 @@ class MongoSeasonRepositoryTest {
         repository.session().flush()
 
         val season = repository.byName("2016")
-        assertThat(season).isPresent
-        assertThat(season.get().id()).isNotNull()
-        assertThat(season.get().friendlyMatches().count()).isZero()
-        assertThat(season.get().leagueMatches().count()).isZero()
+        assertThat(season).isNotNull
+        assertThat(season!!.id).isNotNull()
+        assertThat(season.friendlyMatches()).isEmpty()
+        assertThat(season.leagueMatches()).isEmpty()
     }
 
 }

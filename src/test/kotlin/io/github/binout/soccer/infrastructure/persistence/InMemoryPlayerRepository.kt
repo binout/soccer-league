@@ -10,11 +10,7 @@ import java.util.stream.Stream
 
 class InMemoryPlayerRepository : PlayerRepository {
 
-    private val players: MutableMap<String, Player>
-
-    init {
-        players = ConcurrentHashMap()
-    }
+    private val players: MutableMap<String, Player> = ConcurrentHashMap()
 
     override fun add(player: Player) {
         players[player.name] = player

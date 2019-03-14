@@ -27,9 +27,9 @@ class MongoLeagueMatchDateRepositoryTest {
         repository.session().flush()
 
         val matchDate = repository.byDate(2016, Month.APRIL, 1)
-        assertThat(matchDate).isPresent
-        assertThat(matchDate.get().id()).isNotNull()
-        assertThat(matchDate.get().presents().count()).isZero()
+        assertThat(matchDate).isNotNull
+        assertThat(matchDate!!.id).isNotNull()
+        assertThat(matchDate.presents().count()).isZero()
     }
 
     @Test
@@ -44,9 +44,8 @@ class MongoLeagueMatchDateRepositoryTest {
         repository.session().flush()
 
         val matchDate = repository.byDate(2016, Month.APRIL, 1)
-        assertThat(matchDate).isPresent
-        assertThat(matchDate.get().id()).isNotNull()
-        assertThat(matchDate.get().presents().count()).isEqualTo(1)
-        assertThat(matchDate.get().presents().findFirst().get()).isEqualTo("benoit")
+        assertThat(matchDate).isNotNull
+        assertThat(matchDate!!.id).isNotNull()
+        assertThat(matchDate.presents()).containsOnly("benoit")
     }
 }

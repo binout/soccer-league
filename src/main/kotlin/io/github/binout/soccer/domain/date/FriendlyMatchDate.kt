@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.Month
 import java.util.*
 
-class FriendlyMatchDate(override val date: LocalDate) : MatchDate {
+open class FriendlyMatchDate(override val date: LocalDate) : MatchDate {
 
     val id: String = UUID.randomUUID().toString()
     private val presents: MutableSet<String> = mutableSetOf()
