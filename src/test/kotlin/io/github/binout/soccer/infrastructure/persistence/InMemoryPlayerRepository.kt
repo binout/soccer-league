@@ -17,14 +17,10 @@ class InMemoryPlayerRepository : PlayerRepository {
     }
 
     override fun add(player: Player) {
-        players[player.name()] = player
+        players[player.name] = player
     }
 
-    override fun all(): Stream<Player> {
-        return players.values.stream().sorted(Comparator.comparing<Player, String> { it.name() })
-    }
+    override fun all(): List<Player> = players.values.sortedBy { it.name }
 
-    override fun byName(name: String): Optional<Player> {
-        return Optional.ofNullable(players[name])
-    }
+    override fun byName(name: String): Player? = players[name]
 }

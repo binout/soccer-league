@@ -31,7 +31,7 @@ class SeasonTest {
 
         val stats = season.statistics()
 
-        assertThat(stats.nbPlayers()).isEqualTo(5)
+        assertThat(stats.nbPlayers).isEqualTo(5)
         assertThat(stats.matchPlayed(Player("benoit"))).isEqualTo(1)
         assertThat(stats.matchPlayed(Player("nicolas"))).isEqualTo(1)
         assertThat(stats.matchPlayed(Player("julien"))).isEqualTo(1)
@@ -53,7 +53,7 @@ class SeasonTest {
 
         val stats = season.statistics()
 
-        assertThat(stats.nbPlayers()).isEqualTo(10)
+        assertThat(stats.nbPlayers).isEqualTo(10)
         assertThat(stats.matchPlayed(Player("benoit"))).isEqualTo(2)
         assertThat(stats.matchPlayed(Player("nicolas"))).isEqualTo(2)
         assertThat(stats.matchPlayed(Player("julien"))).isEqualTo(2)

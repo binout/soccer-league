@@ -18,15 +18,12 @@ class InMemoryFriendlyMatchDateRepository : FriendlyMatchDateRepository {
         dates = ConcurrentHashMap()
     }
 
-    override fun all(): Stream<FriendlyMatchDate> {
-        return dates.values.stream().sorted(Comparator.comparing<FriendlyMatchDate, LocalDate> { it.date() })
-    }
+    override fun all(): List<FriendlyMatchDate> = dates.values.sortedBy{ it.date }
 
     override fun add(date: FriendlyMatchDate) {
-        dates[date.date()] = date
+        dates[date.date] = date
     }
 
-    override fun byDate(year: Int, month: Month, dayOfMonth: Int): Optional<FriendlyMatchDate> {
-        return Optional.ofNullable(dates[LocalDate.of(year, month, dayOfMonth)])
-    }
+    override fun byDate(year: Int, month: Month, dayOfMonth: Int): FriendlyMatchDate? =
+            dates[LocalDate.of(year, month, dayOfMonth)]
 }

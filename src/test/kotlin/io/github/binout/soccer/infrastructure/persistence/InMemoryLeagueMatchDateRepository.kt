@@ -18,15 +18,12 @@ class InMemoryLeagueMatchDateRepository : LeagueMatchDateRepository {
         dates = ConcurrentHashMap()
     }
 
-    override fun all(): Stream<LeagueMatchDate> {
-        return dates.values.stream().sorted(Comparator.comparing<LeagueMatchDate, LocalDate> { it.date() })
-    }
+    override fun all(): List<LeagueMatchDate> = dates.values.sortedBy{ it.date }
 
     override fun add(date: LeagueMatchDate) {
-        dates[date.date()] = date
+        dates[date.date] = date
     }
 
-    override fun byDate(year: Int, month: Month, dayOfMonth: Int): Optional<LeagueMatchDate> {
-        return Optional.ofNullable(dates[LocalDate.of(year, month, dayOfMonth)])
-    }
+    override fun byDate(year: Int, month: Month, dayOfMonth: Int): LeagueMatchDate? =
+            dates[LocalDate.of(year, month, dayOfMonth)]
 }

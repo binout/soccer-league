@@ -15,15 +15,11 @@ class InMemorySeasonRepository : SeasonRepository {
     }
 
     override fun add(season: Season) {
-        seasons[season.name()] = season
+        seasons[season.name] = season
     }
 
-    override fun byName(name: String): Optional<Season> {
-        return Optional.ofNullable(seasons[name])
-    }
+    override fun byName(name: String): Season? = seasons[name]
 
-    override fun all(): Stream<Season> {
-        return seasons.values.stream()
-    }
+    override fun all(): List<Season> = seasons.values.toList()
 
 }

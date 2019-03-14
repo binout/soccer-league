@@ -60,7 +60,7 @@ internal class SeasonPlanningTest : WithAssertions {
                 .mapToObj { _ -> UUID.randomUUID().toString() }
                 .map { p ->
                     val player = Player(p)
-                    player.playsInLeague(true)
+                    player.isPlayerLeague = true
                     player
                 }
                 .forEach { this.addPlayer(it) }
@@ -82,7 +82,7 @@ internal class SeasonPlanningTest : WithAssertions {
 
         val leagueMatch = seasonPlanning.planLeagueMatch(EMPTY_SEASON, DATE_FOR_LEAGUE)
 
-        assertThat(leagueMatch.players().count()).isBetween(5L, 7L)
+        assertThat(leagueMatch.players().count()).isBetween(5, 7)
     }
 
     @Test
@@ -99,8 +99,8 @@ internal class SeasonPlanningTest : WithAssertions {
 
     private fun createGoalKeeper(goalName: String): Player {
         val goalKeeper = Player(goalName)
-        goalKeeper.playsInLeague(true)
-        goalKeeper.playsAsGoalkeeper(true)
+        goalKeeper.isPlayerLeague = true
+        goalKeeper.isGoalkeeper = true
         return goalKeeper
     }
 
