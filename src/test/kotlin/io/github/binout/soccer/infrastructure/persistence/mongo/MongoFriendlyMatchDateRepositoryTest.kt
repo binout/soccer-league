@@ -17,7 +17,7 @@ class MongoFriendlyMatchDateRepositoryTest {
 
     @BeforeEach
     fun initRepository(currentSession: MongoSession) {
-        playerRepository = MongoPlayerRepository { currentSession }
+        playerRepository = MongoPlayerRepository(MongoConfiguration("").database())
         repository = MongoFriendlyMatchDateRepository { currentSession }
     }
 

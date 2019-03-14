@@ -15,6 +15,9 @@
  */
 package io.github.binout.soccer.infrastructure.persistence.mongo
 
+import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.ReplaceOptions
 import io.github.binout.soccer.domain.date.FriendlyMatchDate
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository
 import io.github.binout.soccer.domain.date.LeagueMatchDate
@@ -23,6 +26,7 @@ import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.domain.season.SeasonRepository
+import org.bson.Document
 import org.mongolink.MongoSession
 import org.mongolink.domain.criteria.Restriction
 import org.mongolink.domain.criteria.Restrictions
@@ -90,19 +94,32 @@ class MongoLeagueMatchDateRepository(mongoSessionSupplier: () -> MongoSession)
 }
 
 @Component
-class MongoPlayerRepository(mongoSessionSupplier: () -> MongoSession)
-    : MongoRepository<Player>(mongoSessionSupplier), PlayerRepository {
+class MongoPlayerRepository(mongoDatabase: MongoDatabase) : PlayerRepository {
 
-    @Autowired
-    constructor(transactionManager: MongoSessionTransactionManager) : this({ transactionManager.doGetTransaction() })
+    private val collection = mongoDatabase.getCollection("player")
 
-    override fun clazz(): Class<Player> = Player::class.java
+    private fun Player.toDocument(): Document = Document()
+            .append("_id", id)
+            .append("name", name)
+            .append("email", email)
+            .append("isPlayerLeague", isPlayerLeague)
+            .append("isGoalkeeper", isGoalkeeper)
 
-    override fun add(player: Player) = super.add(player, {player.id})
+    private fun Document.toPlayer(): Player = Player(
+            getString("name"),
+            getString("email"),
+            getBoolean("isPlayerLeague"),
+            getBoolean("isGoalkeeper"),
+            getString("_id")
+    )
 
-    override fun byName(name: String): Player? = super.findBy(Restrictions.equals("name", name)).firstOrNull()
+    override fun add(player: Player) {
+        collection.replaceOne(eq("_id", player.id), player.toDocument(), ReplaceOptions().upsert(true))
+    }
 
-    override fun all(): List<Player> = super.all().sortedBy { it.name }
+    override fun byName(name: String): Player? = collection.find(eq("name", name)).first()?.toPlayer()
+
+    override fun all(): List<Player> = collection.find().map { it.toPlayer() }.toList()
 }
 
 
