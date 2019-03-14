@@ -17,12 +17,12 @@ package io.github.binout.soccer.domain.player
 
 import java.util.*
 
-open class Player(val name: String,
-             var email: String? = null,
-             var isPlayerLeague: Boolean = false,
-             var isGoalkeeper: Boolean = false) {
-
-    val id: String = UUID.randomUUID().toString()
+open class Player(
+        val name: String,
+        var email: String? = null,
+        var isPlayerLeague: Boolean = false,
+        var isGoalkeeper: Boolean = false,
+        val id: String = UUID.randomUUID().toString()) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
