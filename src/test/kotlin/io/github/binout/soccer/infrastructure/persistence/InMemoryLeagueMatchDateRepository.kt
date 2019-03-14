@@ -12,11 +12,7 @@ import java.util.stream.Stream
 
 class InMemoryLeagueMatchDateRepository : LeagueMatchDateRepository {
 
-    private val dates: MutableMap<LocalDate, LeagueMatchDate>
-
-    init {
-        dates = ConcurrentHashMap()
-    }
+    private val dates: MutableMap<LocalDate, LeagueMatchDate> = ConcurrentHashMap()
 
     override fun all(): List<LeagueMatchDate> = dates.values.sortedBy{ it.date }
 

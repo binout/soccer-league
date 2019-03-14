@@ -26,7 +26,7 @@ import java.time.Month
 import java.time.temporal.ChronoField
 import java.util.*
 
-class Season(val name: String) {
+open class Season(val name: String) {
 
     val id: String = UUID.randomUUID().toString()
     private val friendlyMatches: MutableSet<FriendlyMatch> = mutableSetOf()

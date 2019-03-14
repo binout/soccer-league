@@ -8,11 +8,7 @@ import java.util.stream.Stream
 
 class InMemorySeasonRepository : SeasonRepository {
 
-    private val seasons: MutableMap<String, Season>
-
-    init {
-        seasons = ConcurrentHashMap()
-    }
+    private val seasons: MutableMap<String, Season> = ConcurrentHashMap()
 
     override fun add(season: Season) {
         seasons[season.name] = season

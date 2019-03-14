@@ -27,38 +27,38 @@ class MongoPlayerRepositoryTest {
         persistPlayer(Player("benoit"))
 
         val benoit = repository.byName("benoit")
-        assertThat(benoit).isPresent
-        assertThat(benoit.get().id()).isNotNull()
-        assertThat(benoit.get().email()).isEmpty
-        assertThat(benoit.get().isPlayerLeague).isFalse()
+        assertThat(benoit).isNotNull
+        assertThat(benoit!!.id).isNotNull()
+        assertThat(benoit.email).isNull()
+        assertThat(benoit.isPlayerLeague).isFalse()
     }
 
     @Test
     fun should_persist_league_player() {
         val leaguePlayer = Player("benoit", "mail@google.com")
-        leaguePlayer.playsInLeague(true)
+        leaguePlayer.isPlayerLeague = true
         persistPlayer(leaguePlayer)
 
         val benoit = repository.byName("benoit")
-        assertThat(benoit).isPresent
-        assertThat(benoit.get().id()).isNotNull()
-        assertThat(benoit.get().email()).contains("mail@google.com")
-        assertThat(benoit.get().isPlayerLeague).isTrue()
+        assertThat(benoit).isNotNull
+        assertThat(benoit!!.id).isNotNull()
+        assertThat(benoit.email).isEqualTo("mail@google.com")
+        assertThat(benoit.isPlayerLeague).isTrue()
     }
 
     @Test
     fun should_persist_goalkeeper() {
         val leaguePlayer = Player("thomas", "mail@google.com")
-        leaguePlayer.playsInLeague(true)
-        leaguePlayer.playsAsGoalkeeper(true)
+        leaguePlayer.isPlayerLeague = true
+        leaguePlayer.isGoalkeeper = true
         persistPlayer(leaguePlayer)
 
         val thomas = repository.byName("thomas")
-        assertThat(thomas).isPresent
-        assertThat(thomas.get().id()).isNotNull()
-        assertThat(thomas.get().email()).contains("mail@google.com")
-        assertThat(thomas.get().isPlayerLeague).isTrue()
-        assertThat(thomas.get().isGoalkeeper).isTrue()
+        assertThat(thomas).isNotNull
+        assertThat(thomas!!.id).isNotNull()
+        assertThat(thomas.email).isEqualTo("mail@google.com")
+        assertThat(thomas.isPlayerLeague).isTrue()
+        assertThat(thomas.isGoalkeeper).isTrue()
     }
 
 }

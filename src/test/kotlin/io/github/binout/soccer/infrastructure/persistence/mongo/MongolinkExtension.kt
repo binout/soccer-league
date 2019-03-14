@@ -25,7 +25,7 @@ import java.lang.IllegalArgumentException
 
 class MongolinkExtension : BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
-    val mongoDatabase = MongoConfiguration().database()
+    val mongoDatabase = MongoConfiguration("").database()
     val sessionManager = MongoSessionManager.create(ContextBuilder(javaClass.`package`.name), Settings.defaultInstance().withDatabase(mongoDatabase))
 
     lateinit var currentSession: MongoSession
