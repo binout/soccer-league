@@ -16,8 +16,8 @@
 package io.github.binout.soccer.domain
 
 import io.github.binout.soccer.domain.player.Player
-import io.github.binout.soccer.domain.season.match.FriendlyMatch
-import io.github.binout.soccer.domain.season.match.LeagueMatch
+import io.github.binout.soccer.domain.season.FriendlyMatch
+import io.github.binout.soccer.domain.season.LeagueMatch
 import java.time.LocalDate
 
 class FriendlyMatchPlanned(friendlyMatch: FriendlyMatch, substitutes: List<Player>) {

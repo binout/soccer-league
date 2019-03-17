@@ -7,10 +7,8 @@ import io.github.binout.soccer.domain.date.LeagueMatchDateRepository
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.domain.season.*
-import io.github.binout.soccer.domain.season.match.FriendlyMatch
-import io.github.binout.soccer.domain.season.match.LeagueMatch
-import io.vavr.Tuple
-import io.vavr.Tuple2
+import io.github.binout.soccer.domain.season.FriendlyMatch
+import io.github.binout.soccer.domain.season.LeagueMatch
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
@@ -78,9 +76,9 @@ class GetFriendlyMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
 
-    fun execute(seasonName: String): List<Tuple2<FriendlyMatch, List<Player>>> {
+    fun execute(seasonName: String): List<Pair<FriendlyMatch, List<Player>>> {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
-        return season.friendlyMatches().map { m -> Tuple.of(m, matchPlanning.getSubstitutes(season, m)) }
+        return season.friendlyMatches().map { it to matchPlanning.getSubstitutes(season, it) }
     }
 }
 
@@ -89,9 +87,9 @@ class GetLeagueMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
 
-    fun execute(seasonName: String): List<Tuple2<LeagueMatch, List<Player>>> {
+    fun execute(seasonName: String): List<Pair<LeagueMatch, List<Player>>> {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
-        return season.leagueMatches().map { m -> Tuple.of(m, matchPlanning.getSubstitutes(season, m)) }
+        return season.leagueMatches().map { it to matchPlanning.getSubstitutes(season, it) }
     }
 }
 
@@ -101,11 +99,11 @@ class GetNextFriendlyMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
 
-    fun execute(seasonName: String): List<Tuple2<FriendlyMatch, List<Player>>> {
+    fun execute(seasonName: String): List<Pair<FriendlyMatch, List<Player>>> {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
         return season.friendlyMatches()
                 .filter{ it.isNowOrFuture() }
-                .map { m -> Tuple.of(m, matchPlanning.getSubstitutes(season, m)) }
+                .map { it to matchPlanning.getSubstitutes(season, it) }
     }
 }
 
@@ -114,11 +112,11 @@ class GetNextLeagueMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
 
-    fun execute(seasonName: String): List<Tuple2<LeagueMatch, List<Player>>> {
+    fun execute(seasonName: String): List<Pair<LeagueMatch, List<Player>>> {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
         return season.leagueMatches()
                 .filter { it.isNowOrFuture() }
-                .map { m -> Tuple.of(m, matchPlanning.getSubstitutes(season, m)) }
+                .map { it to matchPlanning.getSubstitutes(season, it) }
     }
 }
 

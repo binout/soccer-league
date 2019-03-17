@@ -17,8 +17,7 @@ package io.github.binout.soccer.interfaces.rest
 
 import io.github.binout.soccer.application.*
 import io.github.binout.soccer.domain.player.Player
-import io.github.binout.soccer.domain.season.match.Match
-import io.vavr.Tuple2
+import io.github.binout.soccer.domain.season.Match
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -107,10 +106,10 @@ class SeasonMatchesResource(
         return ResponseEntity.ok().build<Any>()
     }
 
-    private fun toRestMatch(m: Tuple2<out Match, List<Player>>): RestMatch {
-        val restMatch = m._1.date.toRestMatch()
-        m._1.players().forEach { restMatch.players.add(it) }
-        m._2.stream().map { it.name }.forEach { restMatch.subs.add(it) }
+    private fun toRestMatch(m: Pair<Match<*>, List<Player>>): RestMatch {
+        val restMatch = m.first.date.toRestMatch()
+        m.first.players().forEach { restMatch.players.add(it) }
+        m.second.stream().map { it.name }.forEach { restMatch.subs.add(it) }
         return restMatch
     }
 }

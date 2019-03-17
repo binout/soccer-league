@@ -16,32 +16,46 @@
 package io.github.binout.soccer.domain.date
 
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.season.FriendlyMatch
+import io.github.binout.soccer.domain.season.LeagueMatch
 
 import java.time.LocalDate
 import java.time.Month
 
-interface MatchDate {
+sealed class MatchDate(val date: LocalDate,
+                       private val presents: MutableSet<String> = mutableSetOf(),
+                       private val minPlayer: Int) {
 
-    fun isNowOrFuture(): Boolean {
-        val now = LocalDate.now()
-        return date.isAfter(now) || date.isEqual(now)
-    }
+    fun isNowOrFuture(): Boolean = LocalDate.now().let { date.isAfter(it) || date.isEqual(it) }
 
-    val date: LocalDate
+    fun presents(): List<String>  = presents.toList()
 
-    fun presents(): List<String>
+    fun present(player: Player) { presents.add(player.name) }
 
-    fun present(player: Player)
+    fun absent(player: Player) { presents.remove(player.name) }
 
-    fun absent(player: Player)
+    fun nbPresents(): Int = presents.count()
 
-    fun canBePlanned(): Boolean
-
-    fun nbPresents(): Int = presents().count()
+    fun canBePlanned() = nbPresents() >= minPlayer
 
     fun isAbsent(player: Player): Boolean = !isPresent(player)
 
     fun isPresent(player: Player): Boolean = presents().any { it == player.name }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MatchDate
+
+        if (date != other.date) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return date.hashCode()
+    }
 
     companion object {
 
@@ -53,6 +67,26 @@ interface MatchDate {
             return FriendlyMatchDate(LocalDate.of(year, month, dayOfMonth))
         }
     }
+
 }
+
+
+class LeagueMatchDate(localDate: LocalDate) : MatchDate(localDate, minPlayer =  LeagueMatch.MIN_PLAYERS)
+
+interface LeagueMatchDateRepository {
+    fun all(): List<LeagueMatchDate>
+    fun replace(date: LeagueMatchDate)
+    fun byDate(year: Int, month: Month, dayOfMonth: Int): LeagueMatchDate?
+}
+
+
+class FriendlyMatchDate(localDate: LocalDate) : MatchDate(localDate, minPlayer =  FriendlyMatch.MIN_PLAYERS)
+
+interface FriendlyMatchDateRepository {
+    fun all(): List<FriendlyMatchDate>
+    fun replace(date: FriendlyMatchDate)
+    fun byDate(year: Int, month: Month, dayOfMonth: Int): FriendlyMatchDate?
+}
+
 
 

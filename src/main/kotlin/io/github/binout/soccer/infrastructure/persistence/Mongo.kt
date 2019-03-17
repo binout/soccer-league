@@ -31,8 +31,8 @@ import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.domain.season.SeasonRepository
-import io.github.binout.soccer.domain.season.match.FriendlyMatch
-import io.github.binout.soccer.domain.season.match.LeagueMatch
+import io.github.binout.soccer.domain.season.FriendlyMatch
+import io.github.binout.soccer.domain.season.LeagueMatch
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

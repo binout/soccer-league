@@ -20,8 +20,6 @@ import io.github.binout.soccer.domain.FriendlyMatchPlanned
 import io.github.binout.soccer.domain.LeagueMatchPlanned
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
-import io.github.binout.soccer.domain.season.match.FriendlyMatch
-import io.github.binout.soccer.domain.season.match.LeagueMatch
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 

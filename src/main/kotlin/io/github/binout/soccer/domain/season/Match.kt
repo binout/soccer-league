@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.binout.soccer.domain.season.match
+package io.github.binout.soccer.domain.season
 
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.date.FriendlyMatchDate
@@ -21,28 +21,29 @@ import io.github.binout.soccer.domain.date.LeagueMatchDate
 import io.github.binout.soccer.domain.date.MatchDate
 
 import java.time.LocalDate
-import java.util.Objects
-import java.util.stream.Stream
 
-interface Match {
+sealed class Match<D : MatchDate> (matchDate: D, players: Set<Player>, val minPlayers: Int, val maxPlayers: Int) {
+
+    val date: LocalDate = matchDate.date
+    private val players: MutableSet<String> = checkPlayers(matchDate, players).map { it.name }.toMutableSet()
 
     fun isNowOrFuture(): Boolean {
         val now = LocalDate.now()
         return date.isAfter(now) || date.isEqual(now)
     }
 
-    val date: LocalDate
+    fun players(): List<String> = players.toList()
 
-    fun players(): List<String>
+    fun replacePlayer(from: Player, by: Player) {
+        if (from.name !in players) {
+            throw IllegalArgumentException(from.name + " is not a player of this match")
+        }
+        players.remove(from.name)
+        players.add(by.name)
+    }
 
-    fun maxPlayers(): Int
-
-    fun minPlayers(): Int
-
-    fun replacePlayer(from: Player, by: Player)
-
-    fun checkPlayers(date: MatchDate, players: Set<Player>): Set<Player> {
-        if (players.size < minPlayers() || players.size > maxPlayers()) {
+    private fun checkPlayers(date: MatchDate, players: Set<Player>): Set<Player> {
+        if (players.size < minPlayers || players.size > maxPlayers) {
             throw IllegalArgumentException("Number of players is incorrect for the match")
         }
         if (players.any(date::isAbsent)) {
@@ -50,6 +51,22 @@ interface Match {
         }
         return players
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Match<*>
+
+        if (date != other.date) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return date.hashCode()
+    }
+
 
     companion object {
 
@@ -60,5 +77,19 @@ interface Match {
         fun newFriendlyMatch(date: FriendlyMatchDate, players: Set<Player>): FriendlyMatch {
             return FriendlyMatch(date, players.toMutableSet())
         }
+    }
+}
+
+class FriendlyMatch(matchDate: FriendlyMatchDate, players: Set<Player>) : Match<FriendlyMatchDate>(matchDate, players, MIN_PLAYERS, MIN_PLAYERS) {
+    companion object {
+        const val MIN_PLAYERS = 10
+        const val MAX_PLAYERS = 10
+    }
+}
+
+open class LeagueMatch(matchDate: LeagueMatchDate, players: Set<Player>) : Match<LeagueMatchDate>(matchDate, players, MIN_PLAYERS, MAX_PLAYERS) {
+    companion object {
+        const val MIN_PLAYERS = 5
+        const val MAX_PLAYERS = 7
     }
 }
