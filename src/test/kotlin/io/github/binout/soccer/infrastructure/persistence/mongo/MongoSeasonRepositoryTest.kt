@@ -54,5 +54,5 @@ class MongoSeasonRepositoryTest {
         assertThat(season.leagueMatches()).hasSize(1)
     }
 
-    fun players(nb: Int) : Set<Player> = (0 until nb).map { UUID.randomUUID().toString() }.map { Player(it) }.toSet()
+    private fun players(nb: Int) : Set<Player> = (0 until nb).map { UUID.randomUUID().toString() }.map { Player(it) }.toSet()
 }

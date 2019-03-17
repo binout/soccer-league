@@ -43,10 +43,8 @@ class PlayersResource(
     }
 
     @GetMapping("{name}")
-    fun get(name: String): ResponseEntity<*> {
-        return getPlayer.execute(name)
-                ?.let { ResponseEntity.ok(it.toRestModel()) }
-                ?: ResponseEntity.notFound().build<Any>()
-    }
+    fun get(name: String): ResponseEntity<*> = getPlayer.execute(name)
+            ?.let { ResponseEntity.ok(it.toRestModel()) }
+            ?: ResponseEntity.notFound().build<Any>()
 
 }

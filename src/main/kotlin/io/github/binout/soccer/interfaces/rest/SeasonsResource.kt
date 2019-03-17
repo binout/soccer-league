@@ -59,10 +59,8 @@ class SeasonsResource (
                 ?: ResponseEntity.notFound().build<Any>()
     }
 
-    private fun toRestStatList(s: SeasonStatistics): List<RestStat> {
-        return getAllPlayers.execute()
-                .map { s.toRestStat(it) }
-                .sortedByDescending { it.nbMatches }
-    }
+    private fun toRestStatList(s: SeasonStatistics): List<RestStat> = getAllPlayers.execute()
+            .map { s.toRestStat(it) }
+            .sortedByDescending { it.nbMatches }
 
 }

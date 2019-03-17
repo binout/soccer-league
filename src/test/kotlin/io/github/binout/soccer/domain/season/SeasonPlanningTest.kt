@@ -17,7 +17,6 @@ import org.mockito.Mockito
 import org.springframework.context.ApplicationEventPublisher
 import java.time.Month
 import java.util.*
-import java.util.stream.IntStream
 
 internal class SeasonPlanningTest : WithAssertions {
 
@@ -45,12 +44,11 @@ internal class SeasonPlanningTest : WithAssertions {
         seasonPlanning = SeasonPlanning(seasonRepository, playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository, matchPlanning, Mockito.mock(ApplicationEventPublisher::class.java))
     }
 
-    private fun generatePlayer(nb: Int) {
-        IntStream.range(0, nb)
-                .mapToObj { _ -> UUID.randomUUID().toString() }
-                .map<Player> { Player(name = it) }
-                .forEach { this.addPlayer(it) }
-    }
+    private fun generatePlayer(nb: Int) =
+            (0 until nb)
+            .map { UUID.randomUUID().toString() }
+            .map { Player(name = it) }
+            .forEach { this.addPlayer(it) }
 
     private fun addPlayer(p: Player) {
         playerRepository.add(p)
@@ -58,16 +56,11 @@ internal class SeasonPlanningTest : WithAssertions {
         DATE_FOR_FRIENDLY.present(p)
     }
 
-    private fun generateLeaguePlayer(nb: Int) {
-        IntStream.range(0, nb)
-                .mapToObj { _ -> UUID.randomUUID().toString() }
-                .map { p ->
-                    val player = Player(name = p)
-                    player.isPlayerLeague = true
-                    player
-                }
-                .forEach { this.addPlayer(it) }
-    }
+    private fun generateLeaguePlayer(nb: Int) =
+            (0 until nb)
+            .map { UUID.randomUUID().toString() }
+            .map { Player(name = it, isPlayerLeague = true) }
+            .forEach { this.addPlayer(it) }
 
     @Test
     fun at_least_5_league_players_for_league_match() {

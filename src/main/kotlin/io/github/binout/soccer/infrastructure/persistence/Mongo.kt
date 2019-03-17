@@ -63,6 +63,7 @@ class MongoConfiguration(@Value("\${app.mongodb.uri}") private val uri: String) 
 }
 
 private fun Date.toLocalDate() = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate()
+private fun <T> Document.getList(key: String) : List<T> = get(key)?.let { it as List<T> } ?: emptyList<T>()
 
 @Component
 class MongoFriendlyMatchDateRepository(mongoDatabase: MongoDatabase):  FriendlyMatchDateRepository {
@@ -75,7 +76,7 @@ class MongoFriendlyMatchDateRepository(mongoDatabase: MongoDatabase):  FriendlyM
 
     private fun Document.toFriendlyMatchDate(): FriendlyMatchDate {
         val friendlyMatchDate = FriendlyMatchDate(getDate("date").toLocalDate())
-        (get("presents") as List<String>).forEach { friendlyMatchDate.present(Player(it)) }
+        getList<String>("presents").forEach { friendlyMatchDate.present(Player(it)) }
         return friendlyMatchDate
     }
 
@@ -100,7 +101,7 @@ class MongoLeagueMatchDateRepository(mongoDatabase: MongoDatabase) : LeagueMatch
 
     private fun Document.toLeagueMatchDate(): LeagueMatchDate {
         val leagueMatchDate = LeagueMatchDate(getDate("date").toLocalDate())
-        (get("presents") as List<String>).forEach { leagueMatchDate.present(Player(it)) }
+        getList<String>("presents").forEach { leagueMatchDate.present(Player(it)) }
         return leagueMatchDate
     }
 
@@ -164,25 +165,24 @@ class MongoSeasonRepository(mongoDatabase: MongoDatabase) : SeasonRepository {
 
     private fun Document.toSeason(): Season {
         val season = Season(getString("name"))
-        (get("friendlyMatches") as List<Document>).map { it.toFriendlyMatch() }.forEach { season.addFriendlyMatch(it.first, it.second) }
-        (get("leagueMatches") as List<Document>).map { it.toLeagueMatch() }.forEach { season.addLeagueMatch(it.first, it.second) }
+        getList<Document>("friendlyMatches").map { it.toFriendlyMatch() }.forEach { season.addFriendlyMatch(it.first, it.second) }
+        getList<Document>("leagueMatches").map { it.toLeagueMatch() }.forEach { season.addLeagueMatch(it.first, it.second) }
         return season
     }
 
     private fun Document.toFriendlyMatch() : Pair<FriendlyMatchDate, Set<Player>> {
         val friendlyMatchDate = FriendlyMatchDate(getDate("friendlyDate").toLocalDate())
-        val players = (get("players") as List<String>).map { Player(it) }.toSet()
+        val players = getList<String>("players").map { Player(it) }.toSet()
         players.forEach { friendlyMatchDate.present(it) }
         return friendlyMatchDate to players
     }
 
     private fun Document.toLeagueMatch() : Pair<LeagueMatchDate, Set<Player>> {
         val leagueMatchDate = LeagueMatchDate(getDate("leagueDate").toLocalDate())
-        val players = (get("players") as List<String>).map { Player(it) }.toSet()
+        val players = getList<String>("players").map { Player(it) }.toSet()
         players.forEach { leagueMatchDate.present(it) }
         return leagueMatchDate to players
     }
-
 
     override fun replace(season: Season) {
         collection.replaceOne(eq("name", season.name), season.toDocument(), ReplaceOptions().upsert(true))

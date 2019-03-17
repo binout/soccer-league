@@ -37,8 +37,8 @@ import javax.servlet.http.HttpServletRequest
 @Configuration
 class FrontAppConfig : WebMvcConfigurerAdapter() {
 
-    override fun addCorsMappings(registry: CorsRegistry?) {
-        registry!!.addMapping("/**")
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/**")
                 .allowCredentials(true)
                 .exposedHeaders(HttpHeaders.LOCATION)
                 .allowedHeaders(HttpHeaders.ORIGIN, HttpHeaders.ACCEPT, HttpHeaders.CONTENT_TYPE, HttpHeaders.AUTHORIZATION, HttpHeaders.CACHE_CONTROL, "x-requested-with")
@@ -55,8 +55,8 @@ class FrontAppConfig : WebMvcConfigurerAdapter() {
 
     }
 
-    override fun addResourceHandlers(registry: ResourceHandlerRegistry?) {
-        registry!!.addResourceHandler("/**")
+    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/public/")
                 .resourceChain(false)
                 .addResolver(PushStateResourceResolver())
@@ -67,16 +67,15 @@ class FrontAppConfig : WebMvcConfigurerAdapter() {
         private val handledExtensions = Arrays.asList("html", "js", "json", "csv", "css", "png", "svg", "eot", "ttf", "woff", "appcache", "jpg", "jpeg", "gif", "ico")
         private val ignoredPaths = Arrays.asList("rest")
 
-        override fun resolveResource(request: HttpServletRequest?, requestPath: String, locations: List<Resource>, chain: ResourceResolverChain): Resource? {
-            return resolve(requestPath, locations)
-        }
+        override fun resolveResource(request: HttpServletRequest?, requestPath: String, locations: List<Resource>, chain: ResourceResolverChain): Resource? =
+                resolve(requestPath, locations)
 
         override fun resolveUrlPath(resourcePath: String, locations: List<Resource>, chain: ResourceResolverChain): String? {
             val resolvedResource = resolve(resourcePath, locations) ?: return null
-            try {
-                return resolvedResource.url.toString()
+            return try {
+                resolvedResource.url.toString()
             } catch (e: IOException) {
-                return resolvedResource.filename
+                resolvedResource.filename
             }
 
         }
@@ -94,18 +93,13 @@ class FrontAppConfig : WebMvcConfigurerAdapter() {
             } else index
         }
 
-        private fun createRelative(resource: Resource, relativePath: String): Resource? {
-            try {
-                return resource.createRelative(relativePath)
-            } catch (e: IOException) {
-                return null
-            }
-
+        private fun createRelative(resource: Resource, relativePath: String): Resource? = try {
+            resource.createRelative(relativePath)
+        } catch (e: IOException) {
+            null
         }
 
-        private fun isIgnored(path: String): Boolean {
-            return ignoredPaths.contains(path)
-        }
+        private fun isIgnored(path: String): Boolean = ignoredPaths.contains(path)
 
         private fun isHandled(path: String): Boolean {
             val extension = StringUtils.getFilenameExtension(path)
