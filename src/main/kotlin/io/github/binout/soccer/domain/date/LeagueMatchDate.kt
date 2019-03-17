@@ -58,7 +58,7 @@ interface LeagueMatchDateRepository {
 
     fun all(): List<LeagueMatchDate>
 
-    fun add(date: LeagueMatchDate)
+    fun replace(date: LeagueMatchDate)
 
     fun byDate(year: Int, month: Month, dayOfMonth: Int): LeagueMatchDate?
 

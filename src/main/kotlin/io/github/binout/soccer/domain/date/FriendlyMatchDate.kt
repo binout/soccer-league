@@ -58,7 +58,7 @@ interface FriendlyMatchDateRepository {
 
     fun all(): List<FriendlyMatchDate>
 
-    fun add(date: FriendlyMatchDate)
+    fun replace(date: FriendlyMatchDate)
 
     fun byDate(year: Int, month: Month, dayOfMonth: Int): FriendlyMatchDate?
 

@@ -22,7 +22,7 @@ class MongoSeasonRepositoryTest {
 
     @Test
     fun should_persist_season() {
-        repository.add(Season("2016"))
+        repository.replace(Season("2016"))
 
         val season = repository.byName("2016")
         assertThat(season).isNotNull
@@ -44,7 +44,7 @@ class MongoSeasonRepositoryTest {
         leaguePlayers.forEach { leagueMatchDate.present(it) }
         season2017.addLeagueMatch(leagueMatchDate, leaguePlayers)
 
-        repository.add(season2017)
+        repository.replace(season2017)
 
         val season = repository.byName("2017")
         assertThat(season).isNotNull

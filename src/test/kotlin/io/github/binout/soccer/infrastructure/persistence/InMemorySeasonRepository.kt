@@ -10,7 +10,7 @@ class InMemorySeasonRepository : SeasonRepository {
 
     private val seasons: MutableMap<String, Season> = ConcurrentHashMap()
 
-    override fun add(season: Season) {
+    override fun replace(season: Season) {
         seasons[season.name] = season
     }
 

@@ -24,7 +24,7 @@ class AddSeason(private val seasonRepository: SeasonRepository) {
 
     fun execute(seasonName: String) {
         if (seasonRepository.byName(seasonName) == null) {
-            seasonRepository.add(Season(seasonName))
+            seasonRepository.replace(Season(seasonName))
         }
     }
 }

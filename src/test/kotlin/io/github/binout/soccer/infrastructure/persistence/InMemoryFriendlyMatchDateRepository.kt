@@ -12,7 +12,7 @@ class InMemoryFriendlyMatchDateRepository : FriendlyMatchDateRepository {
 
     override fun all(): List<FriendlyMatchDate> = dates.values.sortedBy{ it.date }
 
-    override fun add(date: FriendlyMatchDate) {
+    override fun replace(date: FriendlyMatchDate) {
         dates[date.date] = date
     }
 

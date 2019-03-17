@@ -28,8 +28,8 @@ class AddFriendlyMatch(
         private val seasonPlanning: SeasonPlanning) {
 
     fun execute(seasonName: String, year: Int, month: Month, day: Int) {
-        val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Can not add match to season")
-        val matchDate = friendlyMatchDateRepository.byDate(year, month, day) ?: throw IllegalArgumentException("Can not add match to season")
+        val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Can not replace match to season")
+        val matchDate = friendlyMatchDateRepository.byDate(year, month, day) ?: throw IllegalArgumentException("Can not replace match to season")
         seasonPlanning.planFriendlyMatch(season, matchDate)
     }
 }

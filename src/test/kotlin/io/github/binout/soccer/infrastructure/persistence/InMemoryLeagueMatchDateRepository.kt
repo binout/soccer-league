@@ -16,7 +16,7 @@ class InMemoryLeagueMatchDateRepository : LeagueMatchDateRepository {
 
     override fun all(): List<LeagueMatchDate> = dates.values.sortedBy{ it.date }
 
-    override fun add(date: LeagueMatchDate) {
+    override fun replace(date: LeagueMatchDate) {
         dates[date.date] = date
     }
 

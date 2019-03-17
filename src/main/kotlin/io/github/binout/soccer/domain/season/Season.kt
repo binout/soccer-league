@@ -24,7 +24,6 @@ import io.github.binout.soccer.domain.season.match.Match
 import java.time.LocalDate
 import java.time.Month
 import java.time.temporal.ChronoField
-import java.util.*
 
 open class Season(val name: String) {
 
@@ -70,7 +69,7 @@ open class Season(val name: String) {
 
 interface SeasonRepository {
 
-    fun add(season: Season)
+    fun replace(season: Season)
 
     fun byName(name: String): Season?
 

@@ -21,7 +21,7 @@ class MongoLeagueMatchDateRepositoryTest {
 
     @Test
     fun should_persist_date_without_player() {
-        repository.add(MatchDate.newDateForLeague(2016, Month.APRIL, 1))
+        repository.replace(MatchDate.newDateForLeague(2016, Month.APRIL, 1))
 
         val matchDate = repository.byDate(2016, Month.APRIL, 1)
         assertThat(matchDate).isNotNull
@@ -36,7 +36,7 @@ class MongoLeagueMatchDateRepositoryTest {
 
         val date = MatchDate.newDateForLeague(2016, Month.APRIL, 1)
         date.present(benoit)
-        repository.add(date)
+        repository.replace(date)
 
         val matchDate = repository.byDate(2016, Month.APRIL, 1)
         assertThat(matchDate).isNotNull
