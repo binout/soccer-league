@@ -17,16 +17,10 @@ package io.github.binout.soccer.application.date
 
 import io.github.binout.soccer.domain.date.LeagueMatchDate
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-
-import javax.transaction.Transactional
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 @Component
 class GetAllLeagueMatchDates(private val repository: LeagueMatchDateRepository) {
 
-    @Transactional
     fun execute(): List<LeagueMatchDate> = repository.all()
 }

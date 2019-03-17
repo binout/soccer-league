@@ -1,32 +1,56 @@
 package io.github.binout.soccer.infrastructure.persistence.mongo
 
+import io.github.binout.soccer.domain.date.FriendlyMatchDate
+import io.github.binout.soccer.domain.date.LeagueMatchDate
+import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.season.Season
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mongolink.MongoSession
+import java.time.LocalDate
+import java.time.Month
+import java.util.*
 
-@ExtendWith(MongolinkExtension::class)
 class MongoSeasonRepositoryTest {
 
     private lateinit var repository: MongoSeasonRepository
 
     @BeforeEach
-    fun initRepository(currentSession: MongoSession) {
-        repository = MongoSeasonRepository { currentSession }
+    fun initRepository() {
+        repository = MongoSeasonRepository(MongoConfiguration("").database())
     }
 
     @Test
     fun should_persist_season() {
         repository.add(Season("2016"))
-        repository.session().flush()
 
         val season = repository.byName("2016")
         assertThat(season).isNotNull
-        assertThat(season!!.id).isNotNull()
-        assertThat(season.friendlyMatches()).isEmpty()
+        assertThat(season!!.friendlyMatches()).isEmpty()
         assertThat(season.leagueMatches()).isEmpty()
     }
 
+    @Test
+    fun should_persist_season_with_matches() {
+        val season2017 = Season("2017")
+
+        val friendlyPlayers = players(10)
+        val friendlyMatchDate = FriendlyMatchDate(LocalDate.of(2017, Month.APRIL, 12))
+        friendlyPlayers.forEach { friendlyMatchDate.present(it)}
+        season2017.addFriendlyMatch(friendlyMatchDate, friendlyPlayers)
+
+        val leaguePlayers = players(7)
+        val leagueMatchDate = LeagueMatchDate(LocalDate.of(2017, Month.APRIL, 12))
+        leaguePlayers.forEach { leagueMatchDate.present(it) }
+        season2017.addLeagueMatch(leagueMatchDate, leaguePlayers)
+
+        repository.add(season2017)
+
+        val season = repository.byName("2017")
+        assertThat(season).isNotNull
+        assertThat(season!!.friendlyMatches()).hasSize(1)
+        assertThat(season.leagueMatches()).hasSize(1)
+    }
+
+    fun players(nb: Int) : Set<Player> = (0 until nb).map { UUID.randomUUID().toString() }.map { Player(it) }.toSet()
 }

@@ -17,13 +17,10 @@ package io.github.binout.soccer.application.player
 
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
 
 @Component
 class GetPlayer(private val playerRepository: PlayerRepository) {
 
-    @Transactional
     fun execute(name: String): Player? = playerRepository.byName(name)
 }

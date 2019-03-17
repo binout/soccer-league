@@ -20,7 +20,6 @@ import io.github.binout.soccer.domain.season.SeasonPlanning
 import io.github.binout.soccer.domain.season.SeasonRepository
 import org.springframework.stereotype.Component
 import java.time.Month
-import javax.transaction.Transactional
 
 @Component
 class AddLeagueMatch(
@@ -28,7 +27,6 @@ class AddLeagueMatch(
         private val leagueMatchDateRepository: LeagueMatchDateRepository,
         private val seasonPlanning: SeasonPlanning) {
 
-    @Transactional
     fun execute(seasonName: String, year: Int, month: Month, day: Int) {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Can not add match to season")
         val matchDate = leagueMatchDateRepository.byDate(year, month, day) ?: throw IllegalArgumentException("Can not add match to season")

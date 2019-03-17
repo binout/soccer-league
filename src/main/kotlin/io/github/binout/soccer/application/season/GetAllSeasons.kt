@@ -18,11 +18,9 @@ package io.github.binout.soccer.application.season
 import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.domain.season.SeasonRepository
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
 
 @Component
 class GetAllSeasons(private val seasonRepository: SeasonRepository) {
 
-    @Transactional
     fun execute(): List<Season> = seasonRepository.all()
 }

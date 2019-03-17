@@ -18,11 +18,9 @@ package io.github.binout.soccer.application.season
 import io.github.binout.soccer.domain.season.SeasonRepository
 import io.github.binout.soccer.domain.season.SeasonStatistics
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
 
 @Component
 class GetSeasonStats(private val seasonRepository: SeasonRepository) {
 
-    @Transactional
     fun execute(name: String): SeasonStatistics? = seasonRepository.byName(name)?.statistics()
 }

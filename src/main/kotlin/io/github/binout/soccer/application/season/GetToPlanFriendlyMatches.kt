@@ -19,13 +19,11 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDate
 import io.github.binout.soccer.domain.season.SeasonPlanning
 import io.github.binout.soccer.domain.season.SeasonRepository
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
 
 @Component
 class GetToPlanFriendlyMatches(private val seasonRepository: SeasonRepository,
                                private val seasonPlanning: SeasonPlanning) {
 
-    @Transactional
     fun execute(seasonName: String): List<FriendlyMatchDate> = seasonRepository.byName(seasonName)
             ?.let { s -> seasonPlanning.friendlyMatchDatesToPlan(s) }
             ?: throw IllegalArgumentException("Invalid season")

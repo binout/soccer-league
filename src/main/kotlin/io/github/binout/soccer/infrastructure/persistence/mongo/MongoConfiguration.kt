@@ -21,9 +21,6 @@ import com.mongodb.ServerAddress
 import com.mongodb.client.MongoDatabase
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import org.mongolink.MongoSessionManager
-import org.mongolink.Settings
-import org.mongolink.domain.mapper.ContextBuilder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -42,12 +39,6 @@ class MongoConfiguration(@Value("\${app.mongodb.uri}") private val uri: String) 
         val mongoClientURI = MongoClientURI(uri!!)
         val client = MongoClient(mongoClientURI)
         client.getDatabase(mongoClientURI.database!!)
-    }
-
-    @Bean
-    fun sessionManager(database: MongoDatabase): MongoSessionManager {
-        val contextBuilder = ContextBuilder(javaClass.getPackage().name)
-        return MongoSessionManager.create(contextBuilder, Settings.defaultInstance().withDatabase(database))
     }
 
 }

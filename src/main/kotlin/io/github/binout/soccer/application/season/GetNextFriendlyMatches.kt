@@ -22,14 +22,12 @@ import io.github.binout.soccer.domain.season.match.FriendlyMatch
 import io.vavr.Tuple
 import io.vavr.Tuple2
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
 
 @Component
 class GetNextFriendlyMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
 
-    @Transactional
     fun execute(seasonName: String): List<Tuple2<FriendlyMatch, List<Player>>> {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
         return season.friendlyMatches()

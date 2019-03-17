@@ -26,11 +26,9 @@ import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.domain.season.SeasonRepository
+import io.github.binout.soccer.domain.season.match.FriendlyMatch
+import io.github.binout.soccer.domain.season.match.LeagueMatch
 import org.bson.Document
-import org.mongolink.MongoSession
-import org.mongolink.domain.criteria.Restriction
-import org.mongolink.domain.criteria.Restrictions
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.LocalDate
@@ -38,29 +36,7 @@ import java.time.Month
 import java.time.ZoneId
 import java.util.*
 
-abstract class MongoRepository<T> protected constructor(private val mongoSessionSupplier: () -> MongoSession) {
-
-    protected abstract fun clazz(): Class<T>
-
-    fun session(): MongoSession = mongoSessionSupplier()
-
-    protected fun add(`object`: T, idSupplier: () -> String) {
-        val mongoSession = session()
-        if (mongoSession.get(idSupplier(), clazz()) == null) {
-            mongoSession.save(`object`)
-        }
-    }
-
-    protected fun findBy(vararg restrictions: Restriction): List<T> {
-        val mongoSession = session()
-        val criteria = mongoSession.createCriteria(clazz())
-        restrictions.forEach { criteria.add(it) }
-        return criteria.list() as List<T>
-    }
-
-    protected open fun all(): List<T> = session().createCriteria(clazz()).list() as List<T>
-}
-
+private fun Date.toLocalDate() = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate()
 
 @Component
 class MongoFriendlyMatchDateRepository(mongoDatabase: MongoDatabase):  FriendlyMatchDateRepository {
@@ -76,8 +52,6 @@ class MongoFriendlyMatchDateRepository(mongoDatabase: MongoDatabase):  FriendlyM
         (get("presents") as List<String>).forEach { friendlyMatchDate.present(Player(it)) }
         return friendlyMatchDate
     }
-
-    private fun Date.toLocalDate() = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate()
 
     override fun add(date: FriendlyMatchDate) {
         collection.replaceOne(eq("date", date.date), date.toDocument(), ReplaceOptions().upsert(true))
@@ -145,17 +119,57 @@ class MongoPlayerRepository(mongoDatabase: MongoDatabase) : PlayerRepository {
 
 
 @Component
-class MongoSeasonRepository(mongoSessionSupplier: () -> MongoSession)
-    : MongoRepository<Season>(mongoSessionSupplier), SeasonRepository {
+class MongoSeasonRepository(mongoDatabase: MongoDatabase) : SeasonRepository {
 
-    @Autowired
-    constructor(transactionManager: MongoSessionTransactionManager) : this({ transactionManager.doGetTransaction() })
+    private val collection = mongoDatabase.getCollection("season")
 
-    override fun clazz(): Class<Season> = Season::class.java
+    private fun Season.toDocument(): Document = Document()
+            .append("name", name)
+            .append("friendlyMatches", friendlyMatches().map { it.toDocument() })
+            .append("leagueMatches", leagueMatches().map { it.toDocument() })
 
-    override fun add(season: Season) = super.add(season, season::id)
+    private fun FriendlyMatch.toDocument(): Document = Document()
+            .append("friendlyDate", date)
+            .append("players", players())
 
-    override fun byName(name: String): Season? = findBy(Restrictions.equals("name", name)).firstOrNull()
+    private fun LeagueMatch.toDocument(): Document = Document()
+            .append("leagueDate", date)
+            .append("players", players())
 
-    override fun all(): List<Season> = super.all()
+    private fun Document.toSeason(): Season {
+        val season = Season(getString("name"))
+        (get("friendlyMatches") as List<Document>).map { it.toFriendlyMatch() }.forEach { season.addFriendlyMatch(it.first, it.second) }
+        (get("leagueMatches") as List<Document>).map { it.toLeagueMatch() }.forEach { season.addLeagueMatch(it.first, it.second) }
+        return season
+    }
+
+    private fun Document.toFriendlyMatch() : Pair<FriendlyMatchDate, Set<Player>> {
+        val friendlyMatchDate = FriendlyMatchDate(getDate("friendlyDate").toLocalDate())
+        val players = (get("players") as List<String>).map { Player(it) }.toSet()
+        players.forEach { friendlyMatchDate.present(it) }
+        return friendlyMatchDate to players
+    }
+
+    private fun Document.toLeagueMatch() : Pair<LeagueMatchDate, Set<Player>> {
+        val leagueMatchDate = LeagueMatchDate(getDate("leagueDate").toLocalDate())
+        val players = (get("players") as List<String>).map { Player(it) }.toSet()
+        players.forEach { leagueMatchDate.present(it) }
+        return leagueMatchDate to players
+    }
+
+
+    override fun add(season: Season) {
+        collection.replaceOne(eq("name", season.name), season.toDocument(), ReplaceOptions().upsert(true))
+    }
+
+    override fun byName(name: String): Season?  =
+        collection.find(eq("name", name)).first()?.toSeason()
+
+    override fun all(): List<Season> = collection.find().map { it.toSeason() }.toList()
 }
+
+
+
+
+
+
