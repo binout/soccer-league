@@ -5,47 +5,43 @@ import io.github.binout.soccer.domain.player.Player
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mongolink.MongoSession
+import java.time.LocalDate
 import java.time.Month
 
-@ExtendWith(MongolinkExtension::class)
 class MongoFriendlyMatchDateRepositoryTest {
 
     private lateinit var repository: MongoFriendlyMatchDateRepository
     private lateinit var playerRepository: MongoPlayerRepository
 
     @BeforeEach
-    fun initRepository(currentSession: MongoSession) {
+    fun initRepository() {
         playerRepository = MongoPlayerRepository(MongoConfiguration("").database())
-        repository = MongoFriendlyMatchDateRepository { currentSession }
+        repository = MongoFriendlyMatchDateRepository(MongoConfiguration("").database())
     }
 
     @Test
     fun should_persist_date_without_player() {
         repository.add(MatchDate.newDateForFriendly(2016, Month.APRIL, 1))
-        repository.session().flush()
 
         val matchDate = repository.byDate(2016, Month.APRIL, 1)
         assertThat(matchDate).isNotNull
-        assertThat(matchDate!!.id).isNotNull()
+        assertThat(matchDate!!.date).isEqualTo(LocalDate.of(2016, Month.APRIL, 1))
         assertThat(matchDate.presents().count()).isZero()
     }
 
     @Test
     fun should_persist_date_with_player() {
-        val benoit = Player("benoit")
+        val benoit = Player(name = "benoit")
         playerRepository.add(benoit)
-        repository.session().flush()
 
         val date = MatchDate.newDateForFriendly(2016, Month.APRIL, 1)
         date.present(benoit)
         repository.add(date)
-        repository.session().flush()
 
         val matchDate = repository.byDate(2016, Month.APRIL, 1)
         assertThat(matchDate).isNotNull
-        assertThat(matchDate!!.id).isNotNull()
+        assertThat(matchDate!!.date).isEqualTo(LocalDate.of(2016, Month.APRIL, 1))
         assertThat(matchDate.presents()).containsOnly("benoit")
     }
 }

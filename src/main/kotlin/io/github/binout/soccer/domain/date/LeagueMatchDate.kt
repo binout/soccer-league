@@ -23,7 +23,6 @@ import java.util.*
 
 open class LeagueMatchDate(override val date: LocalDate) : MatchDate {
 
-    val id: String = UUID.randomUUID().toString()
     private val presents: MutableSet<String> = mutableSetOf()
 
     override fun presents(): List<String> = presents.toList()
