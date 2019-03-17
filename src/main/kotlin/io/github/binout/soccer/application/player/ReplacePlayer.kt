@@ -25,7 +25,7 @@ class ReplacePlayer(private val playerRepository: PlayerRepository) {
 
     @Transactional
     fun execute(name: String, email: String?, playerLeague: Boolean?, goalkeeper: Boolean?) {
-        val player = playerRepository.byName(name) ?: Player(name)
+        val player = playerRepository.byName(name) ?: Player(name = name)
         email?.let { player.email = it }
         playerLeague?.let { player.isPlayerLeague = it }
         goalkeeper?.let { player.isGoalkeeper = it }

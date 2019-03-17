@@ -11,7 +11,7 @@ import java.time.Month
 
 class SeasonTest {
 
-    private fun players(vararg names: String): MutableSet<Player> = names.map { Player(it) }.toMutableSet()
+    private fun players(vararg names: String): MutableSet<Player> = names.map { Player(name = it) }.toMutableSet()
 
     private fun addLeagueMatch(season: Season, date: LeagueMatchDate, players: Set<Player>) {
         players.forEach { date.present(it) }
@@ -32,11 +32,11 @@ class SeasonTest {
         val stats = season.statistics()
 
         assertThat(stats.nbPlayers).isEqualTo(5)
-        assertThat(stats.matchPlayed(Player("benoit"))).isEqualTo(1)
-        assertThat(stats.matchPlayed(Player("nicolas"))).isEqualTo(1)
-        assertThat(stats.matchPlayed(Player("julien"))).isEqualTo(1)
-        assertThat(stats.matchPlayed(Player("pierre"))).isEqualTo(1)
-        assertThat(stats.matchPlayed(Player("mat"))).isEqualTo(1)
+        assertThat(stats.matchPlayed(Player(name = "benoit"))).isEqualTo(1)
+        assertThat(stats.matchPlayed(Player(name = "nicolas"))).isEqualTo(1)
+        assertThat(stats.matchPlayed(Player(name = "julien"))).isEqualTo(1)
+        assertThat(stats.matchPlayed(Player(name = "pierre"))).isEqualTo(1)
+        assertThat(stats.matchPlayed(Player(name = "mat"))).isEqualTo(1)
     }
 
     @Test
@@ -54,17 +54,17 @@ class SeasonTest {
         val stats = season.statistics()
 
         assertThat(stats.nbPlayers).isEqualTo(10)
-        assertThat(stats.matchPlayed(Player("benoit"))).isEqualTo(2)
-        assertThat(stats.matchPlayed(Player("nicolas"))).isEqualTo(2)
-        assertThat(stats.matchPlayed(Player("julien"))).isEqualTo(2)
-        assertThat(stats.matchPlayed(Player("pierre"))).isEqualTo(2)
-        assertThat(stats.matchPlayed(Player("mat"))).isEqualTo(2)
+        assertThat(stats.matchPlayed(Player(name = "benoit"))).isEqualTo(2)
+        assertThat(stats.matchPlayed(Player(name = "nicolas"))).isEqualTo(2)
+        assertThat(stats.matchPlayed(Player(name = "julien"))).isEqualTo(2)
+        assertThat(stats.matchPlayed(Player(name = "pierre"))).isEqualTo(2)
+        assertThat(stats.matchPlayed(Player(name = "mat"))).isEqualTo(2)
 
-        assertThat(stats.matchPlayed(Player("flo"))).isEqualTo(1)
-        assertThat(stats.matchPlayed(Player("gauthier"))).isEqualTo(1)
-        assertThat(stats.matchPlayed(Player("fabien"))).isEqualTo(1)
-        assertThat(stats.matchPlayed(Player("guillaume"))).isEqualTo(1)
-        assertThat(stats.matchPlayed(Player("sebastien"))).isEqualTo(1)
+        assertThat(stats.matchPlayed(Player(name = "flo"))).isEqualTo(1)
+        assertThat(stats.matchPlayed(Player(name = "gauthier"))).isEqualTo(1)
+        assertThat(stats.matchPlayed(Player(name = "fabien"))).isEqualTo(1)
+        assertThat(stats.matchPlayed(Player(name = "guillaume"))).isEqualTo(1)
+        assertThat(stats.matchPlayed(Player(name = "sebastien"))).isEqualTo(1)
     }
 
     @Test

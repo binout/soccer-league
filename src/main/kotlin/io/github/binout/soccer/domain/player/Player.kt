@@ -21,8 +21,7 @@ open class Player(
         val name: String,
         var email: String? = null,
         var isPlayerLeague: Boolean = false,
-        var isGoalkeeper: Boolean = false,
-        val id: String = UUID.randomUUID().toString()) {
+        var isGoalkeeper: Boolean = false) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

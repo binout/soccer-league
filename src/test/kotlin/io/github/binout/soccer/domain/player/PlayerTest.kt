@@ -8,6 +8,6 @@ class PlayerTest {
 
     @Test
     fun email_with_blank_is_like_optional_empty() {
-        assertThat(Player("sylvain", "").email!!).isEmpty()
+        assertThat(Player(name = "sylvain", email = "").email!!).isEmpty()
     }
 }

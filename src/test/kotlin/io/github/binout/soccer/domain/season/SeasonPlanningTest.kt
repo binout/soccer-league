@@ -45,7 +45,7 @@ internal class SeasonPlanningTest : WithAssertions {
     private fun generatePlayer(nb: Int) {
         IntStream.range(0, nb)
                 .mapToObj { _ -> UUID.randomUUID().toString() }
-                .map<Player> { Player(it) }
+                .map<Player> { Player(name = it) }
                 .forEach { this.addPlayer(it) }
     }
 
@@ -59,7 +59,7 @@ internal class SeasonPlanningTest : WithAssertions {
         IntStream.range(0, nb)
                 .mapToObj { _ -> UUID.randomUUID().toString() }
                 .map { p ->
-                    val player = Player(p)
+                    val player = Player(name = p)
                     player.isPlayerLeague = true
                     player
                 }
@@ -98,7 +98,7 @@ internal class SeasonPlanningTest : WithAssertions {
     }
 
     private fun createGoalKeeper(goalName: String): Player {
-        val goalKeeper = Player(goalName)
+        val goalKeeper = Player(name = goalName)
         goalKeeper.isPlayerLeague = true
         goalKeeper.isGoalkeeper = true
         return goalKeeper

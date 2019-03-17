@@ -32,8 +32,11 @@ import org.mongolink.domain.criteria.Restriction
 import org.mongolink.domain.criteria.Restrictions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
+import java.time.ZoneId
+import java.util.*
 
 abstract class MongoRepository<T> protected constructor(private val mongoSessionSupplier: () -> MongoSession) {
 
@@ -60,37 +63,57 @@ abstract class MongoRepository<T> protected constructor(private val mongoSession
 
 
 @Component
-class MongoFriendlyMatchDateRepository(mongoSupplier: () -> MongoSession)
-    : MongoRepository<FriendlyMatchDate>(mongoSupplier), FriendlyMatchDateRepository {
+class MongoFriendlyMatchDateRepository(mongoDatabase: MongoDatabase):  FriendlyMatchDateRepository {
 
-    @Autowired
-    constructor(transactionManager: MongoSessionTransactionManager) : this({ transactionManager.doGetTransaction() })
+    private val collection = mongoDatabase.getCollection("friendlymatchdate")
 
-    override fun clazz(): Class<FriendlyMatchDate> = FriendlyMatchDate::class.java
+    private fun FriendlyMatchDate.toDocument(): Document = Document()
+            .append("date", date)
+            .append("presents", presents())
 
-    override fun add(date: FriendlyMatchDate) = super.add(date, date::id)
+    private fun Document.toFriendlyMatchDate(): FriendlyMatchDate {
+        val friendlyMatchDate = FriendlyMatchDate(getDate("date").toLocalDate())
+        (get("presents") as List<String>).forEach { friendlyMatchDate.present(Player(it)) }
+        return friendlyMatchDate
+    }
+
+    private fun Date.toLocalDate() = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate()
+
+    override fun add(date: FriendlyMatchDate) {
+        collection.replaceOne(eq("date", date.date), date.toDocument(), ReplaceOptions().upsert(true))
+    }
 
     override fun byDate(year: Int, month: Month, dayOfMonth: Int): FriendlyMatchDate? =
-            super.findBy(Restrictions.equals("date", LocalDate.of(year, month, dayOfMonth))).firstOrNull()
+            collection.find(eq("date", LocalDate.of(year, month, dayOfMonth))).first()?.toFriendlyMatchDate()
 
-    override fun all(): List<FriendlyMatchDate> = super.all().sortedBy { it.date }
+    override fun all(): List<FriendlyMatchDate> = collection.find().map { it.toFriendlyMatchDate() }.toList()
 }
 
 @Component
-class MongoLeagueMatchDateRepository(mongoSessionSupplier: () -> MongoSession)
-    : MongoRepository<LeagueMatchDate>(mongoSessionSupplier), LeagueMatchDateRepository {
+class MongoLeagueMatchDateRepository(mongoDatabase: MongoDatabase) : LeagueMatchDateRepository {
 
-    @Autowired
-    constructor(transactionManager: MongoSessionTransactionManager) : this({ transactionManager.doGetTransaction() })
+    private val collection = mongoDatabase.getCollection("leaguematchdate")
 
-    override fun clazz(): Class<LeagueMatchDate> = LeagueMatchDate::class.java
+    private fun LeagueMatchDate.toDocument(): Document = Document()
+            .append("date", date)
+            .append("presents", presents())
 
-    override fun add(date: LeagueMatchDate) = super.add(date, date::id)
+    private fun Document.toLeagueMatchDate(): LeagueMatchDate {
+        val leagueMatchDate = LeagueMatchDate(getDate("date").toLocalDate())
+        (get("presents") as List<String>).forEach { leagueMatchDate.present(Player(it)) }
+        return leagueMatchDate
+    }
+
+    private fun Date.toLocalDate() = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate()
+
+    override fun add(date: LeagueMatchDate) {
+        collection.replaceOne(eq("date", date.date), date.toDocument(), ReplaceOptions().upsert(true))
+    }
 
     override fun byDate(year: Int, month: Month, dayOfMonth: Int): LeagueMatchDate? =
-            super.findBy(Restrictions.equals("date", LocalDate.of(year, month, dayOfMonth))).firstOrNull()
+            collection.find(eq("date", LocalDate.of(year, month, dayOfMonth))).first()?.toLeagueMatchDate()
 
-    override fun all(): List<LeagueMatchDate> = super.all().sortedBy { it.date }
+    override fun all(): List<LeagueMatchDate> = collection.find().map { it.toLeagueMatchDate() }.toList()
 }
 
 @Component
@@ -99,7 +122,6 @@ class MongoPlayerRepository(mongoDatabase: MongoDatabase) : PlayerRepository {
     private val collection = mongoDatabase.getCollection("player")
 
     private fun Player.toDocument(): Document = Document()
-            .append("_id", id)
             .append("name", name)
             .append("email", email)
             .append("isPlayerLeague", isPlayerLeague)
@@ -109,12 +131,11 @@ class MongoPlayerRepository(mongoDatabase: MongoDatabase) : PlayerRepository {
             getString("name"),
             getString("email"),
             getBoolean("isPlayerLeague"),
-            getBoolean("isGoalkeeper"),
-            getString("_id")
+            getBoolean("isGoalkeeper")
     )
 
     override fun add(player: Player) {
-        collection.replaceOne(eq("_id", player.id), player.toDocument(), ReplaceOptions().upsert(true))
+        collection.replaceOne(eq("name", player.name), player.toDocument(), ReplaceOptions().upsert(true))
     }
 
     override fun byName(name: String): Player? = collection.find(eq("name", name)).first()?.toPlayer()
