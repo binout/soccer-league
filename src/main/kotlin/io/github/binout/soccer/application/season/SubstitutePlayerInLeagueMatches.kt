@@ -20,7 +20,6 @@ import io.github.binout.soccer.domain.season.MatchPlanning
 import io.github.binout.soccer.domain.season.SeasonRepository
 import org.springframework.stereotype.Component
 import java.time.LocalDate
-import javax.transaction.Transactional
 
 @Component
 class SubstitutePlayerInLeagueMatches(
@@ -28,7 +27,6 @@ class SubstitutePlayerInLeagueMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
 
-    @Transactional
     fun execute(seasonName: String, date: LocalDate, playerName: String) {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
         val player = playerRepository.byName(playerName) ?: throw IllegalArgumentException("Invalid player")

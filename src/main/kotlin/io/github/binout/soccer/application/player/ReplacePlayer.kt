@@ -18,12 +18,10 @@ package io.github.binout.soccer.application.player
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
 
 @Component
 class ReplacePlayer(private val playerRepository: PlayerRepository) {
 
-    @Transactional
     fun execute(name: String, email: String?, playerLeague: Boolean?, goalkeeper: Boolean?) {
         val player = playerRepository.byName(name) ?: Player(name = name)
         email?.let { player.email = it }

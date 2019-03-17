@@ -17,14 +17,11 @@ package io.github.binout.soccer.application.date
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDate
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.time.Month
-import javax.transaction.Transactional
 
 @Component
 class GetFriendlyMatchDate(private val repository: FriendlyMatchDateRepository) {
 
-    @Transactional
     fun execute(year: Int, month: Month, day: Int): FriendlyMatchDate? = repository.byDate(year, month, day)
 }

@@ -28,7 +28,6 @@ import java.util.*
 
 open class Season(val name: String) {
 
-    val id: String = UUID.randomUUID().toString()
     private val friendlyMatches: MutableSet<FriendlyMatch> = mutableSetOf()
     private val leagueMatches: MutableSet<LeagueMatch> = mutableSetOf()
 

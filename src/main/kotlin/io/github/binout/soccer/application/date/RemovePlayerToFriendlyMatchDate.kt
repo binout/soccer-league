@@ -16,16 +16,12 @@
 package io.github.binout.soccer.application.date
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRegistration
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-
-import javax.transaction.Transactional
 import java.time.Month
 
 @Component
 class RemovePlayerToFriendlyMatchDate(private val friendlyMatchDateRegistration: FriendlyMatchDateRegistration) {
 
-    @Transactional
     fun execute(playerName: String, year: Int, month: Month, day: Int) =
             friendlyMatchDateRegistration.removePlayer(playerName, year, month, day)
 }

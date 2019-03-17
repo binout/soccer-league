@@ -15,18 +15,14 @@
  */
 package io.github.binout.soccer.application.date
 
-import io.github.binout.soccer.domain.date.*
-import org.springframework.beans.factory.annotation.Autowired
+import io.github.binout.soccer.domain.date.LeagueMatchDateRepository
+import io.github.binout.soccer.domain.date.MatchDate
 import org.springframework.stereotype.Component
-
-import javax.transaction.Transactional
 import java.time.Month
-import java.util.Optional
 
 @Component
 class AddLeagueMatchDate(private val repository: LeagueMatchDateRepository) {
 
-    @Transactional
     fun execute(year: Int, month: Month, day: Int) {
         val leagueMatchDate = repository.byDate(year, month, day)
         if (leagueMatchDate != null) {

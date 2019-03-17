@@ -17,16 +17,10 @@ package io.github.binout.soccer.application.date
 
 import io.github.binout.soccer.domain.date.FriendlyMatchDate
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-
-import javax.transaction.Transactional
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 @Component
 class GetAllFriendlyMatchDates(private val repository: FriendlyMatchDateRepository) {
 
-    @Transactional
     fun execute(): List<FriendlyMatchDate> = repository.all()
 }

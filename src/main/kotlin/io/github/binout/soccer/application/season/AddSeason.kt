@@ -18,12 +18,10 @@ package io.github.binout.soccer.application.season
 import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.domain.season.SeasonRepository
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
 
 @Component
 class AddSeason(private val seasonRepository: SeasonRepository) {
 
-    @Transactional
     fun execute(seasonName: String) {
         if (seasonRepository.byName(seasonName) == null) {
             seasonRepository.add(Season(seasonName))
