@@ -4,6 +4,8 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDate
 import io.github.binout.soccer.domain.date.LeagueMatchDate
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.season.Season
+import io.github.binout.soccer.infrastructure.persistence.MongoConfiguration
+import io.github.binout.soccer.infrastructure.persistence.MongoSeasonRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

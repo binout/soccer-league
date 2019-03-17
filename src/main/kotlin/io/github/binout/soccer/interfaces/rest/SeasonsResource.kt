@@ -15,11 +15,11 @@
  */
 package io.github.binout.soccer.interfaces.rest
 
-import io.github.binout.soccer.application.player.GetAllPlayers
-import io.github.binout.soccer.application.season.AddSeason
-import io.github.binout.soccer.application.season.GetAllSeasons
-import io.github.binout.soccer.application.season.GetSeason
-import io.github.binout.soccer.application.season.GetSeasonStats
+import io.github.binout.soccer.application.GetAllPlayers
+import io.github.binout.soccer.application.AddSeason
+import io.github.binout.soccer.application.GetAllSeasons
+import io.github.binout.soccer.application.GetSeason
+import io.github.binout.soccer.application.GetSeasonStats
 import io.github.binout.soccer.domain.season.SeasonStatistics
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

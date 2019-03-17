@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.binout.soccer.infrastructure.persistence.mongo
+package io.github.binout.soccer.infrastructure.persistence
 
+import com.mongodb.MongoClient
+import com.mongodb.MongoClientURI
+import com.mongodb.ServerAddress
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.ReplaceOptions
+import de.bwaldvogel.mongo.MongoServer
+import de.bwaldvogel.mongo.backend.memory.MemoryBackend
 import io.github.binout.soccer.domain.date.FriendlyMatchDate
 import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository
 import io.github.binout.soccer.domain.date.LeagueMatchDate
@@ -29,12 +34,33 @@ import io.github.binout.soccer.domain.season.SeasonRepository
 import io.github.binout.soccer.domain.season.match.FriendlyMatch
 import io.github.binout.soccer.domain.season.match.LeagueMatch
 import org.bson.Document
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
+import org.springframework.util.StringUtils
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
 import java.time.ZoneId
 import java.util.*
+
+@Configuration
+class MongoConfiguration(@Value("\${app.mongodb.uri}") private val uri: String) {
+
+    @Bean
+    fun database(): MongoDatabase = if (StringUtils.isEmpty(uri)) {
+        val mongoServer = MongoServer(MemoryBackend())
+        val serverAddress = mongoServer.bind()
+        val client = MongoClient(ServerAddress(serverAddress))
+        client.getDatabase("dev")
+    } else {
+        val mongoClientURI = MongoClientURI(uri!!)
+        val client = MongoClient(mongoClientURI)
+        client.getDatabase(mongoClientURI.database!!)
+    }
+
+}
 
 private fun Date.toLocalDate() = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate()
 

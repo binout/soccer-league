@@ -15,10 +15,10 @@
  */
 package io.github.binout.soccer.interfaces.rest
 
-import io.github.binout.soccer.application.player.GetAllLeaguePlayers
-import io.github.binout.soccer.application.player.GetAllPlayers
-import io.github.binout.soccer.application.player.GetPlayer
-import io.github.binout.soccer.application.player.ReplacePlayer
+import io.github.binout.soccer.application.GetAllLeaguePlayers
+import io.github.binout.soccer.application.GetAllPlayers
+import io.github.binout.soccer.application.GetPlayer
+import io.github.binout.soccer.application.ReplacePlayer
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
