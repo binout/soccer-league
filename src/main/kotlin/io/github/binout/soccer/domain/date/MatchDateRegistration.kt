@@ -25,11 +25,11 @@ class FriendlyMatchDateRegistration(private val repository: FriendlyMatchDateRep
                                     private val playerRepository: PlayerRepository) {
 
     fun addPlayer(playerName: String, year: Int, month: Month, day: Int) {
-        managePlayers(playerName, year, month, day) { obj, player -> obj.present(player) }
+        managePlayers(playerName, year, month, day) { matchDate, player -> matchDate.present(player) }
     }
 
     fun removePlayer(playerName: String, year: Int, month: Month, day: Int) {
-        managePlayers(playerName, year, month, day) { obj, player -> obj.absent(player) }
+        managePlayers(playerName, year, month, day) { matchDate, player -> matchDate.absent(player) }
     }
 
     private fun managePlayers(playerName: String, year: Int, month: Month, day: Int, inscription: (FriendlyMatchDate, Player) -> Unit) {
@@ -45,11 +45,11 @@ class LeagueMatchDateRegistration(private val repository: LeagueMatchDateReposit
                                   private val playerRepository: PlayerRepository) {
 
     fun addPlayer(playerName: String, year: Int, month: Month, day: Int) {
-        managePlayers(playerName, year, month, day) { obj, player -> obj.present(player) }
+        managePlayers(playerName, year, month, day) { matchDate, player -> matchDate.present(player) }
     }
 
     fun removePlayer(playerName: String, year: Int, month: Month, day: Int) {
-        managePlayers(playerName, year, month, day) { obj, player -> obj.absent(player) }
+        managePlayers(playerName, year, month, day) { matchDate, player -> matchDate.absent(player) }
     }
 
     private fun managePlayers(playerName: String, year: Int, month: Month, day: Int, inscription: (LeagueMatchDate, Player) -> Unit) {

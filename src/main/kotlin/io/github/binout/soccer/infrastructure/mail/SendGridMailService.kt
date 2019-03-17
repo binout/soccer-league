@@ -15,17 +15,17 @@
  */
 package io.github.binout.soccer.infrastructure.mail
 
-import feign.*
+import feign.Feign
+import feign.Headers
+import feign.RequestLine
 import io.github.binout.soccer.domain.MailService
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
-
-import java.util.Arrays
+import java.util.*
 
 @Component
 class SendGridMailService : MailService {
