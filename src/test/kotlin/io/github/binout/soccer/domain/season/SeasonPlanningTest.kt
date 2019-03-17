@@ -6,6 +6,7 @@ import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.infrastructure.persistence.InMemoryFriendlyMatchDateRepository
 import io.github.binout.soccer.infrastructure.persistence.InMemoryLeagueMatchDateRepository
 import io.github.binout.soccer.infrastructure.persistence.InMemoryPlayerRepository
+import io.github.binout.soccer.infrastructure.persistence.InMemorySeasonRepository
 import org.assertj.core.api.WithAssertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,6 +24,7 @@ internal class SeasonPlanningTest : WithAssertions {
     private lateinit var seasonPlanning: SeasonPlanning
     private lateinit var matchPlanning: MatchPlanning
     private lateinit var playerRepository: PlayerRepository
+    private lateinit var seasonRepository: SeasonRepository
 
     private val DATE_FOR_LEAGUE = MatchDate.newDateForLeague(2016, Month.APRIL, 15)
     private val DATE_FOR_FRIENDLY = MatchDate.newDateForFriendly(2016, Month.APRIL, 15)
@@ -31,15 +33,16 @@ internal class SeasonPlanningTest : WithAssertions {
     @BeforeEach
     fun init() {
         playerRepository = InMemoryPlayerRepository()
+        seasonRepository = InMemorySeasonRepository()
 
         val leagueMatchDateRepository = InMemoryLeagueMatchDateRepository()
-        leagueMatchDateRepository.add(DATE_FOR_LEAGUE)
+        leagueMatchDateRepository.replace(DATE_FOR_LEAGUE)
 
         val friendlyMatchDateRepository = InMemoryFriendlyMatchDateRepository()
-        friendlyMatchDateRepository.add(DATE_FOR_FRIENDLY)
+        friendlyMatchDateRepository.replace(DATE_FOR_FRIENDLY)
 
-        matchPlanning = MatchPlanning(playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository)
-        seasonPlanning = SeasonPlanning(playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository, matchPlanning, Mockito.mock(ApplicationEventPublisher::class.java))
+        matchPlanning = MatchPlanning(seasonRepository, playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository)
+        seasonPlanning = SeasonPlanning(seasonRepository, playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository, matchPlanning, Mockito.mock(ApplicationEventPublisher::class.java))
     }
 
     private fun generatePlayer(nb: Int) {

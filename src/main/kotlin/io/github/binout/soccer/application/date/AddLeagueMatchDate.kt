@@ -25,8 +25,8 @@ class AddLeagueMatchDate(private val repository: LeagueMatchDateRepository) {
 
     fun execute(year: Int, month: Month, day: Int) {
         val leagueMatchDate = repository.byDate(year, month, day)
-        if (leagueMatchDate != null) {
-            repository.add(MatchDate.newDateForLeague(year, month, day))
+        if (leagueMatchDate == null) {
+            repository.replace(MatchDate.newDateForLeague(year, month, day))
         }
     }
 }

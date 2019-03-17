@@ -15,9 +15,7 @@
  */
 package io.github.binout.soccer.domain.season
 
-import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository
-import io.github.binout.soccer.domain.date.LeagueMatchDateRepository
-import io.github.binout.soccer.domain.date.MatchDate
+import io.github.binout.soccer.domain.date.*
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.domain.season.match.FriendlyMatch
@@ -28,6 +26,7 @@ import java.util.*
 
 @Component
 class MatchPlanning(
+        private val seasonRepository: SeasonRepository,
         private val playerRepository: PlayerRepository,
         private val friendlyMatchDateRepository: FriendlyMatchDateRepository,
         private val leagueMatchDateRepository: LeagueMatchDateRepository) {
@@ -40,7 +39,9 @@ class MatchPlanning(
             throw IllegalArgumentException(by.name + " is not present for this date")
         }
         match.replacePlayer(player, by)
+        seasonRepository.replace(season)
         matchDate.absent(player)
+        replaceMatchDate(matchDate)
     }
 
     private fun getSubstitute(season: Season, match: Match): Player {
@@ -49,6 +50,14 @@ class MatchPlanning(
             throw IllegalArgumentException("No substitutes available")
         }
         return substitutes.iterator().next()
+    }
+
+    private fun replaceMatchDate(matchDate: MatchDate) {
+        if (matchDate is LeagueMatchDate) {
+            leagueMatchDateRepository.replace(matchDate)
+        } else if (matchDate is FriendlyMatchDate) {
+            friendlyMatchDateRepository.replace(matchDate)
+        }
     }
 
     private fun getMatchDate(match: Match): MatchDate? {

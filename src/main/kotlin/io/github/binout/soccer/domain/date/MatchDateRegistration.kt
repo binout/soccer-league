@@ -36,6 +36,7 @@ class FriendlyMatchDateRegistration(private val repository: FriendlyMatchDateRep
         val friendlyMatchDate = repository.byDate(year, month, day) ?: throw IllegalArgumentException("Date is invalid")
         val player = playerRepository.byName(playerName) ?: throw IllegalArgumentException("Player is invalid")
         inscription(friendlyMatchDate, player)
+        repository.replace(friendlyMatchDate)
     }
 }
 
@@ -55,5 +56,6 @@ class LeagueMatchDateRegistration(private val repository: LeagueMatchDateReposit
         val leagueMatchDate = repository.byDate(year, month, day) ?: throw IllegalArgumentException("Date is invalid")
         val player = playerRepository.byName(playerName) ?: throw IllegalArgumentException("Player is invalid")
         inscription(leagueMatchDate, player)
+        repository.replace(leagueMatchDate)
     }
 }

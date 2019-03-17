@@ -14,7 +14,7 @@ class InitializeSeason(private val seasonRepository: SeasonRepository) {
         val currentSeason = Season.currentSeasonName()
         val optSeason = seasonRepository.all().firstOrNull { s -> s.name == currentSeason }
         if (optSeason == null) {
-            seasonRepository.add(Season(currentSeason))
+            seasonRepository.replace(Season(currentSeason))
         }
     }
 }

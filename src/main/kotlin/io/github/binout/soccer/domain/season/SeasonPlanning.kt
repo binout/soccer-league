@@ -30,6 +30,7 @@ import java.util.*
 
 @Component
 class SeasonPlanning(
+        private val seasonRepository: SeasonRepository,
         private val playerRepository: PlayerRepository,
         private val friendlyMatchDateRepository: FriendlyMatchDateRepository,
         private val leagueMatchDateRepository: LeagueMatchDateRepository,
@@ -39,6 +40,7 @@ class SeasonPlanning(
     fun planLeagueMatch(season: Season, date: LeagueMatchDate): LeagueMatch {
         val treeMap = computeGamesPlayed(date, playerRepository.all().filter { it.isPlayerLeague }, MatchPlanning.leagueCounter(season))
         val leagueMatch = season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS, true))
+        seasonRepository.replace(season)
         publisher.publishEvent(LeagueMatchPlanned(leagueMatch, matchPlanning.getSubstitutes(season, leagueMatch)))
         return leagueMatch
     }
@@ -46,6 +48,7 @@ class SeasonPlanning(
     fun planFriendlyMatch(season: Season, date: FriendlyMatchDate): FriendlyMatch {
         val treeMap = computeGamesPlayed(date, playerRepository.all(), MatchPlanning.globalCounter(season))
         val friendlyMatch = season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS, false))
+        seasonRepository.replace(season)
         publisher.publishEvent(FriendlyMatchPlanned(friendlyMatch, matchPlanning.getSubstitutes(season, friendlyMatch)))
         return friendlyMatch
     }

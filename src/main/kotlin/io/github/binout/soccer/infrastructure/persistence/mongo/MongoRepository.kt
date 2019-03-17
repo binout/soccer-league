@@ -53,7 +53,7 @@ class MongoFriendlyMatchDateRepository(mongoDatabase: MongoDatabase):  FriendlyM
         return friendlyMatchDate
     }
 
-    override fun add(date: FriendlyMatchDate) {
+    override fun replace(date: FriendlyMatchDate) {
         collection.replaceOne(eq("date", date.date), date.toDocument(), ReplaceOptions().upsert(true))
     }
 
@@ -80,7 +80,7 @@ class MongoLeagueMatchDateRepository(mongoDatabase: MongoDatabase) : LeagueMatch
 
     private fun Date.toLocalDate() = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate()
 
-    override fun add(date: LeagueMatchDate) {
+    override fun replace(date: LeagueMatchDate) {
         collection.replaceOne(eq("date", date.date), date.toDocument(), ReplaceOptions().upsert(true))
     }
 
@@ -158,7 +158,7 @@ class MongoSeasonRepository(mongoDatabase: MongoDatabase) : SeasonRepository {
     }
 
 
-    override fun add(season: Season) {
+    override fun replace(season: Season) {
         collection.replaceOne(eq("name", season.name), season.toDocument(), ReplaceOptions().upsert(true))
     }
 

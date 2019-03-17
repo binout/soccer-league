@@ -25,8 +25,8 @@ class AddFriendlyMatchDate(private val repository: FriendlyMatchDateRepository) 
 
     fun execute(year: Int, month: Month, day: Int) {
         val friendlyMatchDate = repository.byDate(year, month, day)
-        if (friendlyMatchDate != null) {
-            repository.add(MatchDate.newDateForFriendly(year, month, day))
+        if (friendlyMatchDate == null) {
+            repository.replace(MatchDate.newDateForFriendly(year, month, day))
         }
     }
 }
