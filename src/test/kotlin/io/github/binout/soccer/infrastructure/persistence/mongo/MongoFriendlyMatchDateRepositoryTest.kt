@@ -2,6 +2,9 @@ package io.github.binout.soccer.infrastructure.persistence.mongo
 
 import io.github.binout.soccer.domain.date.MatchDate
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.infrastructure.persistence.MongoConfiguration
+import io.github.binout.soccer.infrastructure.persistence.MongoFriendlyMatchDateRepository
+import io.github.binout.soccer.infrastructure.persistence.MongoPlayerRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

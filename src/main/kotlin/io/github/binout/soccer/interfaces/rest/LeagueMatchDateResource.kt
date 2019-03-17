@@ -15,14 +15,14 @@
  */
 package io.github.binout.soccer.interfaces.rest
 
-import io.github.binout.soccer.application.date.*
+import io.github.binout.soccer.application.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("rest/match-dates/league")
 class LeagueMatchDateResource(
-        val allLeagueMatchDates: GetAllLeagueMatchDates, 
+        val allLeagueMatchDates: GetAllLeagueMatchDates,
         val nextLeagueMatchDates: GetNextLeagueMatchDates,
         val addLeagueMatchDate: AddLeagueMatchDate,
         val getLeagueMatchDate: GetLeagueMatchDate,

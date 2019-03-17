@@ -15,7 +15,7 @@
  */
 package io.github.binout.soccer.interfaces.rest
 
-import io.github.binout.soccer.application.season.*
+import io.github.binout.soccer.application.*
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.season.match.Match
 import io.vavr.Tuple2
