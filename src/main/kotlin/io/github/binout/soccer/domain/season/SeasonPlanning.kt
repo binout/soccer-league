@@ -16,8 +16,8 @@
 package io.github.binout.soccer.domain.season
 
 import io.github.binout.soccer.domain.date.*
-import io.github.binout.soccer.domain.event.FriendlyMatchPlanned
-import io.github.binout.soccer.domain.event.LeagueMatchPlanned
+import io.github.binout.soccer.domain.FriendlyMatchPlanned
+import io.github.binout.soccer.domain.LeagueMatchPlanned
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.domain.season.match.FriendlyMatch

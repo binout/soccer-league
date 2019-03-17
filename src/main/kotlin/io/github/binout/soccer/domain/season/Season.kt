@@ -25,7 +25,7 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.temporal.ChronoField
 
-open class Season(val name: String) {
+class Season(val name: String) {
 
     private val friendlyMatches: MutableSet<FriendlyMatch> = mutableSetOf()
     private val leagueMatches: MutableSet<LeagueMatch> = mutableSetOf()

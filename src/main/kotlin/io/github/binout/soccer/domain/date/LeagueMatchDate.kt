@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.Month
 import java.util.*
 
-open class LeagueMatchDate(override val date: LocalDate) : MatchDate {
+class LeagueMatchDate(override val date: LocalDate) : MatchDate {
 
     private val presents: MutableSet<String> = mutableSetOf()
 
