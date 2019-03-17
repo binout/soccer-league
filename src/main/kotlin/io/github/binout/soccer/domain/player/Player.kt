@@ -15,9 +15,7 @@
  */
 package io.github.binout.soccer.domain.player
 
-import java.util.*
-
-open class Player(
+class Player(
         val name: String,
         var email: String? = null,
         var isPlayerLeague: Boolean = false,

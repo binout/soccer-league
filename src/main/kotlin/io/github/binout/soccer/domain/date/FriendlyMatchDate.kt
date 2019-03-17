@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.Month
 import java.util.*
 
-open class FriendlyMatchDate(override val date: LocalDate) : MatchDate {
+class FriendlyMatchDate(override val date: LocalDate) : MatchDate {
 
     private val presents: MutableSet<String> = mutableSetOf()
 

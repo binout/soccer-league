@@ -13,16 +13,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.binout.soccer.domain.notification
+package io.github.binout.soccer.domain
 
-import io.github.binout.soccer.domain.event.FriendlyMatchPlanned
-import io.github.binout.soccer.domain.event.LeagueMatchPlanned
 import io.github.binout.soccer.domain.player.PlayerRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.stream.Stream
+
+interface TemplateEngine {
+
+    fun render(templateName: String, params: Map<String, Any>): String
+}
+
+interface MailService {
+
+    fun sendMail(mail: Mail)
+
+    class Mail(private val from: String, private val subject: String, private val content: String) {
+        private val tos: MutableList<String>
+
+        init {
+            this.tos = ArrayList()
+        }
+
+        fun addRecipient(to: String): Mail {
+            this.tos.add(to)
+            return this
+        }
+
+        fun hasRecipients(): Boolean {
+            return !tos.isEmpty()
+        }
+
+        fun from(): String {
+            return from
+        }
+
+        fun subject(): String {
+            return subject
+        }
+
+        fun content(): String {
+            return content
+        }
+
+        fun recipients(): Stream<String> {
+            return tos.stream()
+        }
+    }
+}
+
 
 @Component
 class NotificationService(
@@ -69,3 +113,4 @@ class NotificationService(
     }
 
 }
+

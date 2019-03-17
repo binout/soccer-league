@@ -1,6 +1,6 @@
 package io.github.binout.soccer.infrastructure.mail
 
-import io.github.binout.soccer.domain.notification.MailService
+import io.github.binout.soccer.domain.MailService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 

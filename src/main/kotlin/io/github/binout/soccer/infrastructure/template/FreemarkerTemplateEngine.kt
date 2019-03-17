@@ -17,16 +17,14 @@ package io.github.binout.soccer.infrastructure.template
 
 import freemarker.template.Configuration
 import freemarker.template.TemplateException
-import io.github.binout.soccer.domain.notification.TemplateEngine
-import io.github.binout.soccer.infrastructure.log.LoggerService
+import io.github.binout.soccer.domain.TemplateEngine
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.io.IOException
 import java.io.StringWriter
 
 @Component
-class FreemarkerTemplateEngine @Autowired
-constructor(private val loggerService: LoggerService) : TemplateEngine {
+class FreemarkerTemplateEngine : TemplateEngine {
 
     private val configuration: Configuration = Configuration().apply {
         setClassForTemplateLoading(this.javaClass, "/templates")
@@ -39,10 +37,10 @@ constructor(private val loggerService: LoggerService) : TemplateEngine {
             template.process(params, writer)
             writer.toString()
         } catch (e: TemplateException) {
-            loggerService.log(this.javaClass, e.message)
+            println(this.javaClass.name + " : " + e.message)
             "Error in mail templating : " + e.message
         } catch (e: IOException) {
-            loggerService.log(this.javaClass, e.message)
+            println(this.javaClass.name + " : " + e.message)
             "Error in mail templating : " + e.message
         }
 

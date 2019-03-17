@@ -16,8 +16,7 @@
 package io.github.binout.soccer.infrastructure.mail
 
 import feign.*
-import io.github.binout.soccer.domain.notification.MailService
-import io.github.binout.soccer.infrastructure.log.LoggerService
+import io.github.binout.soccer.domain.MailService
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -29,8 +28,7 @@ import org.springframework.util.StringUtils
 import java.util.Arrays
 
 @Component
-class SendGridMailService @Autowired
-constructor(private val loggerService: LoggerService) : MailService {
+class SendGridMailService : MailService {
 
     @Value("\${app.mail.sendgrid.url}")
     private val sendGridUrl: String? = null
@@ -48,13 +46,13 @@ constructor(private val loggerService: LoggerService) : MailService {
                             .target(SendGrid::class.java, sendGridUrl)
                             .sendMail(jsonMail)
                 } catch (e: Throwable) {
-                    loggerService.log(this.javaClass, "Cannot send mail to sendgrid api : $jsonMail")
-                    loggerService.log(this.javaClass, Arrays.toString(e.stackTrace))
+                    println(this.javaClass.name + " : " + "Cannot send mail to sendgrid api : $jsonMail")
+                    println(this.javaClass.name + " : " + Arrays.toString(e.stackTrace))
                 }
 
             }
         } else {
-            loggerService.log(this.javaClass, "No SendGrid Configuration")
+            println(this.javaClass.name + " : " + "No SendGrid Configuration")
         }
     }
 

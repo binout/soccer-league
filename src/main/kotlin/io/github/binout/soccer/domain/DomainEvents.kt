@@ -13,14 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.binout.soccer.domain.event
+package io.github.binout.soccer.domain
 
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.season.match.FriendlyMatch
+import io.github.binout.soccer.domain.season.match.LeagueMatch
+import java.time.LocalDate
 
 class FriendlyMatchPlanned(friendlyMatch: FriendlyMatch, substitutes: List<Player>) {
 
     val date = friendlyMatch.date
     val players = friendlyMatch.players()
     val substitutes = substitutes.map { it.name }
+}
+
+class LeagueMatchPlanned(leagueMatch: LeagueMatch, substitutes: List<Player>) {
+
+    val date: LocalDate = leagueMatch.date
+    val players = leagueMatch.players()
+    val substitutes =  substitutes.map { it.name }
+
 }
