@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Tabs,Tab} from 'react-bootstrap';
 
 import PlayersAgenda from './PlayersAgenda.jsx';
 
-const Agenda = React.createClass({
+class Agenda extends Component{
 
     getInitialState() {
         return {
@@ -12,13 +12,13 @@ const Agenda = React.createClass({
             leaguePlayers : [],
             leagueMatchDates : []
         }
-    },
+    }
 
     async fetchData(url){
         const response = await fetch(url);
         const data = await response.json();
         return data;
-    },
+    }
 
     async componentDidMount() {
         const players = await this.fetchData('/rest/players');
@@ -26,19 +26,19 @@ const Agenda = React.createClass({
         this.setState({players, leaguePlayers});
         this.fetchFriendlyMatchState();
         this.fetchLeagueMatchState();
-    },
+    }
 
     //// LeagueMatch
     async fetchLeagueMatchState() {
         const leagueMatchDates = await this.fetchData('/rest/match-dates/league/next');
         this.setState({leagueMatchDates})
-    },
+    }
 
     //// FriendlyMatch
     async fetchFriendlyMatchState() {
         const friendlyMatchDates = await this.fetchData('/rest/match-dates/friendly/next');
         this.setState({friendlyMatchDates});
-    },
+    }
 
     async handleNewMatch(date, matchType) {
         const newMatchDate = date.format('YYYY-MM-DD');
@@ -56,7 +56,7 @@ const Agenda = React.createClass({
                 this.fetchFriendlyMatchState()
             }
         }
-    },
+    }
 
     async handleMatchPresent(matchType, date, player) {
         const url = `/rest/match-dates/${matchType}/${date}/players/${player}`;
@@ -73,7 +73,7 @@ const Agenda = React.createClass({
                 this.fetchFriendlyMatchState();
             }
         }
-    },
+    }
 
     async handleMatchAbsent(matchType, date, player) {
         const url = `/rest/match-dates/${matchType}/${date}/players/${player}`;
@@ -90,7 +90,7 @@ const Agenda = React.createClass({
                 this.fetchFriendlyMatchState();
             }
         }
-    },
+    }
 
     render() {
 
@@ -117,6 +117,6 @@ const Agenda = React.createClass({
             </Tabs>
         );
     }
-});
+}
 
 export default Agenda;

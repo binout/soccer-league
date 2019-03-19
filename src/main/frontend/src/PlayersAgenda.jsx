@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Table,Button,Label} from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 
@@ -6,30 +6,30 @@ var moment = require('moment');
 require('react-datepicker/dist/react-datepicker.css');
 
 
-const PlayersAgenda = React.createClass({
+class PlayersAgenda extends Component {
 
     getDefaultProps() {
         return {
             players : [],
             matchDates : [],
         }
-    },
+    }
 
     getInitialState() {
         return {
             startDate: moment()
         };
-    },
+    }
 
     handleChange(date) {
         this.setState({
             startDate: date
         });
-    },
+    }
 
     handleSubmit() {
         this.props.matchDateHandler(this.state.startDate);
-    },
+    }
 
     handleOnCheck(date, player, event) {
         if (event.target.checked) {
@@ -37,7 +37,7 @@ const PlayersAgenda = React.createClass({
         } else {
             this.props.absentHandler(date, player);
         }
-    },
+    }
 
     renderMatchDate(m) {
         return (
@@ -45,7 +45,7 @@ const PlayersAgenda = React.createClass({
                 &nbsp;<Label bsStyle={m.canBePlanned ? "success" : "warning"}>{m.presents.length}</Label>
             </th>
         );
-    },
+    }
 
     renderMatchDateCheckbox(matchDate, player) {
         return (
@@ -56,7 +56,7 @@ const PlayersAgenda = React.createClass({
                 />
             </td>
         );
-    },
+    }
 
     renderThead() {
         return (
@@ -67,7 +67,7 @@ const PlayersAgenda = React.createClass({
             </tr>
             </thead>
         );
-    },
+    }
 
     renderPlayerLine(player) {
         const checkboxes = this.props.matchDates.map(m => this.renderMatchDateCheckbox(m, player.name));
@@ -77,7 +77,7 @@ const PlayersAgenda = React.createClass({
                 {checkboxes}
             </tr>
         );
-    },
+    }
 
     renderTbody() {
         return (
@@ -85,7 +85,7 @@ const PlayersAgenda = React.createClass({
             {this.props.players.map(p => this.renderPlayerLine(p))}
             </tbody>
         );
-    },
+    }
 
     render() {
         return (
@@ -103,6 +103,6 @@ const PlayersAgenda = React.createClass({
             </div>
         );
     }
-});
+}
 
 export default PlayersAgenda;

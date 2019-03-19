@@ -1,13 +1,16 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Table,Col,Glyphicon } from 'react-bootstrap';
 
-const Players = React.createClass({
-
-    getInitialState() {
-        return {
-            players : []
+class Players extends Component{
+    
+    constructor(props){
+        super(props);
+        this.state = {
+            players: []
         }
-    },
+        this.renderLine = this.renderLine.bind(this);
+        this.fetchState = this.fetchState.bind(this);
+    }
 
     renderLine(player) {
         const playerLeague = player.playerLeague ? <Glyphicon glyph="star"/> : '';
@@ -21,7 +24,17 @@ const Players = React.createClass({
                     <td>{player.email}</td>
                 </tr>
             );
-    },
+    }
+
+    async fetchState() {
+        const response = await fetch('/rest/players');
+        const players = await response.json();
+        this.setState({players})
+    }
+
+    componentDidMount() {
+       this.fetchState();
+    }
 
     render() {
         const nbLeaguePlayers = this.state.players.filter(p => p.playerLeague).length
@@ -29,7 +42,7 @@ const Players = React.createClass({
             <div>
                 <h2>{this.state.players.length} Players </h2>
                 <h3>{nbLeaguePlayers} League Players</h3>
-                <Col md={12}>
+                {/* <Col md={12}>
                 <Table striped bordered condensed>
                     <thead>
                     <tr>
@@ -43,21 +56,11 @@ const Players = React.createClass({
                 </Table>
                     <p>League Player : <Glyphicon glyph="star"/></p>
                     <p>Goalkeeper :  <Glyphicon glyph="print"/></p>
-                </Col>
+                </Col> */}
             </div>
         );
-    },
-
-    async fetchState() {
-        const response = await fetch('/rest/players');
-        const players = await response.json();
-        this.setState({players})
-    },
-
-    componentDidMount() {
-       this.fetchState();
     }
 
-});
+};
 
 export default Players;

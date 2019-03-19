@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Button,Glyphicon,Row,Col,Tabs,Tab,Table} from 'react-bootstrap';
 
 var moment = require('moment');
 
-const Season = React.createClass({
+class Season extends Component {
 
     getInitialState() {
         return {
@@ -16,7 +16,7 @@ const Season = React.createClass({
             leagueMatchesToPlan : [],
             stats : []
         }
-    },
+    }
 
     async componentDidMount() {
         const data = await this.fetchData('/rest/seasons/current');
@@ -24,18 +24,18 @@ const Season = React.createClass({
         this.fetchFriendlyMatchStates();
         this.fetchLeagueMatchStates();
         this.fetchStats();
-    },
+    }
 
     async fetchData(url){
         const response = await fetch(url);
         const data = await response.json();
         return data;
-    },
+    }
 
     async fetchStats() {
         const stats = await this.fetchData('/rest/seasons/current/stats');
         this.setState({stats});
-    },
+    }
 
     async fetchFriendlyMatchStates() {
         const friendlyMatches = await this.fetchData('/rest/seasons/current/matches/friendly/next');
@@ -43,7 +43,7 @@ const Season = React.createClass({
         this.setState({
             friendlyMatches, friendlyMatchesToPlan
         })
-    },
+    }
 
     async fetchLeagueMatchStates() {
         const leagueMatches = await this.fetchData('/rest/seasons/current/matches/league/next');
@@ -51,7 +51,7 @@ const Season = React.createClass({
         this.setState({
             leagueMatches, leagueMatchesToPlan
         })
-    },
+    }
 
     renderPlayer(match, player, substituteHandler) {
         const exit = match.subs.length == 0
@@ -62,14 +62,14 @@ const Season = React.createClass({
                 <td>{player}</td>
                 <td>{exit}</td>
             </tr>);
-    },
+    }
 
     intersperse(arr, sep) {
         if (arr.length === 0) {
             return [];
         }
         return arr.slice(1).reduce((xs, x, i) => xs.concat([sep, x]), [arr[0]]);
-    },
+    }
 
     renderMatch(match, substituteHandler) {
         return (
@@ -84,7 +84,7 @@ const Season = React.createClass({
                     <i>Substitutes : </i> {match.subs.length == 0 ? 'None' : this.intersperse(match.subs, ", ")}
                 </Col>
             </div>);
-    },
+    }
 
     async handleFriendlySubstitute(date, player) {
         const url = `/rest/seasons/current/matches/friendly/${date}/players/${player}`;
@@ -98,7 +98,7 @@ const Season = React.createClass({
             this.fetchFriendlyMatchStates();
             this.fetchStats()
         }
-    },
+    }
 
     async handleFriendlyPlan(date) {
         const url = `/rest/seasons/current/matches/friendly/${date}`;
@@ -112,7 +112,7 @@ const Season = React.createClass({
             this.fetchFriendlyMatchStates();
             this.fetchStats()
         }
-    },
+    }
 
     async handleLeagueSubstitute(date, player) {
         const url = `/rest/seasons/current/matches/league/${date}/players/${player}`;
@@ -126,7 +126,7 @@ const Season = React.createClass({
             this.fetchLeagueMatchStates();
             this.fetchStats()
         }
-    },
+    }
 
     async handleLeaguePlan(date) {
         const url = `/rest/seasons/current/matches/league/${date}`;
@@ -140,7 +140,7 @@ const Season = React.createClass({
             this.fetchLeagueMatchStates();
             this.fetchStats()
         }
-    },
+    }
 
     renderMatchToPlan(matchDate, planHanlder) {
         return (
@@ -149,7 +149,7 @@ const Season = React.createClass({
                 &nbsp;<Button bsStyle="primary" bsSize="xsmall" onClick={planHanlder}>PLAN</Button>
             </li>
         );
-    },
+    }
 
     renderStatLine(stat) {
         return (
@@ -160,7 +160,7 @@ const Season = React.createClass({
               <td>{stat.nbMatches}</td>
           </tr>
         );
-    },
+    }
 
     render() {
         return (
@@ -203,6 +203,6 @@ const Season = React.createClass({
             </div>);
     }
 
-});
+}
 
 export default Season;
