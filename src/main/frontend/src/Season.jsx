@@ -58,7 +58,7 @@ const Season = React.createClass({
             ? ''
             : <Button bsSize="xsmall" onClick={() => substituteHandler(player)}><Glyphicon glyph="log-out"/></Button>;
         return (
-            <tr>
+            <tr key={`player-${player}`}>
                 <td>{player}</td>
                 <td>{exit}</td>
             </tr>);
@@ -73,7 +73,7 @@ const Season = React.createClass({
 
     renderMatch(match, substituteHandler) {
         return (
-            <div>
+            <div key={`match-${match.date}`}>
                 <Col md={3}>
                     <h4>{moment(match.date).format('dddd YYYY/MM/DD')}</h4>
                     <Table condensed>
@@ -144,7 +144,7 @@ const Season = React.createClass({
 
     renderMatchToPlan(matchDate, planHanlder) {
         return (
-            <li>
+            <li key={matchDate}>
                 {matchDate.date}
                 &nbsp;<Button bsStyle="primary" bsSize="xsmall" onClick={planHanlder}>PLAN</Button>
             </li>
@@ -153,7 +153,7 @@ const Season = React.createClass({
 
     renderStatLine(stat) {
         return (
-          <tr>
+          <tr key={stat.player}>
               <td>{stat.player}</td>
               <td>{stat.nbFriendlyMatches}</td>
               <td>{stat.nbLeagueMatches}</td>

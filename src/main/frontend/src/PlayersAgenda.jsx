@@ -41,7 +41,7 @@ const PlayersAgenda = React.createClass({
 
     renderMatchDate(m) {
         return (
-            <th>{moment(m.date).format('dddd YYYY/MM/DD')}
+            <th key={`canbeplanneddate-${m.date}`}>{moment(m.date).format('dddd YYYY/MM/DD')}
                 &nbsp;<Label bsStyle={m.canBePlanned ? "success" : "warning"}>{m.presents.length}</Label>
             </th>
         );
@@ -49,7 +49,7 @@ const PlayersAgenda = React.createClass({
 
     renderMatchDateCheckbox(matchDate, player) {
         return (
-            <td>
+            <td key={`date-checkbox-${player}-${matchDate}`}>
                 <input type="checkbox"
                        defaultChecked={matchDate.presents.includes(player)}
                        onChange={this.handleOnCheck.bind(this, matchDate.date, player)}
@@ -72,7 +72,7 @@ const PlayersAgenda = React.createClass({
     renderPlayerLine(player) {
         const checkboxes = this.props.matchDates.map(m => this.renderMatchDateCheckbox(m, player.name));
         return (
-            <tr>
+            <tr key={`player-line-${player.name}`}>
                 <td>{player.name}</td>
                 {checkboxes}
             </tr>
