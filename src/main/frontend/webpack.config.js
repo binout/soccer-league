@@ -13,17 +13,13 @@ module.exports = {
         rules: [
             { test: /\.css$/, loader: "style-loader!css-loader" },
             {
-                test: /\.jsx?$/,
+                test: /\.js$/,
                 exclude: /node_module/,
                 include: [
                     path.resolve(__dirname, "./src")
                 ],
                 use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ["@babel/preset-env", "@babel/preset-react"]
-
-                    }
+                    loader: 'babel-loader'
                 }
             }
         ]

@@ -5,8 +5,9 @@ var moment = require('moment');
 
 class Season extends Component {
 
-    getInitialState() {
-        return {
+    constructor(props){
+        super(props);
+        this.state = {
             season : {
                 name : ''
             },
@@ -16,7 +17,12 @@ class Season extends Component {
             leagueMatchesToPlan : [],
             stats : []
         }
+
+        this.renderMatch = this.renderMatch.bind(this);
+        this.renderMatchToPlan = this.renderMatchToPlan.bind(this);
+        this.renderPlayer = this.renderPlayer.bind(this);
     }
+
 
     async componentDidMount() {
         const data = await this.fetchData('/rest/seasons/current');
