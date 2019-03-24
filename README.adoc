@@ -9,9 +9,9 @@ This project is a web app to manage a planning for soccer matches between friend
 
 === BackEnd
 
-* JDK 8
+* JDK 8 / Koltin
 * Spring Boot 2
-* MongoDB as database with http://mongolink.org/[MongoLink] as object document mapper
+* MongoDB
 
 === FrontEnd
 
@@ -35,10 +35,10 @@ TIP: you can inject test data with `npm run inject-data`
 
 == Environment Variable
 
-MONGODB_URI:: a uri for a mongo database, if not an im-memory implementation is used (https://github.com/fakemongo/fongo[fongo])
+MONGODB_URI:: a uri for a mongo database, if not an im-memory implementation is used (https://github.com/bwaldvogel/mongo-java-server[mongo java server])
 
 SENDGRID_API_KEY:: the api key for https://sendgrid.com/
 
 == Demo
 
-On Heroku:: https://pes5.cleverapps.io/
+On CleverCloud:: https://pes5.cleverapps.io/
