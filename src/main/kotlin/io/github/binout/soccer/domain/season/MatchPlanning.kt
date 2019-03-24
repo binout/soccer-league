@@ -19,6 +19,7 @@ import io.github.binout.soccer.domain.date.*
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
 import org.springframework.stereotype.Component
+import java.lang.IllegalStateException
 import java.util.*
 
 @Component
@@ -30,24 +31,23 @@ class MatchPlanning(
 
 
     fun substitutePlayer(season: Season, match: Match<*>, player: Player) {
-        val by = getSubstitute(season, match)
         val matchDate = getMatchDate(match) ?: throw IllegalArgumentException("Unknown match date")
-        if (matchDate.isAbsent(by)) {
-            throw IllegalArgumentException(by.name + " is not present for this date")
+        val by = getSubstitutes(season, match).firstOrNull()
+        if (by == null) {
+            if (!match.removePlayer(player)) {
+                throw IllegalStateException("Cannot substitute ${player.name}, no player available !")
+            }
+        } else {
+            if (matchDate.isAbsent(by)) {
+                throw IllegalArgumentException(by.name + " is not present for this date")
+            }
+            match.replacePlayer(player, by)
         }
-        match.replacePlayer(player, by)
         seasonRepository.replace(season)
         matchDate.absent(player)
         replaceMatchDate(matchDate)
     }
 
-    private fun getSubstitute(season: Season, match: Match<*>): Player {
-        val substitutes = getSubstitutes(season, match)
-        if (substitutes.isEmpty()) {
-            throw IllegalArgumentException("No substitutes available")
-        }
-        return substitutes.iterator().next()
-    }
 
     private fun replaceMatchDate(matchDate: MatchDate) {
         when (matchDate) {

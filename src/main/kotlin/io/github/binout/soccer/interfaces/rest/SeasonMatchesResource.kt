@@ -106,9 +106,10 @@ class SeasonMatchesResource(
         return ResponseEntity.ok().build<Any>()
     }
 
-    private fun toRestMatch(m: Pair<Match<*>, List<Player>>): RestMatch {
-        val restMatch = m.first.date.toRestMatch()
-        m.first.players().forEach { restMatch.players.add(it) }
+    private fun toRestMatch(m: Pair<Match<*>, List<Player>>): RestMatch = m.first.let{ match ->
+        val restMatch = match.date.toRestMatch()
+        restMatch.hasMinimumPlayer = match.hasMinimumPlayer()
+        match.players().forEach { restMatch.players.add(it) }
         m.second.stream().map { it.name }.forEach { restMatch.subs.add(it) }
         return restMatch
     }

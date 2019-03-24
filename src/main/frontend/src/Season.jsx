@@ -41,7 +41,7 @@ const Season = React.createClass({
     },
 
     renderPlayer(match, player, substituteHandler) {
-        const exit = match.subs.length == 0
+        const exit = (match.subs.length === 0 && match.hasMinimumPlayer)
             ? ''
             : <Button bsSize="xsmall" onClick={() => substituteHandler(player)}><Glyphicon glyph="log-out"/></Button>;
         return (
@@ -68,7 +68,7 @@ const Season = React.createClass({
                         {match.players.map(p => this.renderPlayer(match, p, substituteHandler))}
                         </tbody>
                     </Table>
-                    <i>Substitutes : </i> {match.subs.length == 0 ? 'None' : this.intersperse(match.subs, ", ")}
+                    <i>Substitutes : </i> {match.subs.length === 0 ? 'None' : this.intersperse(match.subs, ", ")}
                 </Col>
             </div>);
     },
