@@ -57,7 +57,7 @@ class SeasonPlanning(
     private fun extractPlayers(treeMap: TreeMap<Int, List<Player>>, maxPlayers: Int, goalPriority: Boolean): Set<Player> {
         val players = HashSet<Player>()
         if (goalPriority) {
-            treeMap.values.stream().flatMap { it.stream() }.filter{ it.isGoalkeeper }.forEach { players.add(it) }
+            treeMap.values.flatten().filter{ it.isGoalkeeper }.forEach { players.add(it) }
         }
         val iterator = treeMap.entries.iterator()
         while (iterator.hasNext() && teamIsNotFull(players, maxPlayers)) {
