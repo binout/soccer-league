@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component
 import java.time.format.DateTimeFormatter
 import java.util.ArrayList
 import java.util.HashMap
-import java.util.stream.Stream
 
 interface TemplateEngine {
 
@@ -61,8 +60,8 @@ interface MailService {
             return content
         }
 
-        fun recipients(): Stream<String> {
-            return tos.stream()
+        fun recipients(): List<String> {
+            return tos
         }
     }
 }

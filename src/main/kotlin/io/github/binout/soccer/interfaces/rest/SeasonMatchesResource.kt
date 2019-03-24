@@ -94,8 +94,7 @@ class SeasonMatchesResource(
     @GetMapping("league/to-plan")
     fun leagueToPlan(@PathVariable("name") name: String): ResponseEntity<*> {
         val seasonName = SeasonName(name).name
-        return ResponseEntity.ok(getToPlanLeagueMatches.execute(seasonName).stream()
-                .map { it.date.toRestMatch() })
+        return ResponseEntity.ok(getToPlanLeagueMatches.execute(seasonName).map { it.date.toRestMatch() })
     }
 
     @DeleteMapping("league/{dateParam}/players/{playerName}")
@@ -106,11 +105,11 @@ class SeasonMatchesResource(
         return ResponseEntity.ok().build<Any>()
     }
 
-    private fun toRestMatch(m: Pair<Match<*>, List<Player>>): RestMatch = m.first.let{ match ->
+    private fun toRestMatch(m: Pair<Match<*>, List<Player>>): RestMatch = m.let { (match, players) ->
         val restMatch = match.date.toRestMatch()
         restMatch.hasMinimumPlayer = match.hasMinimumPlayer()
         match.players().forEach { restMatch.players.add(it) }
-        m.second.stream().map { it.name }.forEach { restMatch.subs.add(it) }
+        players.map { it.name }.forEach { restMatch.subs.add(it) }
         return restMatch
     }
 }

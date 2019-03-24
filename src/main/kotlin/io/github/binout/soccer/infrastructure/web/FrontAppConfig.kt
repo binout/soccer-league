@@ -85,11 +85,8 @@ class FrontAppConfig : WebMvcConfigurerAdapter() {
                 return null
             }
             return if (isHandled(requestPath)) {
-                locations.stream()
-                        .map<Resource> { loc -> createRelative(loc, requestPath) }
-                        .filter { resource -> resource != null && resource.exists() }
-                        .findFirst()
-                        .orElseGet(null)
+                locations.map { loc -> createRelative(loc, requestPath) }
+                        .firstOrNull { resource -> resource != null && resource.exists() }
             } else index
         }
 
@@ -103,7 +100,7 @@ class FrontAppConfig : WebMvcConfigurerAdapter() {
 
         private fun isHandled(path: String): Boolean {
             val extension = StringUtils.getFilenameExtension(path)
-            return handledExtensions.stream().anyMatch { ext -> ext == extension }
+            return handledExtensions.any { it == extension }
         }
     }
 }
