@@ -5,23 +5,10 @@ import Tab from "@material-ui/core/Tab";
 import Button from "@material-ui/core/Button";
 import AppBar from "@material-ui/core/AppBar";
 import grey from '@material-ui/core/colors/grey';
+import ScheduledMatchWithPlayer from './ScheduledMatchWithPlayer';
+import Statistics from './Statistics';
 
 var moment = require("moment");
-const StatisticsHeader = styled.div`
-  display: grid;
-  grid-template-columns: [first] 30% 20% 20% 20%;
-  grid-auto-rows: 40px;
-  align-items: center;
-`;
-const StatisticsBody = styled.div`
-  display: grid;
-  div:first-child {
-    border-top: 2px solid ${grey[200]};
-  }
-  div:last-child {
-    border: none;
-  }
-`;
 
 const TabsContentWrapper = styled.div`
   margin-top: 40px;
@@ -33,14 +20,6 @@ const StyledTab = styled(({ ...other }) => (
     color: ${grey[900]};
   }
 `
-
-const LineByPlayer = styled.div`
-  display: grid;
-  grid-template-columns: [first] 30% 20% 20% 20%;
-  grid-auto-rows: 35px;
-  align-items: center;
-  border-bottom: 1px solid ${grey[200]};
-`;
 class Season extends Component {
   constructor(props) {
     super(props);
@@ -66,7 +45,7 @@ class Season extends Component {
     this.setState({ season: data });
     this.fetchFriendlyMatchStates();
     this.fetchLeagueMatchStates();
-    this.fetchStats();
+    // this.fetchStats();
   }
 
   async fetchData(url) {
@@ -75,10 +54,10 @@ class Season extends Component {
     return data;
   }
 
-  async fetchStats() {
-    const stats = await this.fetchData("/rest/seasons/current/stats");
-    this.setState({ stats });
-  }
+//   async fetchStats() {
+//     const stats = await this.fetchData("/rest/seasons/current/stats");
+//     this.setState({ stats });
+//   }
 
   async fetchFriendlyMatchStates() {
     const friendlyMatches = await this.fetchData(
@@ -156,7 +135,7 @@ class Season extends Component {
     const response = await fetch(url, params);
     if (response.ok) {
       this.fetchFriendlyMatchStates();
-      this.fetchStats();
+    //   this.fetchStats();
     }
   }
 
@@ -170,7 +149,7 @@ class Season extends Component {
     const response = await fetch(url, params);
     if (response.ok) {
       this.fetchFriendlyMatchStates();
-      this.fetchStats();
+    //   this.fetchStats();
     }
   }
 
@@ -184,7 +163,7 @@ class Season extends Component {
     const response = await fetch(url, params);
     if (response.ok) {
       this.fetchLeagueMatchStates();
-      this.fetchStats();
+    //   this.fetchStats();
     }
   }
 
@@ -198,7 +177,7 @@ class Season extends Component {
     const response = await fetch(url, params);
     if (response.ok) {
       this.fetchLeagueMatchStates();
-      this.fetchStats();
+    //   this.fetchStats();
     }
   }
 
@@ -238,39 +217,23 @@ class Season extends Component {
         </AppBar>
         <TabsContentWrapper>
         {this.state.value === 0 && (
-          <Fragment>
-            <h3>Next friendly matches</h3>
-            <div>
-              {this.state.friendlyMatches.map(m =>
-                this.renderMatch(
-                  m,
-                  this.handleFriendlySubstitute.bind(this, m.date)
-                )
-              )}
-            </div>
-            <h3>Friendly matches to plan</h3>
+            <Fragment>
+                <h3>Next friendly matches</h3>
+                <ScheduledMatchWithPlayer 
+                    matches={this.state.friendlyMatches}
+                />
+                 <h3>Friendly matches to plan</h3>
             {this.state.friendlyMatchesToPlan.map(m =>
               this.renderMatchToPlan(
                 m,
                 this.handleFriendlyPlan.bind(this, m.date)
               )
             )}
-          </Fragment>
+            </Fragment>
+    
         )}
         {this.state.value === 1 && <Fragment>League</Fragment>}
-        {this.state.value === 2 && (
-          <Fragment>
-            <StatisticsHeader>
-              <div>Player</div>
-              <div>Friendly</div>
-              <div>League</div>
-              <div>Total Matches Played</div>
-            </StatisticsHeader>
-            <StatisticsBody>
-              {this.state.stats.map(s => this.renderStatLine(s))}
-            </StatisticsBody>
-          </Fragment>
-        )}
+        {this.state.value === 2 && <Statistics />}
         </TabsContentWrapper>
         {/* <Tabs defaultActiveKey={1} id="agenda-tab">
                     <Tab eventKey={1} title="Friendly">

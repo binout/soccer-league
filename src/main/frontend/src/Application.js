@@ -3,12 +3,12 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import styled from "styled-components";
 import Paper from "@material-ui/core/Paper";
 import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
 
 // import SoccerNavBar from "./SoccerNavBar.jsx";
 import Players from "./Players.js";
 import Agenda from "./Agenda.js";
 import Season from "./Season.js";
+import { Toolbar } from "@material-ui/core";
 
 // const Container = () => {
 //   const content =
@@ -36,11 +36,11 @@ const Application = () => {
     <Router>
       <SoccerAppWrapper>
         <AppBar position="static" color="default" >
-          <Tabs variant="fullWidth">
+          <Toolbar>
             <Link to="/">Planning Equipe Soccer 5</Link>
             <Link to="/agenda">Agenda</Link>
             <Link to="/players">Players</Link>
-          </Tabs>
+          </Toolbar>
         </AppBar>
 
         <Route path="/" exact component={Season} />
