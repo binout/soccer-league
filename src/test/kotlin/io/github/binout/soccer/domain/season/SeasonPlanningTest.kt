@@ -120,10 +120,24 @@ internal class SeasonPlanningTest : WithAssertions {
     fun substitutes_if_more_than_10_players() {
         generatePlayer(17)
         val friendlyMatch = seasonPlanning.planFriendlyMatch(EMPTY_SEASON, DATE_FOR_FRIENDLY)
+        assertThat(matchPlanning.getSubstitutes(EMPTY_SEASON, friendlyMatch)).hasSize(7)
+        matchPlanning.substitutePlayer(EMPTY_SEASON, friendlyMatch, Player(friendlyMatch.players().first()))
 
-        val substitutes = matchPlanning.getSubstitutes(EMPTY_SEASON, friendlyMatch)
-
-        assertThat(substitutes).hasSize(7)
+        val friendlyMatchUpdated = seasonRepository.byName(EMPTY_SEASON.name)!!.friendlyMatches().first()
+        assertThat(matchPlanning.getSubstitutes(EMPTY_SEASON, friendlyMatchUpdated)).hasSize(6)
     }
+
+    @Test
+    fun no_need_substitutes_if_players_greater_than_min_players() {
+        generateLeaguePlayer(7)
+        val leagueMatch = seasonPlanning.planLeagueMatch(EMPTY_SEASON, DATE_FOR_LEAGUE)
+        assertThat(matchPlanning.getSubstitutes(EMPTY_SEASON, leagueMatch)).isEmpty()
+        matchPlanning.substitutePlayer(EMPTY_SEASON, leagueMatch, Player(leagueMatch.players().first()))
+
+        val leagueMatchUpdated = seasonRepository.byName(EMPTY_SEASON.name)!!.leagueMatches().first()
+        assertThat(leagueMatchUpdated.players()).hasSize(6);
+        assertThat(matchPlanning.getSubstitutes(EMPTY_SEASON, leagueMatchUpdated)).isEmpty()
+    }
+
 
 }

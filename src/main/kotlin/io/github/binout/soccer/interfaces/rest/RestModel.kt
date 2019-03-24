@@ -39,7 +39,8 @@ fun String.toRestDate(): RestDate  {
 data class RestMatch(
         var date: String,
         var players: MutableList<String> = mutableListOf(),
-        var subs: MutableList<String> = mutableListOf())
+        var subs: MutableList<String> = mutableListOf(),
+        var hasMinimumPlayer : Boolean = false)
 
 fun LocalDate.toRestMatch() = RestMatch(DateTimeFormatter.ISO_DATE.format(this))
 

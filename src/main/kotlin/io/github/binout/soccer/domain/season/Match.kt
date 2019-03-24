@@ -34,12 +34,26 @@ sealed class Match<D : MatchDate> (matchDate: D, players: Set<Player>, val minPl
 
     fun players(): List<String> = players.toList()
 
+    fun hasMinimumPlayer() = players.size == minPlayers
+
     fun replacePlayer(from: Player, by: Player) {
         if (from.name !in players) {
             throw IllegalArgumentException(from.name + " is not a player of this match")
         }
         players.remove(from.name)
         players.add(by.name)
+    }
+
+    fun removePlayer(player: Player): Boolean {
+        if (player.name !in players) {
+            throw IllegalArgumentException(player.name + " is not a player of this match")
+        }
+        return if (players.size > minPlayers) {
+            players.remove(player.name)
+            true
+        } else {
+            false
+        }
     }
 
     private fun checkPlayers(date: MatchDate, players: Set<Player>): Set<Player> {
