@@ -27,14 +27,12 @@ const LineByPlayer = styled.div`
   border-bottom: 1px solid ${grey[200]};
 `;
 
-
 const Statistics = () => {
 
   const [stats, setStats] = useState([])
 
   useEffect(() => {
     async function fetchData() {
-      console.log('fetchStats')
       const result = await axios('/rest/seasons/current/stats');
       setStats(result.data);
     }
