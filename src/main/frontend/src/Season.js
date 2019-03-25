@@ -1,71 +1,58 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios";
+
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import AppBar from "@material-ui/core/AppBar";
-import grey from '@material-ui/core/colors/grey';
-import ScheduleMatch from './ScheduleMatch';
-import Statistics from './Statistics';
-
+import grey from "@material-ui/core/colors/grey";
+import ScheduleMatch from "./ScheduleMatch";
+import Statistics from "./Statistics";
 
 const TabsContentWrapper = styled.div`
   margin-top: 40px;
 `;
 const StyledTab = styled(({ ...other }) => (
-    <Tab classes={{ label: 'label' }} {...other} />
-  ))` & .label {
+  <Tab classes={{ label: "label" }} {...other} />
+))`
+  & .label {
     font-size: 14px;
     color: ${grey[900]};
   }
-`
-class Season extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: 0,
-      season: {
-        name: ""
-      }
+`;
+const Season = () => {
+  const [season, setSeason] = useState([]);
+  const [selectedTabValue, setSelectedTabValue] = useState(0);
+
+  useEffect(() => {
+    const fetchSeasons = async () => {
+      const result = await axios("/rest/seasons/current");
+      setSeason(result.data);
     };
-    this.handleChange = this.handleChange.bind(this);
-  }
+    fetchSeasons();
+  }, []);
 
-  async componentDidMount() {
-    const data = await this.fetchData("/rest/seasons/current");
-    this.setState({ season: data });
-  }
+  const handleChange = (evt, value) => {
+    setSelectedTabValue(value);
+  };
 
-  async fetchData(url) {
-    const response = await fetch(url);
-    const data = await response.json();
-    return data;
-  }
-
-
-
-  handleChange(evt, value) {
-    this.setState({ value });
-  }
-
-  render() {
-    return (
-      <div>
-        <h2>Season {this.state.season.name}</h2>
-        <AppBar position="static" color="default">
-        <Tabs value={this.state.value} onChange={this.handleChange}>
+  return (
+    <div>
+      <h2>Season {season.name}</h2>
+      <AppBar position="static" color="default">
+        <Tabs value={selectedTabValue} onChange={handleChange}>
           <StyledTab label="Friendly" />
           <StyledTab label="League" />
           <StyledTab label="Statistics" />
         </Tabs>
-        </AppBar>
-        <TabsContentWrapper>
-        {this.state.value === 0 && <ScheduleMatch matchType="friendly"/>}
-        {this.state.value === 1 && <ScheduleMatch matchType="league"/>}
-        {this.state.value === 2 && <Statistics />}
-        </TabsContentWrapper>
-      </div>
-    );
-  }
-}
+      </AppBar>
+      <TabsContentWrapper>
+        {selectedTabValue === 0 && <ScheduleMatch matchType="friendly" />}
+        {selectedTabValue === 1 && <ScheduleMatch matchType="league" />}
+        {selectedTabValue === 2 && <Statistics />}
+      </TabsContentWrapper>
+    </div>
+  );
+};
 
 export default Season;

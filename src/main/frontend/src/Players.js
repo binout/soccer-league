@@ -1,5 +1,7 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios";
+
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -26,7 +28,7 @@ const CustomTableHead = styled(TableHead)`
 `;
 
 const TitleWrapper = styled.div`
-margin-left: 20px;
+  margin-left: 20px;
   h2: {
     font-size: 30px;
   }
@@ -40,60 +42,50 @@ const Note = styled.div`
   margin: 0 20px 5px 0;
 `;
 
-class Players extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      players: []
+const Players = () => {
+  const [players, setPlayers] = useState([]);
+
+  useEffect(() => {
+    const fetchState = async () => {
+      const result = await axios.get("/rest/players");
+      setPlayers(result.data);
     };
-    this.fetchState = this.fetchState.bind(this);
-  }
+    fetchState();
+  }, []);
 
-  async fetchState() {
-    const response = await fetch("/rest/players");
-    const players = await response.json();
-    this.setState({ players });
-  }
+  const nbLeaguePlayers = players.filter(p => p.playerLeague).length;
 
-  componentDidMount() {
-    this.fetchState();
-  }
-
-  render() {
-    const nbLeaguePlayers = this.state.players.filter(p => p.playerLeague)
-      .length;
-    return (
-      <PlayersWrapper>
-        <TitleWrapper>
-          <h2>{this.state.players.length} Players </h2>
-          <h3>{nbLeaguePlayers} League Players</h3>
-        </TitleWrapper>
-        <Note>
-          <span>League Player: "⭐"</span>
-          <span>Goalkeeper: "🥅"</span>
-        </Note>
-        <PlayersTable>
-          <CustomTableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
+  return (
+    <PlayersWrapper>
+      <TitleWrapper>
+        <h2>{this.state.players.length} Players </h2>
+        <h3>{nbLeaguePlayers} League Players</h3>
+      </TitleWrapper>
+      <Note>
+        <span>League Player: "⭐"</span>
+        <span>Goalkeeper: "🥅"</span>
+      </Note>
+      <PlayersTable>
+        <CustomTableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Email</TableCell>
+          </TableRow>
+        </CustomTableHead>
+        <TableBody>
+          {this.state.players.map(player => (
+            <TableRow key={player.name}>
+              <TableCell>
+                {player.name} {player.playerLeague && "⭐"}
+                {player.goalkeeper && " 🥅"}
+              </TableCell>
+              <TableCell>{player.email}</TableCell>
             </TableRow>
-          </CustomTableHead>
-          <TableBody>
-            {this.state.players.map(player => (
-              <TableRow key={player.name}>
-                <TableCell>
-                  {player.name} {player.playerLeague && "⭐"}
-                  {player.goalkeeper && " 🥅"}
-                </TableCell>
-                <TableCell>{player.email}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </PlayersTable>
-      </PlayersWrapper>
-    );
-  }
-}
+          ))}
+        </TableBody>
+      </PlayersTable>
+    </PlayersWrapper>
+  );
+};
 
 export default Players;
