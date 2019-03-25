@@ -5,7 +5,7 @@ import Tab from "@material-ui/core/Tab";
 import Button from "@material-ui/core/Button";
 import AppBar from "@material-ui/core/AppBar";
 import grey from '@material-ui/core/colors/grey';
-import ScheduledMatchWithPlayer from './ScheduledMatchWithPlayer';
+import ScheduleMatch from './ScheduleMatch';
 import Statistics from './Statistics';
 
 var moment = require("moment");
@@ -216,23 +216,8 @@ class Season extends Component {
         </Tabs>
         </AppBar>
         <TabsContentWrapper>
-        {this.state.value === 0 && (
-            <Fragment>
-                <h3>Next friendly matches</h3>
-                <ScheduledMatchWithPlayer 
-                    matches={this.state.friendlyMatches}
-                />
-                 <h3>Friendly matches to plan</h3>
-            {this.state.friendlyMatchesToPlan.map(m =>
-              this.renderMatchToPlan(
-                m,
-                this.handleFriendlyPlan.bind(this, m.date)
-              )
-            )}
-            </Fragment>
-    
-        )}
-        {this.state.value === 1 && <Fragment>League</Fragment>}
+        {this.state.value === 0 && <ScheduleMatch matchType="friendly"/>}
+        {this.state.value === 1 && <ScheduleMatch matchType="league"/>}
         {this.state.value === 2 && <Statistics />}
         </TabsContentWrapper>
         {/* <Tabs defaultActiveKey={1} id="agenda-tab">

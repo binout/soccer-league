@@ -1,160 +1,154 @@
-import React, { Component } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
-import Badge from "@material-ui/core/Badge";
-// import { Table, Button, Label } from "react-bootstrap";
 import styled from "styled-components";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
 import Checkbox from "@material-ui/core/Checkbox";
 import DatePicker from "react-datepicker";
+import axios from "axios";
 
 var moment = require("moment");
 import "react-datepicker/dist/react-datepicker.css";
 
-const AgendaTable = styled(Table)`
-  th,
-  td {
-    font-size: 14px;
-  }
-`;
-const CustomBadge = styled(Badge)`
-  margin-left: 18px;
+const Badge = styled.div`
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  font-size: 10px;
+  border-radius: 10px;
+  background-color: ${props => (props.canBePlanned ? "#2e7d32" : "#ffc107")};
+  text-align: center;
+  padding-top: 2px;
+  color: white;
 `;
 
-class PlayersAgenda extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      startDate: new Date()
+const DatePickerWrapper = styled.div``;
+const PlayersPlanning = styled.div`
+  margin-top: 30px;
+`;
+const PlayerLine = styled.div`
+  display: grid;
+  grid-template-columns: ${props =>
+    props.column
+      ? `[first] 200px repeat(${props.column}, 200px)`
+      : `200px 200px`};
+  align-items: center;
+`;
+const PlanningHeader = styled.div`
+  display: grid;
+  grid-template-columns: ${props =>
+    props.column
+      ? `[first] 200px repeat(${props.column}, 200px)`
+      : `200px 200px`};
+  font-size: 16px;
+  font-weight: bold;
+`;
+const MatchDate = styled.span`
+  display: inline-flex;
+`;
+
+const PlayersAgenda = ({ matchType }) => {
+  const [date, setDate] = useState(new Date());
+  const [updateMatchStateToggle, setUpdateMatchStateToggle] = useState(false);
+  const [matchDates, setMatchDates] = useState([]);
+  const [players, setPlayers] = useState([]);
+
+  useEffect(() => {
+    const fetchMatchDates = async () => {
+      const result = await axios.get(`/rest/match-dates/${matchType}/next`);
+      setMatchDates(result.data);
     };
+    fetchMatchDates();
+  }, [updateMatchStateToggle]);
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleOnCheck = this.handleOnCheck.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.displayMatchDateCheckBox = this.displayMatchDateCheckBox.bind(this);
-  }
+  useEffect(() => {
+    const fetchPlayers = async () => {
+   
+      if(matchType==='friendly'){
+         const result = await axios.get("/rest/players");
+         setPlayers(result.data);
+      }else{
+        const result = await axios.get("/rest/players/league");
+        setPlayers(result.data);
+      }
+      
+    };
+    fetchPlayers();
+  }, []);
 
-  handleChange(date) {
-    this.setState({
-      startDate: date
-    });
-  }
-
-  handleSubmit() {
-    this.props.matchDateHandler(this.state.startDate);
-  }
-
-  handleOnCheck(date, player, checked) {
+  const handleOnCheck = async (date, player, checked) => {
     if (checked) {
-      this.props.presentHandler(date, player);
-    } else {
-      this.props.absentHandler(date, player);
-    }
-  }
-
-  displayMatchDateCheckBox(player) {
-    return this.props.matchDates.map(matchDate => {
-      return (
-        <TableCell key={`date-checkbox-${player}-${matchDate.date}`}>
-          <Checkbox
-            type="checkbox"
-            checked={matchDate.presents.includes(player)}
-            onChange={(evt, checked) =>
-              this.handleOnCheck(matchDate.date, player, checked)
-            }
-          />
-        </TableCell>
+      await axios.put(
+        `/rest/match-dates/${matchType}/${date}/players/${player}`
       );
-    });
-  }
+      setUpdateMatchStateToggle(!updateMatchStateToggle);
+    } else {
+      await axios.delete(
+        `/rest/match-dates/${matchType}/${date}/players/${player}`
+      );
+      setUpdateMatchStateToggle(!updateMatchStateToggle);
+    }
+  };
 
-  renderMatchDate(m) {
-    return (
-      <TableCell key={`canbeplanneddate-${m.date}`}>
-        {moment(m.date).format("dddd YYYY/MM/DD")}
-        <CustomBadge
-          badgeContent={m.presents.length}
-          color={m.canBePlanned ? '#2e7d32':'#ffc107'}
+  const handleSubmit = async () => {
+    const newMatchDate = moment(date).format("YYYY-MM-DD");
+    await axios.put(`/rest/match-dates/${matchType}/${newMatchDate}`);
+    setUpdateMatchStateToggle(!updateMatchStateToggle);
+  };
+
+  return (
+    <Fragment>
+      <DatePickerWrapper>
+        <DatePicker
+          selected={date}
+          onChange={date => setDate(date)}
+          dateFormat="yyyy/MM/dd"
         />
-      </TableCell>
-    );
-  }
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
+          ADD
+        </Button>
+      </DatePickerWrapper>
+      {matchDates.length > 0 && (
+        <PlayersPlanning>
+          <PlanningHeader column={matchDates.length}>
+            <span>Players</span>
+            {matchDates.map(matchDate => {
+              return (
+                <MatchDate key={`header-${matchDate.date}`}>
+                  {matchDate.date}
+                  <Badge canBePlanned={matchDate.canBePlanned}>
+                    {matchDate.presents.length}
+                  </Badge>
+                </MatchDate>
+              );
+            })}
+          </PlanningHeader>
+          {players.map(player => {
+            return (
+              <PlayerLine
+                key={`playerLine-${player.name}`}
+                column={matchDates.length}
+              >
+                <span>{player.name}</span>
 
-  //   renderThead() {
-  //     return (
-  //       <thead>
-  //         <tr>
-  //           <th>Players</th>
-  //           {this.props.matchDates.map(m => this.renderMatchDate(m))}
-  //         </tr>
-  //       </thead>
-  //     );
-  //   }
-
-  //   renderPlayerLine(player) {
-  //     const checkboxes = this.props.matchDates.map(m =>
-  //       this.renderMatchDateCheckbox(m, player.name)
-  //     );
-  //     return (
-  //       <tr key={`player-line-${player.name}`}>
-  //         <td>{player.name}</td>
-  //         {checkboxes}
-  //       </tr>
-  //     );
-  //   }
-
-  //   renderTbody() {
-  //     return (
-  //       <tbody>{this.props.players.map(p => this.renderPlayerLine(p))}</tbody>
-  //     );
-  //   }
-
-  render() {
-    return (
-      <div>
-        <br />
-        <form>
-          <DatePicker
-            selected={this.state.startDate}
-            onChange={this.handleChange}
-            dateFormat="yyyy/MM/dd"
-          />
-          &nbsp;
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleSubmit}
-          >
-            ADD
-          </Button>
-        </form>
-        <br />
-        <AgendaTable>
-          <TableHead>
-            <TableRow>
-              <TableCell>Players</TableCell>
-              {this.props.matchDates.map(date => this.renderMatchDate(date))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {this.props.players.map(player => (
-              <TableRow key={`playeragenda-${player.name}`}>
-                <TableCell>{player.name}</TableCell>
-                {this.displayMatchDateCheckBox(player.name)}
-              </TableRow>
-            ))}
-          </TableBody>
-        </AgendaTable>
-      </div>
-    );
-  }
-}
-
-PlayersAgenda.defaultProps = {
-  players: [],
-  matchDates: []
+                {matchDates.map(matchDate => {
+                  return (
+                    <span key={`checkbox-${matchDate.date}-${player.name}`}>
+                      <Checkbox
+                        type="checkbox"
+                        checked={matchDate.presents.includes(player.name)}
+                        onChange={(evt, checked) =>
+                          handleOnCheck(matchDate.date, player.name, checked)
+                        }
+                      />
+                    </span>
+                  );
+                })}
+              </PlayerLine>
+            );
+          })}
+        </PlayersPlanning>
+      )}
+    </Fragment>
+  );
 };
+
 export default PlayersAgenda;
