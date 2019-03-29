@@ -43,6 +43,8 @@ class Season(val name: String) {
         return match
     }
 
+    fun matches() = friendlyMatches + leagueMatches
+
     fun statistics(): SeasonStatistics = SeasonStatistics(this)
 
     companion object {

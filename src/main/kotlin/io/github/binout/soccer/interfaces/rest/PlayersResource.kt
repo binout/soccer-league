@@ -15,20 +15,17 @@
  */
 package io.github.binout.soccer.interfaces.rest
 
-import io.github.binout.soccer.application.GetAllLeaguePlayers
-import io.github.binout.soccer.application.GetAllPlayers
-import io.github.binout.soccer.application.GetPlayer
-import io.github.binout.soccer.application.ReplacePlayer
+import io.github.binout.soccer.application.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("rest/players")
 class PlayersResource(
-        val getAllPlayers: GetAllPlayers,
-        val getAllLeaguePlayers: GetAllLeaguePlayers,
-        val replacePlayer: ReplacePlayer,
-        val getPlayer: GetPlayer) {
+        private val getAllPlayers: GetAllPlayers,
+        private val getAllLeaguePlayers: GetAllLeaguePlayers,
+        private val replacePlayer: ReplacePlayer,
+        private val getPlayer: GetPlayer) {
 
     @GetMapping
     fun all() : List<RestPlayer> = getAllPlayers.execute().map { it.toRestModel() }
@@ -48,3 +45,13 @@ class PlayersResource(
             ?: ResponseEntity.notFound().build<Any>()
 
 }
+
+@RestController
+@RequestMapping("rest/players-stats")
+class PlayerStatsResource(val getAllPlayerStats: GetAllPlayerStats) {
+
+    @GetMapping
+    fun all() : List<RestPlayerStat> = getAllPlayerStats.execute().map { it.toRestModel() }
+
+}
+

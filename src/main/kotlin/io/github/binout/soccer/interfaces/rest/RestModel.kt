@@ -17,6 +17,7 @@ package io.github.binout.soccer.interfaces.rest
 
 import io.github.binout.soccer.domain.date.MatchDate
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerStats
 import io.github.binout.soccer.domain.player.values
 import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.domain.season.SeasonStatistics
@@ -67,6 +68,17 @@ data class RestPlayer(
         var isGoalkeeper: Boolean = false)
 
 fun Player.toRestModel() = RestPlayer(name.value, email, isPlayerLeague, isGoalkeeper)
+
+data class RestPlayerStat(
+        var name: String,
+        var email: String? = null,
+        var isPlayerLeague: Boolean = false,
+        var isGoalkeeper: Boolean = false,
+        var nbSeasons: Int,
+        var nbMatches: Int)
+
+fun PlayerStats.toRestModel() = RestPlayerStat(player.name.value, player.email, player.isPlayerLeague, player.isGoalkeeper, nbSeasons, nbMatches)
+
 
 data class RestSeason(var name: String)
 
