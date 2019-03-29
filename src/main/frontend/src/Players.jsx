@@ -43,7 +43,7 @@ const Players = React.createClass({
                     </tr>
                     </thead>
                     <tbody>
-                        {this.state.players.sort(p => p.nbMatches).map(p => this.renderLine(p))}
+                        {this.state.players.sort((p1, p2) => p1.nbMatches - p2.nbMatches).map(p => this.renderLine(p))}
                     </tbody>
                 </Table>
                     <p>League Player : <Glyphicon glyph="star"/></p>
