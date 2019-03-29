@@ -2,6 +2,8 @@ package io.github.binout.soccer.infrastructure.persistence.mongo
 
 import io.github.binout.soccer.domain.date.MatchDate
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerName
+import io.github.binout.soccer.domain.player.values
 import io.github.binout.soccer.infrastructure.persistence.MongoConfiguration
 import io.github.binout.soccer.infrastructure.persistence.MongoFriendlyMatchDateRepository
 import io.github.binout.soccer.infrastructure.persistence.MongoPlayerRepository
@@ -34,7 +36,7 @@ class MongoFriendlyMatchDateRepositoryTest {
 
     @Test
     fun should_persist_date_with_player() {
-        val benoit = Player(name = "benoit")
+        val benoit = Player(PlayerName("benoit"))
         playerRepository.add(benoit)
 
         val date = MatchDate.newDateForFriendly(2016, Month.APRIL, 1)
@@ -44,6 +46,6 @@ class MongoFriendlyMatchDateRepositoryTest {
         val matchDate = repository.byDate(2016, Month.APRIL, 1)
         assertThat(matchDate).isNotNull
         assertThat(matchDate!!.date).isEqualTo(LocalDate.of(2016, Month.APRIL, 1))
-        assertThat(matchDate.presents()).containsOnly("benoit")
+        assertThat(matchDate.presents().values()).containsOnly("benoit")
     }
 }

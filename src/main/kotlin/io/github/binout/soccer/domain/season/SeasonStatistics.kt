@@ -16,11 +16,12 @@
 package io.github.binout.soccer.domain.season
 
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerName
 
 class SeasonStatistics(season: Season) {
 
-    private val friendlyMatchesPlayed: Map<String, Int>
-    private val leagueMatchesPlayed: Map<String, Int>
+    private val friendlyMatchesPlayed: Map<PlayerName, Int>
+    private val leagueMatchesPlayed: Map<PlayerName, Int>
     val nbPlayers: Int
 
     init {
@@ -31,7 +32,7 @@ class SeasonStatistics(season: Season) {
         this.nbPlayers = (friendlyPlayerGames + leaguePlayerGames).distinct().count()
     }
 
-    private fun playersByGamePlayed(allPlayerGames: List<String>): Map<String, Int> =
+    private fun playersByGamePlayed(allPlayerGames: List<PlayerName>): Map<PlayerName, Int> =
             allPlayerGames.distinct().associate { player -> player to allPlayerGames.count { player == it  } }
 
     fun matchPlayed(player: Player): Int = leagueMatchPlayed(player) + friendlyMatchPlayed(player)

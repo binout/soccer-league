@@ -1,6 +1,7 @@
 package io.github.binout.soccer.infrastructure.persistence.mongo
 
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.infrastructure.persistence.MongoConfiguration
 import io.github.binout.soccer.infrastructure.persistence.MongoPlayerRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -18,9 +19,9 @@ class MongoPlayerRepositoryTest {
 
     @Test
     fun should_persist_player() {
-        repository.add(Player(name = "benoit"))
+        repository.add(Player(PlayerName("benoit")))
 
-        val benoit = repository.byName("benoit")
+        val benoit = repository.byName(PlayerName("benoit"))
         assertThat(benoit).isNotNull
         assertThat(benoit!!.email).isNull()
         assertThat(benoit.isPlayerLeague).isFalse()
@@ -28,11 +29,11 @@ class MongoPlayerRepositoryTest {
 
     @Test
     fun should_persist_league_player() {
-        val leaguePlayer = Player(name = "benoit", email = "mail@google.com")
+        val leaguePlayer = Player(name = PlayerName("benoit"), email = "mail@google.com")
         leaguePlayer.isPlayerLeague = true
         repository.add(leaguePlayer)
 
-        val benoit = repository.byName("benoit")
+        val benoit = repository.byName(PlayerName("benoit"))
         assertThat(benoit).isNotNull
         assertThat(benoit!!.email).isEqualTo("mail@google.com")
         assertThat(benoit.isPlayerLeague).isTrue()
@@ -40,12 +41,12 @@ class MongoPlayerRepositoryTest {
 
     @Test
     fun should_persist_goalkeeper() {
-        val leaguePlayer = Player(name = "thomas", email = "mail@google.com")
+        val leaguePlayer = Player(name = PlayerName("thomas"), email = "mail@google.com")
         leaguePlayer.isPlayerLeague = true
         leaguePlayer.isGoalkeeper = true
         repository.add(leaguePlayer)
 
-        val thomas = repository.byName("thomas")
+        val thomas = repository.byName(PlayerName("thomas"))
         assertThat(thomas).isNotNull
         assertThat(thomas!!.email).isEqualTo("mail@google.com")
         assertThat(thomas.isPlayerLeague).isTrue()

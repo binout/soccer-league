@@ -19,26 +19,27 @@ import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.date.FriendlyMatchDate
 import io.github.binout.soccer.domain.date.LeagueMatchDate
 import io.github.binout.soccer.domain.date.MatchDate
+import io.github.binout.soccer.domain.player.PlayerName
 
 import java.time.LocalDate
 
 sealed class Match<D : MatchDate> (matchDate: D, players: Set<Player>, val minPlayers: Int, val maxPlayers: Int) {
 
     val date: LocalDate = matchDate.date
-    private val players: MutableSet<String> = checkPlayers(matchDate, players).map { it.name }.toMutableSet()
+    private val players: MutableSet<PlayerName> = checkPlayers(matchDate, players).map { it.name }.toMutableSet()
 
     fun isNowOrFuture(): Boolean {
         val now = LocalDate.now()
         return date.isAfter(now) || date.isEqual(now)
     }
 
-    fun players(): List<String> = players.toList()
+    fun players(): List<PlayerName> = players.toList()
 
     fun hasMinimumPlayer() = players.size == minPlayers
 
     fun replacePlayer(from: Player, by: Player) {
         if (from.name !in players) {
-            throw IllegalArgumentException(from.name + " is not a player of this match")
+            throw IllegalArgumentException("${from.name.value} is not a player of this match")
         }
         players.remove(from.name)
         players.add(by.name)
@@ -46,7 +47,7 @@ sealed class Match<D : MatchDate> (matchDate: D, players: Set<Player>, val minPl
 
     fun removePlayer(player: Player): Boolean {
         if (player.name !in players) {
-            throw IllegalArgumentException(player.name + " is not a player of this match")
+            throw IllegalArgumentException("${player.name.value} is not a player of this match")
         }
         return if (players.size > minPlayers) {
             players.remove(player.name)

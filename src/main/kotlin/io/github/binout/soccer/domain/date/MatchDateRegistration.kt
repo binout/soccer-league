@@ -16,6 +16,7 @@
 package io.github.binout.soccer.domain.date
 
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.player.PlayerRepository
 import org.springframework.stereotype.Component
 import java.time.Month
@@ -34,7 +35,7 @@ class FriendlyMatchDateRegistration(private val repository: FriendlyMatchDateRep
 
     private fun managePlayers(playerName: String, year: Int, month: Month, day: Int, inscription: (FriendlyMatchDate, Player) -> Unit) {
         val friendlyMatchDate = repository.byDate(year, month, day) ?: throw IllegalArgumentException("Date is invalid")
-        val player = playerRepository.byName(playerName) ?: throw IllegalArgumentException("Player is invalid")
+        val player = playerRepository.byName(PlayerName( playerName)) ?: throw IllegalArgumentException("Player is invalid")
         inscription(friendlyMatchDate, player)
         repository.replace(friendlyMatchDate)
     }
@@ -54,7 +55,7 @@ class LeagueMatchDateRegistration(private val repository: LeagueMatchDateReposit
 
     private fun managePlayers(playerName: String, year: Int, month: Month, day: Int, inscription: (LeagueMatchDate, Player) -> Unit) {
         val leagueMatchDate = repository.byDate(year, month, day) ?: throw IllegalArgumentException("Date is invalid")
-        val player = playerRepository.byName(playerName) ?: throw IllegalArgumentException("Player is invalid")
+        val player = playerRepository.byName(PlayerName(playerName)) ?: throw IllegalArgumentException("Player is invalid")
         inscription(leagueMatchDate, player)
         repository.replace(leagueMatchDate)
     }

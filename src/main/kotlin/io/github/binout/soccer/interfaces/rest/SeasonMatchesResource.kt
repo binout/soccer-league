@@ -17,6 +17,7 @@ package io.github.binout.soccer.interfaces.rest
 
 import io.github.binout.soccer.application.*
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.values
 import io.github.binout.soccer.domain.season.Match
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -108,8 +109,8 @@ class SeasonMatchesResource(
     private fun toRestMatch(m: Pair<Match<*>, List<Player>>): RestMatch = m.let { (match, players) ->
         val restMatch = match.date.toRestMatch()
         restMatch.hasMinimumPlayer = match.hasMinimumPlayer()
-        match.players().forEach { restMatch.players.add(it) }
-        players.map { it.name }.forEach { restMatch.subs.add(it) }
+        match.players().values().forEach { restMatch.players.add(it) }
+        players.map { it.name }.values().forEach { restMatch.subs.add(it) }
         return restMatch
     }
 }

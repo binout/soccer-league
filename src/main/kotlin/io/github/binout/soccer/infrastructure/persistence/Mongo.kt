@@ -28,7 +28,9 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository
 import io.github.binout.soccer.domain.date.LeagueMatchDate
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.player.PlayerRepository
+import io.github.binout.soccer.domain.player.values
 import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.domain.season.SeasonRepository
 import io.github.binout.soccer.domain.season.FriendlyMatch
@@ -55,7 +57,7 @@ class MongoConfiguration(@Value("\${app.mongodb.uri}") private val uri: String) 
         val client = MongoClient(ServerAddress(serverAddress))
         client.getDatabase("dev")
     } else {
-        val mongoClientURI = MongoClientURI(uri!!)
+        val mongoClientURI = MongoClientURI(uri)
         val client = MongoClient(mongoClientURI)
         client.getDatabase(mongoClientURI.database!!)
     }
@@ -72,11 +74,11 @@ class MongoFriendlyMatchDateRepository(mongoDatabase: MongoDatabase):  FriendlyM
 
     private fun FriendlyMatchDate.toDocument(): Document = Document()
             .append("date", date)
-            .append("presents", presents())
+            .append("presents", presents().values())
 
     private fun Document.toFriendlyMatchDate(): FriendlyMatchDate {
         val friendlyMatchDate = FriendlyMatchDate(getDate("date").toLocalDate())
-        getList<String>("presents").forEach { friendlyMatchDate.present(Player(it)) }
+        getList<String>("presents").forEach { friendlyMatchDate.present(Player(PlayerName( it))) }
         return friendlyMatchDate
     }
 
@@ -97,11 +99,11 @@ class MongoLeagueMatchDateRepository(mongoDatabase: MongoDatabase) : LeagueMatch
 
     private fun LeagueMatchDate.toDocument(): Document = Document()
             .append("date", date)
-            .append("presents", presents())
+            .append("presents", presents().values())
 
     private fun Document.toLeagueMatchDate(): LeagueMatchDate {
         val leagueMatchDate = LeagueMatchDate(getDate("date").toLocalDate())
-        getList<String>("presents").forEach { leagueMatchDate.present(Player(it)) }
+        getList<String>("presents").forEach { leagueMatchDate.present(Player(PlayerName(it))) }
         return leagueMatchDate
     }
 
@@ -123,23 +125,23 @@ class MongoPlayerRepository(mongoDatabase: MongoDatabase) : PlayerRepository {
     private val collection = mongoDatabase.getCollection("player")
 
     private fun Player.toDocument(): Document = Document()
-            .append("name", name)
+            .append("name", name.value)
             .append("email", email)
             .append("isPlayerLeague", isPlayerLeague)
             .append("isGoalkeeper", isGoalkeeper)
 
     private fun Document.toPlayer(): Player = Player(
-            getString("name"),
+            PlayerName(getString("name")),
             getString("email"),
             getBoolean("isPlayerLeague"),
             getBoolean("isGoalkeeper")
     )
 
     override fun add(player: Player) {
-        collection.replaceOne(eq("name", player.name), player.toDocument(), ReplaceOptions().upsert(true))
+        collection.replaceOne(eq("name", player.name.value), player.toDocument(), ReplaceOptions().upsert(true))
     }
 
-    override fun byName(name: String): Player? = collection.find(eq("name", name)).first()?.toPlayer()
+    override fun byName(name: PlayerName): Player? = collection.find(eq("name", name.value)).first()?.toPlayer()
 
     override fun all(): List<Player> = collection.find().map { it.toPlayer() }.toList()
 }
@@ -157,11 +159,11 @@ class MongoSeasonRepository(mongoDatabase: MongoDatabase) : SeasonRepository {
 
     private fun FriendlyMatch.toDocument(): Document = Document()
             .append("friendlyDate", date)
-            .append("players", players())
+            .append("players", players().values())
 
     private fun LeagueMatch.toDocument(): Document = Document()
             .append("leagueDate", date)
-            .append("players", players())
+            .append("players", players().values())
 
     private fun Document.toSeason(): Season {
         val season = Season(getString("name"))
@@ -172,14 +174,14 @@ class MongoSeasonRepository(mongoDatabase: MongoDatabase) : SeasonRepository {
 
     private fun Document.toFriendlyMatch() : Pair<FriendlyMatchDate, Set<Player>> {
         val friendlyMatchDate = FriendlyMatchDate(getDate("friendlyDate").toLocalDate())
-        val players = getList<String>("players").map { Player(it) }.toSet()
+        val players = getList<String>("players").map { Player(PlayerName(it)) }.toSet()
         players.forEach { friendlyMatchDate.present(it) }
         return friendlyMatchDate to players
     }
 
     private fun Document.toLeagueMatch() : Pair<LeagueMatchDate, Set<Player>> {
         val leagueMatchDate = LeagueMatchDate(getDate("leagueDate").toLocalDate())
-        val players = getList<String>("players").map { Player(it) }.toSet()
+        val players = getList<String>("players").map { Player(PlayerName(it)) }.toSet()
         players.forEach { leagueMatchDate.present(it) }
         return leagueMatchDate to players
     }

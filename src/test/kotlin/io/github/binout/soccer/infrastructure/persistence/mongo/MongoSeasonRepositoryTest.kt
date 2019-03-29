@@ -3,6 +3,7 @@ package io.github.binout.soccer.infrastructure.persistence.mongo
 import io.github.binout.soccer.domain.date.FriendlyMatchDate
 import io.github.binout.soccer.domain.date.LeagueMatchDate
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.infrastructure.persistence.MongoConfiguration
 import io.github.binout.soccer.infrastructure.persistence.MongoSeasonRepository
@@ -54,5 +55,8 @@ class MongoSeasonRepositoryTest {
         assertThat(season.leagueMatches()).hasSize(1)
     }
 
-    private fun players(nb: Int) : Set<Player> = (0 until nb).map { UUID.randomUUID().toString() }.map { Player(it) }.toSet()
+    private fun players(nb: Int) : Set<Player> = (0 until nb)
+            .map { UUID.randomUUID().toString() }
+            .map { PlayerName(it) }
+            .map { Player(it) }.toSet()
 }
