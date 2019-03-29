@@ -20,6 +20,8 @@ const Players = React.createClass({
                         &nbsp;{goalkeeper}
                     </td>
                     <td>{player.email}</td>
+                    <td>{player.nbSeasons}</td>
+                    <td>{player.nbMatches}</td>
                 </tr>
             );
     },
@@ -36,10 +38,12 @@ const Players = React.createClass({
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Nb Seasons</th>
+                        <th>Nb Matches</th>
                     </tr>
                     </thead>
                     <tbody>
-                        {this.state.players.map(p => this.renderLine(p))}
+                        {this.state.players.sort(p => p.nbMatches).map(p => this.renderLine(p))}
                     </tbody>
                 </Table>
                     <p>League Player : <Glyphicon glyph="star"/></p>
@@ -50,7 +54,7 @@ const Players = React.createClass({
     },
 
     fetchState() {
-        $.get('/rest/players').done(data => this.setState({players : data}));
+        $.get('/rest/players-stats').done(data => this.setState({players : data}));
     },
 
     componentDidMount() {

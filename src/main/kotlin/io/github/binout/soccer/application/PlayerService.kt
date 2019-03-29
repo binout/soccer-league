@@ -1,8 +1,6 @@
 package io.github.binout.soccer.application
 
-import io.github.binout.soccer.domain.player.Player
-import io.github.binout.soccer.domain.player.PlayerName
-import io.github.binout.soccer.domain.player.PlayerRepository
+import io.github.binout.soccer.domain.player.*
 import org.springframework.stereotype.Component
 
 @Component
@@ -15,6 +13,12 @@ class GetAllLeaguePlayers(private val playerRepository: PlayerRepository) {
 class GetAllPlayers(private val playerRepository: PlayerRepository) {
 
     fun execute(): List<Player> = playerRepository.all()
+}
+
+@Component
+class GetAllPlayerStats(private val playerRepository: PlayerRepository, private val playerStatistics: PlayerStatistics) {
+
+    fun execute(): List<PlayerStats> = playerRepository.all().map { playerStatistics.of(it) }
 }
 
 @Component
