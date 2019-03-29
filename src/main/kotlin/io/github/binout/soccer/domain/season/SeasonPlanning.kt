@@ -71,9 +71,7 @@ class SeasonPlanning(
         return players
     }
 
-    private fun teamIsNotFull(players: Set<Player>, maxPlayers: Int): Boolean {
-        return players.size < maxPlayers
-    }
+    private fun teamIsNotFull(players: Set<Player>, maxPlayers: Int): Boolean = players.size < maxPlayers
 
     fun friendlyMatchDatesToPlan(season: Season): List<FriendlyMatchDate> {
         val dates = season.friendlyMatches().map { it.date }.toSet()

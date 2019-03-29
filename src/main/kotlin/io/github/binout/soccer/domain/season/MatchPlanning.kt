@@ -49,18 +49,16 @@ class MatchPlanning(
     }
 
 
-    private fun replaceMatchDate(matchDate: MatchDate) {
-        when (matchDate) {
-            is LeagueMatchDate -> leagueMatchDateRepository.replace(matchDate)
-            is FriendlyMatchDate -> friendlyMatchDateRepository.replace(matchDate)
-        }
+    private fun replaceMatchDate(matchDate: MatchDate) = when (matchDate) {
+        is LeagueMatchDate -> leagueMatchDateRepository.replace(matchDate)
+        is FriendlyMatchDate -> friendlyMatchDateRepository.replace(matchDate)
     }
 
     private fun getMatchDate(match: Match<*>): MatchDate? {
         val date = match.date
         return when (match) {
             is FriendlyMatch -> friendlyMatchDateRepository.byDate(date.year, date.month, date.dayOfMonth)
-            else -> leagueMatchDateRepository.byDate(date.year, date.month, date.dayOfMonth)
+            is LeagueMatch -> leagueMatchDateRepository.byDate(date.year, date.month, date.dayOfMonth)
         }
     }
 
@@ -75,7 +73,10 @@ class MatchPlanning(
     }
 
     private fun getPlayerComparator(season: Season, match: Match<*>): Comparator<Player> {
-        val counter = if (match is LeagueMatch) leagueCounter(season) else globalCounter(season)
+        val counter = when (match) {
+            is LeagueMatch -> leagueCounter(season)
+            is FriendlyMatch -> globalCounter(season)
+        }
         return Comparator.comparingInt { counter(it) }
     }
 
