@@ -35,11 +35,11 @@ class MatchPlanning(
         val by = getSubstitutes(season, match).firstOrNull()
         if (by == null) {
             if (!match.removePlayer(player)) {
-                throw IllegalStateException("Cannot substitute ${player.name}, no player available !")
+                throw IllegalStateException("Cannot substitute ${player.name.value}, no player available !")
             }
         } else {
             if (matchDate.isAbsent(by)) {
-                throw IllegalArgumentException(by.name + " is not present for this date")
+                throw IllegalArgumentException("${by.name.value} is not present for this date")
             }
             match.replacePlayer(player, by)
         }

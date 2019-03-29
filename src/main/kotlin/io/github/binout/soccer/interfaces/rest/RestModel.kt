@@ -17,6 +17,7 @@ package io.github.binout.soccer.interfaces.rest
 
 import io.github.binout.soccer.domain.date.MatchDate
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.values
 import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.domain.season.SeasonStatistics
 import java.time.LocalDate
@@ -54,7 +55,7 @@ fun LocalDate.toRestMatchDate() = RestMatchDate(DateTimeFormatter.ISO_DATE.forma
 
 fun MatchDate.toRestModel(): RestMatchDate {
     val restMatchDate = date.toRestMatchDate()
-    presents().forEach { restMatchDate.presents.add(it) }
+    presents().values().forEach { restMatchDate.presents.add(it) }
     restMatchDate.isCanBePlanned = canBePlanned()
     return restMatchDate
 }
@@ -65,7 +66,7 @@ data class RestPlayer(
         var isPlayerLeague: Boolean = false,
         var isGoalkeeper: Boolean = false)
 
-fun Player.toRestModel() = RestPlayer(name, email, isPlayerLeague, isGoalkeeper)
+fun Player.toRestModel() = RestPlayer(name.value, email, isPlayerLeague, isGoalkeeper)
 
 data class RestSeason(var name: String)
 
@@ -78,7 +79,7 @@ data class RestStat(
         var nbLeagueMatches: Int = 0)
 
 fun SeasonStatistics.toRestStat(p: Player): RestStat = RestStat(
-        player = p.name,
+        player = p.name.value,
         nbFriendlyMatches = friendlyMatchPlayed(p),
         nbLeagueMatches = leagueMatchPlayed(p),
         nbMatches = matchPlayed(p))

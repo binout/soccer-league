@@ -5,6 +5,7 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository
 import io.github.binout.soccer.domain.date.LeagueMatchDate
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.domain.season.*
 import io.github.binout.soccer.domain.season.FriendlyMatch
@@ -157,7 +158,8 @@ class SubstitutePlayerInFriendlyMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
 
-    fun execute(seasonName: String, date: LocalDate, playerName: String) {
+    fun execute(seasonName: String, date: LocalDate, name: String) {
+        val playerName = PlayerName(name)
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
         val player = playerRepository.byName(playerName) ?: throw  IllegalArgumentException("Invalid player")
         val match = season.friendlyMatches().first { m -> m.date == date }
@@ -171,7 +173,8 @@ class SubstitutePlayerInLeagueMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
 
-    fun execute(seasonName: String, date: LocalDate, playerName: String) {
+    fun execute(seasonName: String, date: LocalDate, name: String) {
+        val playerName = PlayerName(name)
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
         val player = playerRepository.byName(playerName) ?: throw IllegalArgumentException("Invalid player")
         val match = season.leagueMatches().first { m -> m.date == date }

@@ -15,8 +15,14 @@
  */
 package io.github.binout.soccer.domain.player
 
+data class PlayerName(val value: String): Comparable<PlayerName> {
+    override fun compareTo(other: PlayerName): Int = value.compareTo(other.value)
+}
+
+fun List<PlayerName>.values() = this.map { it.value }
+
 class Player(
-        val name: String,
+        val name: PlayerName,
         var email: String? = null,
         var isPlayerLeague: Boolean = false,
         var isGoalkeeper: Boolean = false) {
@@ -43,5 +49,5 @@ interface PlayerRepository {
 
     fun all(): List<Player>
 
-    fun byName(name: String): Player?
+    fun byName(name: PlayerName): Player?
 }

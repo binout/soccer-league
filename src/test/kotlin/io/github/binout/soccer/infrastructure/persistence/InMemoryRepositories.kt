@@ -5,6 +5,7 @@ import io.github.binout.soccer.domain.date.FriendlyMatchDateRepository
 import io.github.binout.soccer.domain.date.LeagueMatchDate
 import io.github.binout.soccer.domain.date.LeagueMatchDateRepository
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.domain.season.Season
 import io.github.binout.soccer.domain.season.SeasonRepository
@@ -42,7 +43,7 @@ class InMemoryLeagueMatchDateRepository : LeagueMatchDateRepository {
 
 class InMemoryPlayerRepository : PlayerRepository {
 
-    private val players: MutableMap<String, Player> = ConcurrentHashMap()
+    private val players: MutableMap<PlayerName, Player> = ConcurrentHashMap()
 
     override fun add(player: Player) {
         players[player.name] = player
@@ -50,7 +51,7 @@ class InMemoryPlayerRepository : PlayerRepository {
 
     override fun all(): List<Player> = players.values.sortedBy { it.name }
 
-    override fun byName(name: String): Player? = players[name]
+    override fun byName(name: PlayerName): Player? = players[name]
 }
 
 class InMemorySeasonRepository : SeasonRepository {

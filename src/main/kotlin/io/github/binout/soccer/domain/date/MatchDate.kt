@@ -16,6 +16,7 @@
 package io.github.binout.soccer.domain.date
 
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.season.FriendlyMatch
 import io.github.binout.soccer.domain.season.LeagueMatch
 
@@ -23,12 +24,12 @@ import java.time.LocalDate
 import java.time.Month
 
 sealed class MatchDate(val date: LocalDate,
-                       private val presents: MutableSet<String> = mutableSetOf(),
+                       private val presents: MutableSet<PlayerName> = mutableSetOf(),
                        private val minPlayer: Int) {
 
     fun isNowOrFuture(): Boolean = LocalDate.now().let { date.isAfter(it) || date.isEqual(it) }
 
-    fun presents(): List<String>  = presents.toList()
+    fun presents(): List<PlayerName>  = presents.toList()
 
     fun present(player: Player) { presents.add(player.name) }
 

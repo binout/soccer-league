@@ -15,7 +15,9 @@
  */
 package io.github.binout.soccer.domain
 
+import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.player.PlayerRepository
+import io.github.binout.soccer.domain.player.values
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
@@ -79,13 +81,13 @@ class NotificationService(
     @EventListener
     fun newLeagueMatchPlanned(event: LeagueMatchPlanned) {
         val date = DateTimeFormatter.ISO_DATE.format(event.date)
-        sendMail("$title League : $date", date, event.players, event.substitutes)
+        sendMail("$title League : $date", date, event.players.values(), event.substitutes.values())
     }
 
     @EventListener
     fun newFriendlyMatchPlanned(event: FriendlyMatchPlanned) {
         val date = DateTimeFormatter.ISO_DATE.format(event.date)
-        sendMail("$title : $date", date, event.players, event.substitutes)
+        sendMail("$title : $date", date, event.players.values(), event.substitutes.values())
     }
 
     private fun sendMail(title: String, date: String, players: List<String>, subs: List<String>) {
@@ -105,7 +107,7 @@ class NotificationService(
     }
 
     private fun addRecipients(mail: MailService.Mail, players: List<String>) {
-        players.mapNotNull { playerRepository.byName(it) }
+        players.mapNotNull { playerRepository.byName(PlayerName(it)) }
                 .mapNotNull { it.email }
                 .filterNot { it.isEmpty() }
                 .forEach { mail.addRecipient(it) }

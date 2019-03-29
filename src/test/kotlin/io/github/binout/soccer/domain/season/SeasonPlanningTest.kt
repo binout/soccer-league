@@ -2,6 +2,7 @@ package io.github.binout.soccer.domain.season
 
 import io.github.binout.soccer.domain.date.MatchDate
 import io.github.binout.soccer.domain.player.Player
+import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.infrastructure.persistence.InMemoryFriendlyMatchDateRepository
 import io.github.binout.soccer.infrastructure.persistence.InMemoryLeagueMatchDateRepository
@@ -46,9 +47,10 @@ internal class SeasonPlanningTest : WithAssertions {
 
     private fun generatePlayer(nb: Int) =
             (0 until nb)
-            .map { UUID.randomUUID().toString() }
-            .map { Player(name = it) }
-            .forEach { this.addPlayer(it) }
+                    .map { UUID.randomUUID().toString() }
+                    .map { PlayerName(it) }
+                    .map { Player(name = it) }
+                    .forEach { this.addPlayer(it) }
 
     private fun addPlayer(p: Player) {
         playerRepository.add(p)
@@ -58,9 +60,10 @@ internal class SeasonPlanningTest : WithAssertions {
 
     private fun generateLeaguePlayer(nb: Int) =
             (0 until nb)
-            .map { UUID.randomUUID().toString() }
-            .map { Player(name = it, isPlayerLeague = true) }
-            .forEach { this.addPlayer(it) }
+                    .map { UUID.randomUUID().toString() }
+                    .map { PlayerName(it) }
+                    .map { Player(name = it, isPlayerLeague = true) }
+                    .forEach { this.addPlayer(it) }
 
     @Test
     fun at_least_5_league_players_for_league_match() {
@@ -85,7 +88,7 @@ internal class SeasonPlanningTest : WithAssertions {
     fun goalkeeper_priority_for_league_match() {
         generateLeaguePlayer(10)
 
-        val goalName = UUID.randomUUID().toString()
+        val goalName = PlayerName(UUID.randomUUID().toString())
         addPlayer(createGoalKeeper(goalName))
 
         val leagueMatch = seasonPlanning.planLeagueMatch(EMPTY_SEASON, DATE_FOR_LEAGUE)
@@ -93,7 +96,7 @@ internal class SeasonPlanningTest : WithAssertions {
         assertThat(leagueMatch.players()).contains(goalName)
     }
 
-    private fun createGoalKeeper(goalName: String): Player {
+    private fun createGoalKeeper(goalName: PlayerName): Player {
         val goalKeeper = Player(name = goalName)
         goalKeeper.isPlayerLeague = true
         goalKeeper.isGoalkeeper = true
