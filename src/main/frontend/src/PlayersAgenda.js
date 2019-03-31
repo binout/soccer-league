@@ -2,15 +2,14 @@ import React, { Fragment, useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import styled from "styled-components";
 import Checkbox from "@material-ui/core/Checkbox";
-import DatePicker from "react-datepicker";
 import axios from "axios";
-
+import { MuiPickersUtilsProvider, InlineDatePicker } from "material-ui-pickers";
+import DateFnsUtils from "@date-io/moment";
 var moment = require("moment");
-import "react-datepicker/dist/react-datepicker.css";
 
 const Badge = styled.div`
   width: 20px;
-  height: 20px;
+  height: 15px;
   margin-left: 10px;
   font-size: 10px;
   border-radius: 10px;
@@ -20,9 +19,13 @@ const Badge = styled.div`
   color: white;
 `;
 
-const DatePickerWrapper = styled.div``;
+const DatePickerWrapper = styled.div`
+margin-left: 15px;
+`;
 const PlayersPlanning = styled.div`
   margin-top: 30px;
+  margin-left: 15px;
+  overflow-y: hidden;
 `;
 const PlayerLine = styled.div`
   display: grid;
@@ -31,6 +34,7 @@ const PlayerLine = styled.div`
       ? `[first] 200px repeat(${props.column}, 200px)`
       : `200px 200px`};
   align-items: center;
+  grid-auto-rows: 35px;
 `;
 const PlanningHeader = styled.div`
   display: grid;
@@ -43,6 +47,12 @@ const PlanningHeader = styled.div`
 `;
 const MatchDate = styled.span`
   display: inline-flex;
+`;
+const AddBtn = styled(Button)`
+  && {
+    margin-top: 10px;
+    margin-left: 15px;
+  }
 `;
 
 const PlayersAgenda = ({ matchType }) => {
@@ -61,15 +71,13 @@ const PlayersAgenda = ({ matchType }) => {
 
   useEffect(() => {
     const fetchPlayers = async () => {
-   
-      if(matchType==='friendly'){
-         const result = await axios.get("/rest/players");
-         setPlayers(result.data);
-      }else{
+      if (matchType === "friendly") {
+        const result = await axios.get("/rest/players");
+        setPlayers(result.data);
+      } else {
         const result = await axios.get("/rest/players/league");
         setPlayers(result.data);
       }
-      
     };
     fetchPlayers();
   }, []);
@@ -97,14 +105,21 @@ const PlayersAgenda = ({ matchType }) => {
   return (
     <Fragment>
       <DatePickerWrapper>
-        <DatePicker
-          selected={date}
-          onChange={date => setDate(date)}
-          dateFormat="yyyy/MM/dd"
-        />
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <InlineDatePicker
+          variant="outlined"
+            onlyCalendar
+            label="Match date"
+            value={date}
+            onChange={date => {
+              setDate(date);
+            }}
+          />
+        </MuiPickersUtilsProvider>
+
+        <AddBtn variant="contained" color="primary" onClick={handleSubmit}>
           ADD
-        </Button>
+        </AddBtn>
       </DatePickerWrapper>
       {matchDates.length > 0 && (
         <PlayersPlanning>

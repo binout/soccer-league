@@ -1,51 +1,73 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, NavLink } from "react-router-dom";
 import styled from "styled-components";
-import Paper from "@material-ui/core/Paper";
+import { createGlobalStyle } from "styled-components";
 import AppBar from "@material-ui/core/AppBar";
-
-// import SoccerNavBar from "./SoccerNavBar.jsx";
+import green from "@material-ui/core/colors/green";
 import Players from "./Players.js";
 import Agenda from "./Agenda.js";
 import Season from "./Season.js";
 import { Toolbar } from "@material-ui/core";
 
-// const Container = () => {
-//   const content =
-//     this.props.children == null ? <Season /> : this.props.children;
-//   return (
-//     <div className="App container">
-//       <SoccerNavBar />
-//       {content}
-//     </div>
-//   );
-// };
-const SoccerAppWrapper = styled(Paper)`
-  width: 70%;
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  }
+`;
+
+const SoccerAppWrapper = styled.div`
   margin: 0 auto;
-  padding: 20px;
-  header {
-    a + a {
-      margin-left: 50px;
+`;
+
+const StyledAppBar = styled(AppBar)`
+  && {
+    background-color: ${green[900]};
+    margin-bottom: 50px;
+    a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      text-transform: uppercase;
+      padding: 19px 40px;
+      transition: opacity 0.5s;
+      opacity: 0.7;
+
+      &:active,
+      &:visited,
+      &:focus,
+      &:hover {
+        text-decoration: none;
+        color: white;
+        opacity: 1;
+      }
     }
   }
 `;
 
+const Content = styled.div`
+  width: 80%;
+  margin: 0 auto;
+`;
+
 const Application = () => {
+
   return (
     <Router>
+      <GlobalStyle />
       <SoccerAppWrapper>
-        <AppBar position="static" color="default" >
+        <StyledAppBar position="static" color="default">
           <Toolbar>
-            <Link to="/">Planning Equipe Soccer 5</Link>
-            <Link to="/agenda">Agenda</Link>
-            <Link to="/players">Players</Link>
+            <NavLink to="/">Planning Equipe Soccer 5</NavLink>
+            <NavLink to="/agenda">Agenda</NavLink>
+            <NavLink to="/players">Players</NavLink>
           </Toolbar>
-        </AppBar>
-
-        <Route path="/" exact component={Season} />
-        <Route path="/agenda" component={Agenda} />
-        <Route path="/players" component={Players} />
+        </StyledAppBar>
+        <Content>
+          <Route path="/" exact component={Season} />
+          <Route path="/agenda" component={Agenda} />
+          <Route path="/players" component={Players} />
+        </Content>
       </SoccerAppWrapper>
     </Router>
   );

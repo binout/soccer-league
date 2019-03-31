@@ -19,10 +19,16 @@ const CancelBtn = styled.div`
 const MatchWithPlayer = styled.div``;
 const MatchToBePlanned = styled.div``;
 const PlanButton = styled(Button)`
-  && {margin-left: 30px;}
+  && {
+    margin-left: 30px;
+    margin-bottom: 10px;
+  }
+`;
+const Title = styled.h3`
+  font-size: 20px;
 `;
 
-const ScheduleMatch = ({matchType}) => {
+const ScheduleMatch = ({ matchType }) => {
   const [scheduledMatches, setScheduledMatches] = useState([]);
   const [matchesList, setMatchesList] = useState([]);
   const [updateToggle, setUpdateToggle] = useState(false);
@@ -30,7 +36,9 @@ const ScheduleMatch = ({matchType}) => {
 
   useEffect(() => {
     async function fetchData() {
-      const result = await axios(`/rest/seasons/current/matches/${matchType}/next`);
+      const result = await axios(
+        `/rest/seasons/current/matches/${matchType}/next`
+      );
       setScheduledMatches(result.data);
     }
 
@@ -43,7 +51,7 @@ const ScheduleMatch = ({matchType}) => {
         `rest/seasons/current/matches/${matchType}/to-plan`
       );
       setMatchesList(result.data);
-      setMatchToPlanCount(result.data.length)
+      setMatchToPlanCount(result.data.length);
     }
 
     fetchData();
@@ -60,7 +68,7 @@ const ScheduleMatch = ({matchType}) => {
     await axios.put(`/rest/seasons/current/matches/${matchType}/${date}`);
     setUpdateToggle(!updateToggle);
     setMatchToPlanCount(matchToPlanCount - 1);
-  }
+  };
 
   const intersperse = (arr, sep) => {
     if (arr.length === 0) {
@@ -71,41 +79,53 @@ const ScheduleMatch = ({matchType}) => {
 
   return (
     <Fragment>
-      <MatchWithPlayer>
-      <h3>Next {matchType} matches</h3>
-        {scheduledMatches.map(match => (
-          <div key={`match-${match.date}`}>
-            <h4>{moment(match.date).format("dddd YYYY/MM/DD")}</h4>
-            {match.players.map(player => (
-              <Player key={`player-${player}`}>
-                <span>{player}</span>
-                <span>
-                  {match.subs.length !== 0 && (
-                    <CancelBtn
-                      onClick={() => handleSubstitute(match.date, player)}
-                    >
-                      ❎
-                    </CancelBtn>
-                  )}
-                </span>
-              </Player>
-            ))}
-            <i>Substitutes : </i>{" "}
-            {match.subs.length == 0 ? "None" : intersperse(match.subs, ", ")}
-          </div>
-        ))}
-      </MatchWithPlayer>
-      <MatchToBePlanned>
-        <h3>Matches to plan</h3>
-        {matchesList.map(match => (
-          <li key={match.date}>
-            {match.date}
-            <PlanButton color="primary" variant="contained" onClick={() => planHanlder(match.date)}>
-              PLAN
-            </PlanButton>
-          </li>
-        ))}
-      </MatchToBePlanned>
+      {scheduledMatches.length > 0 && (
+        <MatchWithPlayer>
+          <Title>Next {matchType} matches</Title>
+          {scheduledMatches.map(match => (
+            <div key={`match-${match.date}`}>
+              <h4>{moment(match.date).format("dddd YYYY/MM/DD")}</h4>
+              {match.players.map(player => (
+                <Player key={`player-${player}`}>
+                  <span>{player}</span>
+                  <span>
+                    {match.subs.length !== 0 && (
+                      <CancelBtn
+                        onClick={() => handleSubstitute(match.date, player)}
+                      >
+                        ❎
+                      </CancelBtn>
+                    )}
+                  </span>
+                </Player>
+              ))}
+              <i>Substitutes : </i>{" "}
+              {match.subs.length == 0 ? "None" : intersperse(match.subs, ", ")}
+            </div>
+          ))}
+        </MatchWithPlayer>
+      )}
+      {matchesList.length > 0 && (
+        <MatchToBePlanned>
+          <Title>Matches to plan</Title>
+          {matchesList.map(match => (
+            <div key={match.date}>
+              {match.date}
+              <PlanButton
+                color="primary"
+                size="small"
+                variant="contained"
+                onClick={() => planHanlder(match.date)}
+              >
+                PLAN
+              </PlanButton>
+            </div>
+          ))}
+        </MatchToBePlanned>
+      )}
+      {scheduledMatches.length === 0 && matchesList.length === 0 && (
+        <div>No match to plan</div>
+      )}
     </Fragment>
   );
 };

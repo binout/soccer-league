@@ -1,7 +1,6 @@
 var webpack = require('webpack');
 var path = require('path');
 require( "@babel/polyfill")
-var ExtractTextPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     entry: ["@babel/polyfill", "./src/index.js"],
@@ -11,7 +10,6 @@ module.exports = {
     },
     module: {
         rules: [
-            { test: /\.css$/, loader: "style-loader!css-loader" },
             {
                 test: /\.js$/,
                 exclude: /node_module/,
@@ -23,8 +21,5 @@ module.exports = {
                 }
             }
         ]
-    },
-    plugins: [
-        new ExtractTextPlugin("[name].css")
-    ]
+    }
 };

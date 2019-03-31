@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import styled from "styled-components";
 import axios from "axios";
 
@@ -10,7 +10,11 @@ import ScheduleMatch from "./ScheduleMatch";
 import Statistics from "./Statistics";
 
 const TabsContentWrapper = styled.div`
-  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid ${grey[200]};
+  border-top: none;
+  padding: 0 15px 15px 20px;
 `;
 const StyledTab = styled(({ ...other }) => (
   <Tab classes={{ label: "label" }} {...other} />
@@ -20,6 +24,10 @@ const StyledTab = styled(({ ...other }) => (
     color: ${grey[900]};
   }
 `;
+const Title = styled.h2`
+  margin-bottom: 20px;
+`;
+
 const Season = () => {
   const [season, setSeason] = useState([]);
   const [selectedTabValue, setSelectedTabValue] = useState(0);
@@ -37,8 +45,8 @@ const Season = () => {
   };
 
   return (
-    <div>
-      <h2>Season {season.name}</h2>
+    <Fragment>
+      <Title>Season {season.name}</Title>
       <AppBar position="static" color="default">
         <Tabs value={selectedTabValue} onChange={handleChange}>
           <StyledTab label="Friendly" />
@@ -51,7 +59,7 @@ const Season = () => {
         {selectedTabValue === 1 && <ScheduleMatch matchType="league" />}
         {selectedTabValue === 2 && <Statistics />}
       </TabsContentWrapper>
-    </div>
+    </Fragment>
   );
 };
 
