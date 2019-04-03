@@ -8,6 +8,7 @@ import Players from "./Players.js";
 import Agenda from "./Agenda.js";
 import Season from "./Season.js";
 import { Toolbar } from "@material-ui/core";
+import { media } from "./style";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -32,6 +33,7 @@ const StyledAppBar = styled(AppBar)`
       padding: 19px 40px;
       transition: opacity 0.5s;
       opacity: 0.7;
+      ${media.phone`padding: 19px;`}
 
       &:active,
       &:visited,
@@ -48,10 +50,10 @@ const StyledAppBar = styled(AppBar)`
 const Content = styled.div`
   width: 80%;
   margin: 0 auto;
+  ${media.phone`width: 95%;`}
 `;
 
 const Application = () => {
-
   return (
     <Router>
       <GlobalStyle />

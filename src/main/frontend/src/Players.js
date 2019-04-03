@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import grey from "@material-ui/core/colors/grey";
+import { media } from "./style";
 
 const PlayersWrapper = styled.div`
   display: flex;
@@ -29,6 +30,12 @@ const PlayerLine = styled.div`
   &:nth-child(odd) {
     background-color: ${grey[100]};
   }
+
+  ${media.phone`
+    grid-template-columns: 110px 200px;
+    grid-auto-rows: 60px;
+    grid-column-gap: 10px;
+    `}
 `;
 
 const TitleWrapper = styled.div``;
@@ -49,11 +56,11 @@ const Players = () => {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    const fetchState = async () => {
+    const fetchPlayers = async () => {
       const result = await axios.get("/rest/players");
       setPlayers(result.data);
     };
-    fetchState();
+    fetchPlayers();
   }, []);
 
   const nbLeaguePlayers = players.filter(p => p.playerLeague).length;

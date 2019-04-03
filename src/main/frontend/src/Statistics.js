@@ -27,6 +27,7 @@ const LineByPlayer = styled.div`
   display: grid;
   grid-template-columns: [first] 30% 20% 20% 20%;
   grid-auto-rows: 35px;
+  grid-column-gap: 15px;
   align-items: center;
   border-bottom: 1px solid ${grey[200]};
   &:nth-child(odd) {

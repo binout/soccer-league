@@ -18,6 +18,9 @@ const CancelBtn = styled.div`
 
 const MatchWithPlayer = styled.div``;
 const MatchToBePlanned = styled.div``;
+const NoMatch = styled.div`
+  margin-top: 20px;
+`;
 const PlanButton = styled(Button)`
   && {
     margin-left: 30px;
@@ -124,7 +127,7 @@ const ScheduleMatch = ({ matchType }) => {
         </MatchToBePlanned>
       )}
       {scheduledMatches.length === 0 && matchesList.length === 0 && (
-        <div>No match to plan</div>
+        <NoMatch>No match to plan</NoMatch>
       )}
     </Fragment>
   );

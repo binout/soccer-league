@@ -5,6 +5,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import axios from "axios";
 import { MuiPickersUtilsProvider, InlineDatePicker } from "material-ui-pickers";
 import DateFnsUtils from "@date-io/moment";
+import { media } from "./style";
 var moment = require("moment");
 
 const Badge = styled.div`
@@ -20,7 +21,7 @@ const Badge = styled.div`
 `;
 
 const DatePickerWrapper = styled.div`
-margin-left: 15px;
+  margin-left: 15px;
 `;
 const PlayersPlanning = styled.div`
   margin-top: 30px;
@@ -35,6 +36,10 @@ const PlayerLine = styled.div`
       : `200px 200px`};
   align-items: center;
   grid-auto-rows: 35px;
+  ${media.phone`
+    grid-template-columns: ${props => props.column ? `[first] 80px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
+    grid-auto-rows: auto;
+  `}
 `;
 const PlanningHeader = styled.div`
   display: grid;
@@ -44,6 +49,10 @@ const PlanningHeader = styled.div`
       : `200px 200px`};
   font-size: 16px;
   font-weight: bold;
+  ${media.phone`
+    grid-template-columns: ${props => props.column ? `[first] 80px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
+    grid-auto-rows: auto;    
+  `}
 `;
 const MatchDate = styled.span`
   display: inline-flex;
@@ -107,7 +116,7 @@ const PlayersAgenda = ({ matchType }) => {
       <DatePickerWrapper>
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <InlineDatePicker
-          variant="outlined"
+            variant="outlined"
             onlyCalendar
             label="Match date"
             value={date}

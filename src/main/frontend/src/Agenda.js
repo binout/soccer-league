@@ -11,6 +11,7 @@ const TabContent = styled.div`
   width: 100%;
   border: 1px solid ${grey[100]};
   padding-top: 30px;
+  padding-bottom: 30px;
 `;
 
 const StyledTab = styled(({ ...other }) => (
