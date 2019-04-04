@@ -1,30 +1,25 @@
 var webpack = require('webpack');
 var path = require('path');
-require( 'es6-promise' ).polyfill()
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+require( "@babel/polyfill")
 
 module.exports = {
-    entry: "./src/index.js",
+    entry: ["@babel/polyfill", "./src/index.js"],
     output: {
-        path: '../../../target/classes/public',
+        path: path.resolve(__dirname, '../../../target/classes/public'),
         filename: "bundle.js"
     },
     module: {
-        loaders: [
-            { test: /\.css$/, loader: "style-loader!css-loader" },
+        rules: [
             {
-                test: /\.jsx?$/,
+                test: /\.js$/,
+                exclude: /node_module/,
                 include: [
                     path.resolve(__dirname, "./src")
                 ],
-                loader: 'babel',
-                query: {
-                    presets: ['es2015', 'react']
+                use: {
+                    loader: 'babel-loader'
                 }
             }
         ]
-    },
-    plugins: [
-        new ExtractTextPlugin("[name].css")
-    ]
+    }
 };

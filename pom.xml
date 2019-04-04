@@ -40,8 +40,8 @@
                 <configuration>
                     <workingDirectory>src/main/frontend</workingDirectory>
                     <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
-                    <nodeVersion>v5.6.0</nodeVersion>
-                    <npmVersion>3.7.1</npmVersion>
+                    <nodeVersion>v8.9.4</nodeVersion>
+                    <npmVersion>5.6.0</npmVersion>
                     <installDirectory>target</installDirectory>
                 </configuration>
                 <executions>
