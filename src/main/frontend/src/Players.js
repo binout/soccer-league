@@ -12,7 +12,7 @@ const PlayersWrapper = styled.div`
 const PlayersTable = styled.div``;
 const TableTitle = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 35px;
   font-weight: bold;
   background-color: ${grey[100]};
@@ -23,7 +23,7 @@ const TableTitle = styled.div`
 
 const PlayerLine = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 35px;
   padding-left: 15px;
   align-items: center;
@@ -57,7 +57,7 @@ const Players = () => {
 
   useEffect(() => {
     const fetchPlayers = async () => {
-      const result = await axios.get("/rest/players");
+      const result = await axios.get("/rest/players-stats");
       setPlayers(result.data);
     };
     fetchPlayers();
@@ -79,14 +79,18 @@ const Players = () => {
         <TableTitle>
           <span>Name</span>
           <span>Email</span>
+          <span>Nb Seasons</span>
+          <span>Nb Matches</span>
         </TableTitle>
-        {players.map(player => (
+        {players.sort((p1, p2) => p2.nbMatches - p1.nbMatches).map(player => (
           <PlayerLine key={player.name}>
             <span>
               {player.name} {player.playerLeague && "⭐"}
               {player.goalkeeper && " 🥅"}
             </span>
             <span>{player.email}</span>
+            <span>{player.nbSeasons}</span>
+            <span>{player.nbMatches}</span>
           </PlayerLine>
         ))}
       </PlayersTable>

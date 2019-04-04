@@ -92,7 +92,7 @@ const ScheduleMatch = ({ matchType }) => {
                 <Player key={`player-${player}`}>
                   <span>{player}</span>
                   <span>
-                    {match.subs.length !== 0 && (
+                    {match.subs.length !== 0 && match.hasMinimumPlayer && (
                       <CancelBtn
                         onClick={() => handleSubstitute(match.date, player)}
                       >
