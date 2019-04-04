@@ -36,12 +36,12 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>0.0.27</version>
+                <version>0.0.29</version>
                 <configuration>
                     <workingDirectory>src/main/frontend</workingDirectory>
                     <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
                     <nodeVersion>v8.9.4</nodeVersion>
-                    <npmVersion>5.6.0</npmVersion>
+                    <npmVersion>6.4.1</npmVersion>
                     <installDirectory>target</installDirectory>
                 </configuration>
                 <executions>
