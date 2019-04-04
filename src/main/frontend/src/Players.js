@@ -32,7 +32,7 @@ const PlayerLine = styled.div`
   }
 
   ${media.phone`
-    grid-template-columns: 110px 200px;
+    grid-template-columns: repeat(4, 1fr);
     grid-auto-rows: 60px;
     grid-column-gap: 10px;
     `}
