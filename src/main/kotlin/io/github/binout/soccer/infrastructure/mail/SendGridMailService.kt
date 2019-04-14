@@ -19,25 +19,22 @@ import feign.Feign
 import feign.Headers
 import feign.RequestLine
 import io.github.binout.soccer.domain.MailService
+import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
-import org.springframework.util.StringUtils
 import java.util.*
+import javax.enterprise.context.ApplicationScoped
 
-@Component
+@ApplicationScoped
 class SendGridMailService : MailService {
 
-    @Value("\${app.mail.sendgrid.url}")
-    private val sendGridUrl: String? = null
-
-    @Value("\${app.mail.sendgrid.api-key}")
-    private val sendGridApiKey: String? = null
+    @ConfigProperty(name = "\${app.mail.sendgrid.url}")
+    private lateinit var sendGridUrl: String
 
     override fun sendMail(email: MailService.Mail) {
-        if (!StringUtils.isEmpty(sendGridApiKey)) {
+        val sendGridApiKey = System.getenv("SENDGRID_API_KEY")
+        if (sendGridApiKey != null) {
             if (email.hasRecipients()) {
                 val jsonMail = toSendGridMail(email)
                 try {

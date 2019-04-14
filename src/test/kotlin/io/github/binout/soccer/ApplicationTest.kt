@@ -1,20 +1,19 @@
 package io.github.binout.soccer
 
-import com.github.kevinsawicki.http.HttpRequest
+import io.quarkus.test.junit.QuarkusTest
+import io.restassured.RestAssured.given
 import org.assertj.core.api.WithAssertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ApplicationTest(@LocalServerPort val port: Int): WithAssertions {
+@QuarkusTest
+class ApplicationTest: WithAssertions {
 
     @Test
     fun should_start() {
-        assertThat(HttpRequest.get("http://localhost:$port/rest/seasons/current").ok()).isTrue()
+        given()
+                .`when`().get("/rest/seasons/current")
+                .then()
+                .statusCode(200)
     }
 
 }

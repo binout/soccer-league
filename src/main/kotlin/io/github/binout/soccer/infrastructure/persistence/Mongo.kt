@@ -36,30 +36,31 @@ import io.github.binout.soccer.domain.season.SeasonRepository
 import io.github.binout.soccer.domain.season.FriendlyMatch
 import io.github.binout.soccer.domain.season.LeagueMatch
 import org.bson.Document
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.stereotype.Component
-import org.springframework.util.StringUtils
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
 import java.time.ZoneId
 import java.util.*
+import javax.enterprise.context.ApplicationScoped
+import javax.enterprise.inject.Produces
+import javax.inject.Inject
 
-@Configuration
-class MongoConfiguration(@Value("\${app.mongodb.uri}") private val uri: String) {
+@ApplicationScoped
+class MongoConfiguration {
 
-    @Bean
-    fun database(): MongoDatabase = if (StringUtils.isEmpty(uri)) {
-        val mongoServer = MongoServer(MemoryBackend())
-        val serverAddress = mongoServer.bind()
-        val client = MongoClient(ServerAddress(serverAddress))
-        client.getDatabase("dev")
-    } else {
-        val mongoClientURI = MongoClientURI(uri)
-        val client = MongoClient(mongoClientURI)
-        client.getDatabase(mongoClientURI.database!!)
+    @Produces
+    fun database(): MongoDatabase {
+        val mongoDbUri = System.getenv("MONGODB_URI")
+        return if (mongoDbUri == null) {
+            val mongoServer = MongoServer(MemoryBackend())
+            val serverAddress = mongoServer.bind()
+            val client = MongoClient(ServerAddress(serverAddress))
+            client.getDatabase("dev")
+        } else {
+            val mongoClientURI = MongoClientURI(mongoDbUri)
+            val client = MongoClient(mongoClientURI)
+            client.getDatabase(mongoClientURI.database!!)
+        }
     }
 
 }
@@ -67,10 +68,14 @@ class MongoConfiguration(@Value("\${app.mongodb.uri}") private val uri: String) 
 private fun Date.toLocalDate() = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate()
 private fun <T> Document.getList(key: String) : List<T> = get(key)?.let { it as List<T> } ?: emptyList<T>()
 
-@Component
-class MongoFriendlyMatchDateRepository(mongoDatabase: MongoDatabase):  FriendlyMatchDateRepository {
+class MongoFriendlyMatchDateRepository():  FriendlyMatchDateRepository {
 
-    private val collection = mongoDatabase.getCollection("friendlymatchdate")
+    @Inject var mongoDatabase : MongoDatabase? = null
+    constructor(mongoDatabase: MongoDatabase):this() {
+        this.mongoDatabase = mongoDatabase
+    }
+
+    private val collection get() =mongoDatabase!!.getCollection("friendlymatchdate")
 
     private fun FriendlyMatchDate.toDocument(): Document = Document()
             .append("date", date)
@@ -92,10 +97,15 @@ class MongoFriendlyMatchDateRepository(mongoDatabase: MongoDatabase):  FriendlyM
     override fun all(): List<FriendlyMatchDate> = collection.find().map { it.toFriendlyMatchDate() }.toList()
 }
 
-@Component
-class MongoLeagueMatchDateRepository(mongoDatabase: MongoDatabase) : LeagueMatchDateRepository {
 
-    private val collection = mongoDatabase.getCollection("leaguematchdate")
+class MongoLeagueMatchDateRepository() : LeagueMatchDateRepository {
+
+    @Inject var mongoDatabase : MongoDatabase? = null
+    constructor(mongoDatabase: MongoDatabase):this() {
+        this.mongoDatabase = mongoDatabase
+    }
+
+    private val collection get() = mongoDatabase!!.getCollection("leaguematchdate")
 
     private fun LeagueMatchDate.toDocument(): Document = Document()
             .append("date", date)
@@ -119,10 +129,15 @@ class MongoLeagueMatchDateRepository(mongoDatabase: MongoDatabase) : LeagueMatch
     override fun all(): List<LeagueMatchDate> = collection.find().map { it.toLeagueMatchDate() }.toList()
 }
 
-@Component
-class MongoPlayerRepository(mongoDatabase: MongoDatabase) : PlayerRepository {
 
-    private val collection = mongoDatabase.getCollection("player")
+class MongoPlayerRepository() : PlayerRepository {
+
+    @Inject var mongoDatabase : MongoDatabase? = null
+    constructor(mongoDatabase: MongoDatabase):this() {
+        this.mongoDatabase = mongoDatabase
+    }
+
+    private val collection get() = mongoDatabase!!.getCollection("player")
 
     private fun Player.toDocument(): Document = Document()
             .append("name", name.value)
@@ -147,10 +162,15 @@ class MongoPlayerRepository(mongoDatabase: MongoDatabase) : PlayerRepository {
 }
 
 
-@Component
-class MongoSeasonRepository(mongoDatabase: MongoDatabase) : SeasonRepository {
 
-    private val collection = mongoDatabase.getCollection("season")
+class MongoSeasonRepository() : SeasonRepository {
+
+    @Inject lateinit var mongoDatabase : MongoDatabase
+    constructor(mongoDatabase: MongoDatabase):this() {
+        this.mongoDatabase = mongoDatabase
+    }
+
+    private val collection get() = mongoDatabase.getCollection("season")
 
     private fun Season.toDocument(): Document = Document()
             .append("name", name)

@@ -20,26 +20,25 @@ import io.github.binout.soccer.domain.FriendlyMatchPlanned
 import io.github.binout.soccer.domain.LeagueMatchPlanned
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
-import org.springframework.context.ApplicationEventPublisher
-import org.springframework.stereotype.Component
 
 import java.time.LocalDate
 import java.util.*
+import javax.enterprise.event.Event
 
-@Component
 class SeasonPlanning(
         private val seasonRepository: SeasonRepository,
         private val playerRepository: PlayerRepository,
         private val friendlyMatchDateRepository: FriendlyMatchDateRepository,
         private val leagueMatchDateRepository: LeagueMatchDateRepository,
         private val matchPlanning: MatchPlanning,
-        private val publisher: ApplicationEventPublisher) {
+        private val friendlyMatchPlannedPublisher: Event<FriendlyMatchPlanned>,
+        private val leagueMatchPlannedPublisher: Event<LeagueMatchPlanned>) {
 
     fun planLeagueMatch(season: Season, date: LeagueMatchDate): LeagueMatch {
         val treeMap = computeGamesPlayed(date, playerRepository.all().filter { it.isPlayerLeague }, MatchPlanning.leagueCounter(season))
         val leagueMatch = season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS, true))
         seasonRepository.replace(season)
-        publisher.publishEvent(LeagueMatchPlanned(leagueMatch, matchPlanning.getSubstitutes(season, leagueMatch)))
+        leagueMatchPlannedPublisher.fire(LeagueMatchPlanned(leagueMatch, matchPlanning.getSubstitutes(season, leagueMatch)))
         return leagueMatch
     }
 
@@ -47,7 +46,7 @@ class SeasonPlanning(
         val treeMap = computeGamesPlayed(date, playerRepository.all(), MatchPlanning.globalCounter(season))
         val friendlyMatch = season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS, false))
         seasonRepository.replace(season)
-        publisher.publishEvent(FriendlyMatchPlanned(friendlyMatch, matchPlanning.getSubstitutes(season, friendlyMatch)))
+        friendlyMatchPlannedPublisher.fire(FriendlyMatchPlanned(friendlyMatch, matchPlanning.getSubstitutes(season, friendlyMatch)))
         return friendlyMatch
     }
 

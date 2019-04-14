@@ -1,5 +1,7 @@
 package io.github.binout.soccer.domain.season
 
+import io.github.binout.soccer.domain.FriendlyMatchPlanned
+import io.github.binout.soccer.domain.LeagueMatchPlanned
 import io.github.binout.soccer.domain.date.MatchDate
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerName
@@ -15,9 +17,9 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.Mockito
-import org.springframework.context.ApplicationEventPublisher
 import java.time.Month
 import java.util.*
+import javax.enterprise.event.Event
 
 internal class SeasonPlanningTest : WithAssertions {
 
@@ -42,7 +44,9 @@ internal class SeasonPlanningTest : WithAssertions {
         friendlyMatchDateRepository.replace(DATE_FOR_FRIENDLY)
 
         matchPlanning = MatchPlanning(seasonRepository, playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository)
-        seasonPlanning = SeasonPlanning(seasonRepository, playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository, matchPlanning, Mockito.mock(ApplicationEventPublisher::class.java))
+        seasonPlanning = SeasonPlanning(seasonRepository, playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository, matchPlanning,
+                Mockito.mock(Event::class.java) as Event<FriendlyMatchPlanned>,
+                Mockito.mock(Event::class.java) as Event<LeagueMatchPlanned>)
     }
 
     private fun generatePlayer(nb: Int) =

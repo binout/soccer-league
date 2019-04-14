@@ -10,17 +10,20 @@ import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.domain.season.*
 import io.github.binout.soccer.domain.season.FriendlyMatch
 import io.github.binout.soccer.domain.season.LeagueMatch
-import org.springframework.context.event.ContextRefreshedEvent
-import org.springframework.context.event.EventListener
-import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.Month
+import javax.enterprise.context.ApplicationScoped
+import javax.enterprise.context.Initialized
+import javax.enterprise.event.Observes
+import javax.inject.Inject
 
-@Component
-class InitializeSeason(private val seasonRepository: SeasonRepository) {
 
-    @EventListener(ContextRefreshedEvent::class)
-    fun initCurrentSeason() {
+@ApplicationScoped
+class InitializeSeason {
+
+    @Inject lateinit var seasonRepository: SeasonRepository
+
+    fun initCurrentSeason(@Observes @Initialized(ApplicationScoped::class) init: Any) {
         val currentSeason = Season.currentSeasonName()
         val optSeason = seasonRepository.all().firstOrNull { s -> s.name == currentSeason }
         if (optSeason == null) {
@@ -29,7 +32,7 @@ class InitializeSeason(private val seasonRepository: SeasonRepository) {
     }
 }
 
-@Component
+
 class AddFriendlyMatch(
         private val seasonRepository: SeasonRepository,
         private val friendlyMatchDateRepository: FriendlyMatchDateRepository,
@@ -42,7 +45,7 @@ class AddFriendlyMatch(
     }
 }
 
-@Component
+
 class AddLeagueMatch(
         private val seasonRepository: SeasonRepository,
         private val leagueMatchDateRepository: LeagueMatchDateRepository,
@@ -56,7 +59,7 @@ class AddLeagueMatch(
 }
 
 
-@Component
+
 class AddSeason(private val seasonRepository: SeasonRepository) {
 
     fun execute(seasonName: String) {
@@ -66,13 +69,13 @@ class AddSeason(private val seasonRepository: SeasonRepository) {
     }
 }
 
-@Component
+
 class GetAllSeasons(private val seasonRepository: SeasonRepository) {
 
     fun execute(): List<Season> = seasonRepository.all()
 }
 
-@Component
+
 class GetFriendlyMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
@@ -83,7 +86,7 @@ class GetFriendlyMatches(
     }
 }
 
-@Component
+
 class GetLeagueMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
@@ -95,7 +98,7 @@ class GetLeagueMatches(
 }
 
 
-@Component
+
 class GetNextFriendlyMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
@@ -108,7 +111,7 @@ class GetNextFriendlyMatches(
     }
 }
 
-@Component
+
 class GetNextLeagueMatches(
         private val seasonRepository: SeasonRepository,
         private val matchPlanning: MatchPlanning) {
@@ -122,19 +125,19 @@ class GetNextLeagueMatches(
 }
 
 
-@Component
+
 class GetSeason(private val seasonRepository: SeasonRepository) {
 
     fun execute(name: String): Season? = seasonRepository.byName(name)
 }
 
-@Component
+
 class GetSeasonStats(private val seasonRepository: SeasonRepository) {
 
     fun execute(name: String): SeasonStatistics? = seasonRepository.byName(name)?.statistics()
 }
 
-@Component
+
 class GetToPlanFriendlyMatches(private val seasonRepository: SeasonRepository,
                                private val seasonPlanning: SeasonPlanning) {
 
@@ -143,7 +146,7 @@ class GetToPlanFriendlyMatches(private val seasonRepository: SeasonRepository,
             ?: throw IllegalArgumentException("Invalid season")
 }
 
-@Component
+
 class GetToPlanLeagueMatches(private val seasonRepository: SeasonRepository,
                              private val seasonPlanning: SeasonPlanning) {
 
@@ -152,7 +155,7 @@ class GetToPlanLeagueMatches(private val seasonRepository: SeasonRepository,
             ?: throw IllegalArgumentException("Invalid season")
 }
 
-@Component
+
 class SubstitutePlayerInFriendlyMatches(
         private val playerRepository: PlayerRepository,
         private val seasonRepository: SeasonRepository,
@@ -167,7 +170,7 @@ class SubstitutePlayerInFriendlyMatches(
     }
 }
 
-@Component
+
 class SubstitutePlayerInLeagueMatches(
         private val playerRepository: PlayerRepository,
         private val seasonRepository: SeasonRepository,

@@ -21,42 +21,49 @@ import io.github.binout.soccer.application.GetAllSeasons
 import io.github.binout.soccer.application.GetSeason
 import io.github.binout.soccer.application.GetSeasonStats
 import io.github.binout.soccer.domain.season.SeasonStatistics
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import javax.inject.Inject
+import javax.ws.rs.*
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
-@RestController
-@RequestMapping("rest/seasons")
-class SeasonsResource (
-        val getAllSeasons: GetAllSeasons,
-        val addSeason: AddSeason,
-        val getSeason: GetSeason,
-        val getSeasonStats: GetSeasonStats,
-        val getAllPlayers: GetAllPlayers) {
+@Path("rest/seasons")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+class SeasonsResource {
 
-    @GetMapping
+    @Inject lateinit var getAllSeasons: GetAllSeasons
+    @Inject lateinit var addSeason: AddSeason
+    @Inject lateinit var getSeason: GetSeason
+    @Inject lateinit var getSeasonStats: GetSeasonStats
+    @Inject lateinit var getAllPlayers: GetAllPlayers
+
+    @GET
     fun all(): List<RestSeason> = getAllSeasons.execute().map { it.toRestModel() }
 
-    @PutMapping("{name}")
-    fun put(@PathVariable("name") name: String): ResponseEntity<*> {
+    @PUT
+    @Path("{name}")
+    fun put(@PathParam("name") name: String): Response {
         val seasonName = SeasonName(name).name
         addSeason.execute(seasonName)
-        return ResponseEntity.ok().build<Any>()
+        return Response.ok().build()
     }
 
-    @GetMapping("{name}")
-    fun get(@PathVariable("name") name: String): ResponseEntity<*> {
+    @GET
+    @Path("{name}")
+    fun get(@PathParam("name") name: String): Response {
         val seasonName = SeasonName(name).name
         return getSeason.execute(seasonName)
-                ?.let { ResponseEntity.ok(RestSeason(it.name)) }
-                ?: ResponseEntity.notFound().build<Any>()
+                ?.let { Response.ok(RestSeason(it.name)).build() }
+                ?: Response.status(404).build()
     }
 
-    @GetMapping("{name}/stats")
-    fun stats(@PathVariable("name") name: String): ResponseEntity<*> {
+    @GET
+    @Path("{name}/stats")
+    fun stats(@PathParam("name") name: String): Response {
         val seasonName = SeasonName(name).name
         return getSeasonStats.execute(seasonName)
-                ?.let { ResponseEntity.ok(toRestStatList(it)) }
-                ?: ResponseEntity.notFound().build<Any>()
+                ?.let { Response.ok(toRestStatList(it)).build() }
+                ?: Response.status(404).build()
     }
 
     private fun toRestStatList(s: SeasonStatistics): List<RestStat> = getAllPlayers.execute()

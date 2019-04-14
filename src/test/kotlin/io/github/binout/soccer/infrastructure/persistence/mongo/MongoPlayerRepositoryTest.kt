@@ -14,7 +14,7 @@ class MongoPlayerRepositoryTest {
 
     @BeforeEach
     fun initRepository() {
-        repository = MongoPlayerRepository(MongoConfiguration("").database())
+        repository = MongoPlayerRepository(MongoConfiguration().database())
     }
 
     @Test

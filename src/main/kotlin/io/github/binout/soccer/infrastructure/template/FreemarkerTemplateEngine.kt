@@ -18,11 +18,11 @@ package io.github.binout.soccer.infrastructure.template
 import freemarker.template.Configuration
 import freemarker.template.TemplateException
 import io.github.binout.soccer.domain.TemplateEngine
-import org.springframework.stereotype.Component
 import java.io.IOException
 import java.io.StringWriter
+import javax.enterprise.context.ApplicationScoped
 
-@Component
+@ApplicationScoped
 class FreemarkerTemplateEngine : TemplateEngine {
 
     private val configuration: Configuration = Configuration().apply {

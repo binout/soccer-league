@@ -19,91 +19,106 @@ import io.github.binout.soccer.application.*
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.values
 import io.github.binout.soccer.domain.season.Match
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import javax.inject.Inject
+import javax.ws.rs.*
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
-@RestController
-@RequestMapping("rest/seasons/{name}/matches")
-class SeasonMatchesResource(
-        val getFriendlyMatches: GetFriendlyMatches,
-        val getNextFriendlyMatches: GetNextFriendlyMatches,
-        val addFriendlyMatch: AddFriendlyMatch,
-        val getLeagueMatches: GetLeagueMatches,
-        val getNextLeagueMatches: GetNextLeagueMatches,
-        val addLeagueMatch: AddLeagueMatch,
-        val getToPlanFriendlyMatches: GetToPlanFriendlyMatches,
-        val getToPlanLeagueMatches: GetToPlanLeagueMatches,
-        val substitutePlayerInFriendlyMatches: SubstitutePlayerInFriendlyMatches,
-        val substitutePlayerInLeagueMatches: SubstitutePlayerInLeagueMatches) {
+@Path("rest/seasons/{name}/matches")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+class SeasonMatchesResource {
 
-    @GetMapping("friendly")
-    fun getFriendlyMatch(@PathVariable("name") name: String): ResponseEntity<*> {
+        @Inject lateinit var getFriendlyMatches: GetFriendlyMatches
+        @Inject lateinit var getNextFriendlyMatches: GetNextFriendlyMatches
+        @Inject lateinit var addFriendlyMatch: AddFriendlyMatch
+        @Inject lateinit var getLeagueMatches: GetLeagueMatches
+        @Inject lateinit var getNextLeagueMatches: GetNextLeagueMatches
+        @Inject lateinit var addLeagueMatch: AddLeagueMatch
+        @Inject lateinit var getToPlanFriendlyMatches: GetToPlanFriendlyMatches
+        @Inject lateinit var getToPlanLeagueMatches: GetToPlanLeagueMatches
+        @Inject lateinit var substitutePlayerInFriendlyMatches: SubstitutePlayerInFriendlyMatches
+        @Inject lateinit var substitutePlayerInLeagueMatches: SubstitutePlayerInLeagueMatches
+
+    @GET
+    @Path("friendly")
+    fun getFriendlyMatch(@PathParam("name") name: String): Response {
         val seasonName = SeasonName(name).name
-        return ResponseEntity.ok(getFriendlyMatches.execute(seasonName).map { this.toRestMatch(it) })
+        return Response.ok(getFriendlyMatches.execute(seasonName).map { this.toRestMatch(it) }).build()
     }
 
-    @PutMapping("friendly/{dateParam}")
-    fun putFriendlyMatch(@PathVariable("name") name: String, @PathVariable("dateParam") dateParam: String): ResponseEntity<*> {
+    @PUT
+    @Path("friendly/{dateParam}")
+    fun putFriendlyMatch(@PathParam("name") name: String, @PathParam("dateParam") dateParam: String): Response {
         val seasonName = SeasonName(name).name
         val date = dateParam.toRestDate()
         addFriendlyMatch.execute(seasonName, date.year, date.month, date.day)
-        return ResponseEntity.ok().build<Any>()
+        return Response.ok().build()
     }
 
-    @GetMapping("friendly/next")
-    fun getNextFriendly(@PathVariable("name") name: String): ResponseEntity<*> {
+    @GET
+    @Path("friendly/next")
+    fun getNextFriendly(@PathParam("name") name: String): Response {
         val seasonName = SeasonName(name).name
-        return ResponseEntity.ok(getNextFriendlyMatches.execute(seasonName).map{ this.toRestMatch(it) })
+        return Response.ok(getNextFriendlyMatches.execute(seasonName).map{ this.toRestMatch(it) }).build()
     }
 
-    @GetMapping("friendly/to-plan")
-    fun friendlyToPlan(@PathVariable("name") name: String): ResponseEntity<*> {
+    @GET
+    @Path("friendly/to-plan")
+    fun friendlyToPlan(@PathParam("name") name: String): Response {
         val seasonName = SeasonName(name).name
-        return ResponseEntity.ok(getToPlanFriendlyMatches.execute(seasonName)
+        return Response.ok(getToPlanFriendlyMatches.execute(seasonName)
                 .map { it.date.toRestMatch() })
+                .build()
     }
 
-    @DeleteMapping("friendly/{dateParam}/players/{playerName}")
-    fun susbstitutePlayerFriendly(@PathVariable("name") name: String, @PathVariable("dateParam") dateParam: String, @PathVariable("playerName") playerName: String): ResponseEntity<*> {
+    @DELETE
+    @Path("friendly/{dateParam}/players/{playerName}")
+    fun susbstitutePlayerFriendly(@PathParam("name") name: String, @PathParam("dateParam") dateParam: String, @PathParam("playerName") playerName: String): Response {
         val seasonName = SeasonName(name).name
         val date = dateParam.toRestDate()
         substitutePlayerInFriendlyMatches.execute(seasonName, date.asLocalDate(), playerName)
-        return ResponseEntity.ok().build<Any>()
+        return Response.ok().build()
     }
 
 
-    @GetMapping("league")
-    fun getLeagueMatch(@PathVariable("name") name: String): ResponseEntity<*> {
+    @GET
+    @Path("league")
+    fun getLeagueMatch(@PathParam("name") name: String): Response {
         val seasonName = SeasonName(name).name
-        return ResponseEntity.ok(getLeagueMatches.execute(seasonName).map { this.toRestMatch(it) })
+        return Response.ok(getLeagueMatches.execute(seasonName).map { this.toRestMatch(it) }).build()
     }
 
-    @PutMapping("league/{dateParam}")
-    fun putLeagueMatch(@PathVariable("name") name: String, @PathVariable("dateParam") dateParam: String): ResponseEntity<*> {
+    @PUT
+    @Path("league/{dateParam}")
+    fun putLeagueMatch(@PathParam("name") name: String, @PathParam("dateParam") dateParam: String): Response {
         val seasonName = SeasonName(name).name
         val date = dateParam.toRestDate()
         addLeagueMatch.execute(seasonName, date.year, date.month, date.day)
-        return ResponseEntity.ok().build<Any>()
+        return Response.ok().build()
     }
 
-    @GetMapping("league/next")
-    fun getNextLeague(@PathVariable("name") name: String): ResponseEntity<*> {
+    @GET
+    @Path("league/next")
+    fun getNextLeague(@PathParam("name") name: String): Response {
         val seasonName = SeasonName(name).name
-        return ResponseEntity.ok(getNextLeagueMatches.execute(seasonName).map { this.toRestMatch(it) })
+        return Response.ok(getNextLeagueMatches.execute(seasonName).map { this.toRestMatch(it) }).build()
     }
 
-    @GetMapping("league/to-plan")
-    fun leagueToPlan(@PathVariable("name") name: String): ResponseEntity<*> {
+    @GET
+    @Path("league/to-plan")
+    fun leagueToPlan(@PathParam("name") name: String): Response {
         val seasonName = SeasonName(name).name
-        return ResponseEntity.ok(getToPlanLeagueMatches.execute(seasonName).map { it.date.toRestMatch() })
+        return Response.ok(getToPlanLeagueMatches.execute(seasonName).map { it.date.toRestMatch() }).build()
     }
 
-    @DeleteMapping("league/{dateParam}/players/{playerName}")
-    fun susbstitutePlayerLeague(@PathVariable("name") name: String, @PathVariable("dateParam") dateParam: String, @PathVariable("playerName") playerName: String): ResponseEntity<*> {
+    @DELETE
+    @Path("league/{dateParam}/players/{playerName}")
+    fun susbstitutePlayerLeague(@PathParam("name") name: String, @PathParam("dateParam") dateParam: String, @PathParam("playerName") playerName: String): Response {
         val seasonName = SeasonName(name).name
         val date = dateParam.toRestDate()
         substitutePlayerInLeagueMatches.execute(seasonName, date.asLocalDate(), playerName)
-        return ResponseEntity.ok().build<Any>()
+        return Response.ok().build()
     }
 
     private fun toRestMatch(m: Pair<Match<*>, List<Player>>): RestMatch = m.let { (match, players) ->

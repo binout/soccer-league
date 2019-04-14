@@ -16,52 +16,61 @@
 package io.github.binout.soccer.interfaces.rest
 
 import io.github.binout.soccer.application.*
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import javax.inject.Inject
+import javax.ws.rs.*
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
-@RestController
-@RequestMapping("rest/match-dates/friendly")
-class FriendlyMatchDateResource(
-        val allFriendlyMatchDates: GetAllFriendlyMatchDates,
-        val nextFriendlyMatchDates: GetNextFriendlyMatchDates,
-        val addFriendlyMatchDate: AddFriendlyMatchDate,
-        val getFriendlyMatchDate: GetFriendlyMatchDate,
-        val addPlayerToFriendlyMatchDate: AddPlayerToFriendlyMatchDate,
-        val removePlayerToFriendlyMatchDate: RemovePlayerToFriendlyMatchDate) {
+@Path("rest/match-dates/friendly")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+class FriendlyMatchDateResource {
 
-    @GetMapping
+    @Inject lateinit var allFriendlyMatchDates: GetAllFriendlyMatchDates
+    @Inject lateinit var nextFriendlyMatchDates: GetNextFriendlyMatchDates
+    @Inject lateinit var addFriendlyMatchDate: AddFriendlyMatchDate
+    @Inject lateinit var getFriendlyMatchDate: GetFriendlyMatchDate
+    @Inject lateinit var addPlayerToFriendlyMatchDate: AddPlayerToFriendlyMatchDate
+    @Inject lateinit var removePlayerToFriendlyMatchDate: RemovePlayerToFriendlyMatchDate
+
+    @GET
     fun all(): List<RestMatchDate> = allFriendlyMatchDates.execute().map { it.toRestModel() }
 
-    @GetMapping("next")
+    @GET
+    @Path("next")
     fun next(): List<RestMatchDate> = nextFriendlyMatchDates.execute().map{ it.toRestModel() }
 
-    @PutMapping("{dateParam}")
-    fun put(@PathVariable("dateParam") dateParam: String): ResponseEntity<*> {
+    @PUT
+    @Path("{dateParam}")
+    fun put(@PathParam("dateParam") dateParam: String): Response {
         val date = dateParam.toRestDate()
         addFriendlyMatchDate.execute(date.year, date.month, date.day)
-        return ResponseEntity.ok().build<Any>()
+        return Response.ok().build()
     }
 
-    @GetMapping("{dateParam}")
-    fun get(@PathVariable("dateParam") dateParam: String): ResponseEntity<*> {
+    @GET
+    @Path("{dateParam}")
+    fun get(@PathParam("dateParam") dateParam: String): Response {
         val date = dateParam.toRestDate()
         return getFriendlyMatchDate.execute(date.year, date.month, date.day)
-                ?.let{ ResponseEntity.ok(it.toRestModel()) }
-                ?: ResponseEntity.notFound().build<Any>()
+                ?.let{ Response.ok(it.toRestModel()).build() }
+                ?: Response.status(404).build()
     }
 
-    @PutMapping("{dateParam}/players/{name}")
-    fun putPlayers(@PathVariable("dateParam") dateParam: String, @PathVariable("name") name: String): ResponseEntity<*> {
+    @PUT
+    @Path("{dateParam}/players/{name}")
+    fun putPlayers(@PathParam("dateParam") dateParam: String, @PathParam("name") name: String): Response {
         val date = dateParam.toRestDate()
         addPlayerToFriendlyMatchDate.execute(name, date.year, date.month, date.day)
-        return ResponseEntity.ok().build<Any>()
+        return Response.ok().build()
     }
 
-    @DeleteMapping("{dateParam}/players/{name}")
-    fun deletePlayers(@PathVariable("dateParam") dateParam: String, @PathVariable("name") name: String): ResponseEntity<*> {
+    @DELETE
+    @Path("{dateParam}/players/{name}")
+    fun deletePlayers(@PathParam("dateParam") dateParam: String, @PathParam("name") name: String): Response {
         val date = dateParam.toRestDate()
         removePlayerToFriendlyMatchDate.execute(name, date.year, date.month, date.day)
-        return ResponseEntity.ok().build<Any>()
+        return Response.ok().build()
     }
 
 }

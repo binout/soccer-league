@@ -18,16 +18,15 @@ package io.github.binout.soccer.domain.season
 import io.github.binout.soccer.domain.date.*
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
-import org.springframework.stereotype.Component
 import java.lang.IllegalStateException
 import java.util.*
+import javax.inject.Inject
 
-@Component
 class MatchPlanning(
-        private val seasonRepository: SeasonRepository,
-        private val playerRepository: PlayerRepository,
-        private val friendlyMatchDateRepository: FriendlyMatchDateRepository,
-        private val leagueMatchDateRepository: LeagueMatchDateRepository) {
+        @Inject private val seasonRepository: SeasonRepository,
+        @Inject private val playerRepository: PlayerRepository,
+        @Inject private val friendlyMatchDateRepository: FriendlyMatchDateRepository,
+        @Inject private val leagueMatchDateRepository: LeagueMatchDateRepository) {
 
 
     fun substitutePlayer(season: Season, match: Match<*>, player: Player) {

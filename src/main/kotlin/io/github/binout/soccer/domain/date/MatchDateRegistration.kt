@@ -18,10 +18,8 @@ package io.github.binout.soccer.domain.date
 import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.player.PlayerRepository
-import org.springframework.stereotype.Component
 import java.time.Month
 
-@Component
 class FriendlyMatchDateRegistration(private val repository: FriendlyMatchDateRepository,
                                     private val playerRepository: PlayerRepository) {
 
@@ -41,7 +39,6 @@ class FriendlyMatchDateRegistration(private val repository: FriendlyMatchDateRep
     }
 }
 
-@Component
 class LeagueMatchDateRegistration(private val repository: LeagueMatchDateRepository,
                                   private val playerRepository: PlayerRepository) {
 

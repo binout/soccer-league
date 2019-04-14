@@ -20,7 +20,7 @@ class MongoSeasonRepositoryTest {
 
     @BeforeEach
     fun initRepository() {
-        repository = MongoSeasonRepository(MongoConfiguration("").database())
+        repository = MongoSeasonRepository(MongoConfiguration().database())
     }
 
     @Test

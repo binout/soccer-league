@@ -20,8 +20,8 @@ class MongoFriendlyMatchDateRepositoryTest {
 
     @BeforeEach
     fun initRepository() {
-        playerRepository = MongoPlayerRepository(MongoConfiguration("").database())
-        repository = MongoFriendlyMatchDateRepository(MongoConfiguration("").database())
+        playerRepository = MongoPlayerRepository(MongoConfiguration().database())
+        repository = MongoFriendlyMatchDateRepository(MongoConfiguration().database())
     }
 
     @Test

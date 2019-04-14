@@ -16,41 +16,46 @@
 package io.github.binout.soccer.interfaces.rest
 
 import io.github.binout.soccer.application.*
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import javax.inject.Inject
+import javax.ws.rs.*
+import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
-@RestController
-@RequestMapping("rest/players")
+@Path("rest/players")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 class PlayersResource(
-        private val getAllPlayers: GetAllPlayers,
-        private val getAllLeaguePlayers: GetAllLeaguePlayers,
-        private val replacePlayer: ReplacePlayer,
-        private val getPlayer: GetPlayer) {
+        @Inject private val getAllPlayers: GetAllPlayers,
+        @Inject private val getAllLeaguePlayers: GetAllLeaguePlayers,
+        @Inject private val replacePlayer: ReplacePlayer,
+        @Inject private val getPlayer: GetPlayer) {
 
-    @GetMapping
+    @GET
     fun all() : List<RestPlayer> = getAllPlayers.execute().map { it.toRestModel() }
 
-    @GetMapping("league")
+    @GET
+    @Path("league")
     fun allLeague() : List<RestPlayer> = getAllLeaguePlayers.execute().map { it.toRestModel() }
 
-    @PutMapping("{name}")
-    fun put(@PathVariable("name") name: String, @RequestBody restPlayer: RestPlayer): ResponseEntity<*> {
+    @PUT
+    @Path("{name}")
+    fun put(@PathParam("name") name: String, restPlayer: RestPlayer): Response {
         replacePlayer.execute(name, restPlayer.email, restPlayer.isPlayerLeague, restPlayer.isGoalkeeper)
-        return ResponseEntity.ok().build<Any>()
+        return Response.ok().build()
     }
 
-    @GetMapping("{name}")
-    fun get(name: String): ResponseEntity<*> = getPlayer.execute(name)
-            ?.let { ResponseEntity.ok(it.toRestModel()) }
-            ?: ResponseEntity.notFound().build<Any>()
+    @GET
+    @Path("{name}")
+    fun get(name: String): Response = getPlayer.execute(name)
+            ?.let { Response.ok(it.toRestModel()).build() }
+            ?: Response.status(404).build()
 
 }
 
-@RestController
-@RequestMapping("rest/players-stats")
+@Path("rest/players-stats")
 class PlayerStatsResource(val getAllPlayerStats: GetAllPlayerStats) {
 
-    @GetMapping
+    @GET
     fun all() : List<RestPlayerStat> = getAllPlayerStats.execute().map { it.toRestModel() }
 
 }

@@ -20,8 +20,8 @@ class MongoLeagueMatchDateRepositoryTest {
 
     @BeforeEach
     fun initRepository() {
-        playerRepository = MongoPlayerRepository(MongoConfiguration("").database())
-        repository = MongoLeagueMatchDateRepository(MongoConfiguration("").database())
+        playerRepository = MongoPlayerRepository(MongoConfiguration().database())
+        repository = MongoLeagueMatchDateRepository(MongoConfiguration().database())
     }
 
     @Test

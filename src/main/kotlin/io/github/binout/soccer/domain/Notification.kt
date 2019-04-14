@@ -18,12 +18,12 @@ package io.github.binout.soccer.domain
 import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.player.PlayerRepository
 import io.github.binout.soccer.domain.player.values
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.event.EventListener
-import org.springframework.stereotype.Component
+import org.eclipse.microprofile.config.inject.ConfigProperty
 import java.time.format.DateTimeFormatter
 import java.util.ArrayList
 import java.util.HashMap
+import javax.enterprise.event.Observes
+import javax.inject.Inject
 
 interface TemplateEngine {
 
@@ -69,23 +69,21 @@ interface MailService {
 }
 
 
-@Component
-class NotificationService(
-        private val mailService: MailService,
-        private val playerRepository: PlayerRepository,
-        private val templateEngine: TemplateEngine,
-        @Value("\${app.url}") private val url: String,
-        @Value("\${app.mail.no-reply}") private val noReply: String,
-        @Value("\${app.mail.title}") private val title: String) {
+class NotificationService {
 
-    @EventListener
-    fun newLeagueMatchPlanned(event: LeagueMatchPlanned) {
+    @Inject lateinit var mailService: MailService
+    @Inject lateinit var playerRepository: PlayerRepository
+    @Inject lateinit var templateEngine: TemplateEngine
+    @ConfigProperty(name = "\${app.url}") lateinit var url: String
+    @ConfigProperty(name = "\${app.mail.no-reply}") lateinit var noReply: String
+    @ConfigProperty(name = "\${app.mail.title}") lateinit var title: String
+
+    fun newLeagueMatchPlanned(@Observes event: LeagueMatchPlanned) {
         val date = DateTimeFormatter.ISO_DATE.format(event.date)
         sendMail("$title League : $date", date, event.players.values(), event.substitutes.values())
     }
 
-    @EventListener
-    fun newFriendlyMatchPlanned(event: FriendlyMatchPlanned) {
+    fun newFriendlyMatchPlanned(@Observes event: FriendlyMatchPlanned) {
         val date = DateTimeFormatter.ISO_DATE.format(event.date)
         sendMail("$title : $date", date, event.players.values(), event.substitutes.values())
     }
