@@ -38,6 +38,7 @@
 
     <build>
         <finalName>soccer-league</finalName>
+        <sourceDirectory>src/main/kotlin</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>com.github.eirslett</groupId>
