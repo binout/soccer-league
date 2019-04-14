@@ -74,9 +74,9 @@ class NotificationService {
     @Inject lateinit var mailService: MailService
     @Inject lateinit var playerRepository: PlayerRepository
     @Inject lateinit var templateEngine: TemplateEngine
-    @ConfigProperty(name = "\${app.url}") lateinit var url: String
-    @ConfigProperty(name = "\${app.mail.no-reply}") lateinit var noReply: String
-    @ConfigProperty(name = "\${app.mail.title}") lateinit var title: String
+    @ConfigProperty(name = "app.url") lateinit var url: String
+    @ConfigProperty(name = "app.mail.no-reply") lateinit var noReply: String
+    @ConfigProperty(name = "app.mail.title") lateinit var title: String
 
     fun newLeagueMatchPlanned(@Observes event: LeagueMatchPlanned) {
         val date = DateTimeFormatter.ISO_DATE.format(event.date)

@@ -19,9 +19,14 @@ import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerName
 import io.github.binout.soccer.domain.player.PlayerRepository
 import java.time.Month
+import javax.enterprise.context.ApplicationScoped
+import javax.inject.Inject
 
-class FriendlyMatchDateRegistration(private val repository: FriendlyMatchDateRepository,
-                                    private val playerRepository: PlayerRepository) {
+@ApplicationScoped
+class FriendlyMatchDateRegistration {
+
+    @Inject lateinit var repository: FriendlyMatchDateRepository
+    @Inject lateinit var playerRepository: PlayerRepository
 
     fun addPlayer(playerName: String, year: Int, month: Month, day: Int) {
         managePlayers(playerName, year, month, day) { matchDate, player -> matchDate.present(player) }
@@ -39,8 +44,11 @@ class FriendlyMatchDateRegistration(private val repository: FriendlyMatchDateRep
     }
 }
 
-class LeagueMatchDateRegistration(private val repository: LeagueMatchDateRepository,
-                                  private val playerRepository: PlayerRepository) {
+@ApplicationScoped
+class LeagueMatchDateRegistration {
+
+    @Inject lateinit var repository: LeagueMatchDateRepository
+    @Inject lateinit var playerRepository: PlayerRepository
 
     fun addPlayer(playerName: String, year: Int, month: Month, day: Int) {
         managePlayers(playerName, year, month, day) { matchDate, player -> matchDate.present(player) }

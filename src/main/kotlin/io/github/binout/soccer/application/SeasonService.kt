@@ -21,7 +21,8 @@ import javax.inject.Inject
 @ApplicationScoped
 class InitializeSeason {
 
-    @Inject lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
 
     fun initCurrentSeason(@Observes @Initialized(ApplicationScoped::class) init: Any) {
         val currentSeason = Season.currentSeasonName()
@@ -32,35 +33,46 @@ class InitializeSeason {
     }
 }
 
-
-class AddFriendlyMatch(
-        private val seasonRepository: SeasonRepository,
-        private val friendlyMatchDateRepository: FriendlyMatchDateRepository,
-        private val seasonPlanning: SeasonPlanning) {
+@ApplicationScoped
+class AddFriendlyMatch {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var friendlyMatchDateRepository: FriendlyMatchDateRepository
+    @Inject
+    lateinit var seasonPlanning: SeasonPlanning
 
     fun execute(seasonName: String, year: Int, month: Month, day: Int) {
-        val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Can not replace match to season")
-        val matchDate = friendlyMatchDateRepository.byDate(year, month, day) ?: throw IllegalArgumentException("Can not replace match to season")
+        val season = seasonRepository.byName(seasonName)
+                ?: throw IllegalArgumentException("Can not replace match to season")
+        val matchDate = friendlyMatchDateRepository.byDate(year, month, day)
+                ?: throw IllegalArgumentException("Can not replace match to season")
         seasonPlanning.planFriendlyMatch(season, matchDate)
     }
 }
 
-
-class AddLeagueMatch(
-        private val seasonRepository: SeasonRepository,
-        private val leagueMatchDateRepository: LeagueMatchDateRepository,
-        private val seasonPlanning: SeasonPlanning) {
+@ApplicationScoped
+class AddLeagueMatch {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var leagueMatchDateRepository: LeagueMatchDateRepository
+    @Inject
+    lateinit var seasonPlanning: SeasonPlanning
 
     fun execute(seasonName: String, year: Int, month: Month, day: Int) {
-        val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Can not replace match to season")
-        val matchDate = leagueMatchDateRepository.byDate(year, month, day) ?: throw IllegalArgumentException("Can not replace match to season")
+        val season = seasonRepository.byName(seasonName)
+                ?: throw IllegalArgumentException("Can not replace match to season")
+        val matchDate = leagueMatchDateRepository.byDate(year, month, day)
+                ?: throw IllegalArgumentException("Can not replace match to season")
         seasonPlanning.planLeagueMatch(season, matchDate)
     }
 }
 
-
-
-class AddSeason(private val seasonRepository: SeasonRepository) {
+@ApplicationScoped
+class AddSeason {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
 
     fun execute(seasonName: String) {
         if (seasonRepository.byName(seasonName) == null) {
@@ -69,16 +81,20 @@ class AddSeason(private val seasonRepository: SeasonRepository) {
     }
 }
 
-
-class GetAllSeasons(private val seasonRepository: SeasonRepository) {
+@ApplicationScoped
+class GetAllSeasons {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
 
     fun execute(): List<Season> = seasonRepository.all()
 }
 
-
-class GetFriendlyMatches(
-        private val seasonRepository: SeasonRepository,
-        private val matchPlanning: MatchPlanning) {
+@ApplicationScoped
+class GetFriendlyMatches {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var matchPlanning: MatchPlanning
 
     fun execute(seasonName: String): List<Pair<FriendlyMatch, List<Player>>> {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
@@ -86,10 +102,12 @@ class GetFriendlyMatches(
     }
 }
 
-
-class GetLeagueMatches(
-        private val seasonRepository: SeasonRepository,
-        private val matchPlanning: MatchPlanning) {
+@ApplicationScoped
+class GetLeagueMatches {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var matchPlanning: MatchPlanning
 
     fun execute(seasonName: String): List<Pair<LeagueMatch, List<Player>>> {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
@@ -97,24 +115,27 @@ class GetLeagueMatches(
     }
 }
 
-
-
-class GetNextFriendlyMatches(
-        private val seasonRepository: SeasonRepository,
-        private val matchPlanning: MatchPlanning) {
+@ApplicationScoped
+class GetNextFriendlyMatches {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var matchPlanning: MatchPlanning
 
     fun execute(seasonName: String): List<Pair<FriendlyMatch, List<Player>>> {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
         return season.friendlyMatches()
-                .filter{ it.isNowOrFuture() }
+                .filter { it.isNowOrFuture() }
                 .map { it to matchPlanning.getSubstitutes(season, it) }
     }
 }
 
-
-class GetNextLeagueMatches(
-        private val seasonRepository: SeasonRepository,
-        private val matchPlanning: MatchPlanning) {
+@ApplicationScoped
+class GetNextLeagueMatches {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var matchPlanning: MatchPlanning
 
     fun execute(seasonName: String): List<Pair<LeagueMatch, List<Player>>> {
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Invalid season")
@@ -124,42 +145,54 @@ class GetNextLeagueMatches(
     }
 }
 
-
-
-class GetSeason(private val seasonRepository: SeasonRepository) {
+@ApplicationScoped
+class GetSeason {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
 
     fun execute(name: String): Season? = seasonRepository.byName(name)
 }
 
-
-class GetSeasonStats(private val seasonRepository: SeasonRepository) {
+@ApplicationScoped
+class GetSeasonStats {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
 
     fun execute(name: String): SeasonStatistics? = seasonRepository.byName(name)?.statistics()
 }
 
-
-class GetToPlanFriendlyMatches(private val seasonRepository: SeasonRepository,
-                               private val seasonPlanning: SeasonPlanning) {
+@ApplicationScoped
+class GetToPlanFriendlyMatches {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var seasonPlanning: SeasonPlanning
 
     fun execute(seasonName: String): List<FriendlyMatchDate> = seasonRepository.byName(seasonName)
             ?.let { s -> seasonPlanning.friendlyMatchDatesToPlan(s) }
             ?: throw IllegalArgumentException("Invalid season")
 }
 
-
-class GetToPlanLeagueMatches(private val seasonRepository: SeasonRepository,
-                             private val seasonPlanning: SeasonPlanning) {
+@ApplicationScoped
+class GetToPlanLeagueMatches {
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var seasonPlanning: SeasonPlanning
 
     fun execute(seasonName: String): List<LeagueMatchDate> = seasonRepository.byName(seasonName)
             ?.let { s -> seasonPlanning.leagueMatchDatesToPlan(s) }
             ?: throw IllegalArgumentException("Invalid season")
 }
 
-
-class SubstitutePlayerInFriendlyMatches(
-        private val playerRepository: PlayerRepository,
-        private val seasonRepository: SeasonRepository,
-        private val matchPlanning: MatchPlanning) {
+@ApplicationScoped
+class SubstitutePlayerInFriendlyMatches {
+    @Inject
+    lateinit var playerRepository: PlayerRepository
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var matchPlanning: MatchPlanning
 
     fun execute(seasonName: String, date: LocalDate, name: String) {
         val playerName = PlayerName(name)
@@ -170,11 +203,14 @@ class SubstitutePlayerInFriendlyMatches(
     }
 }
 
-
-class SubstitutePlayerInLeagueMatches(
-        private val playerRepository: PlayerRepository,
-        private val seasonRepository: SeasonRepository,
-        private val matchPlanning: MatchPlanning) {
+@ApplicationScoped
+class SubstitutePlayerInLeagueMatches {
+    @Inject
+    lateinit var playerRepository: PlayerRepository
+    @Inject
+    lateinit var seasonRepository: SeasonRepository
+    @Inject
+    lateinit var matchPlanning: MatchPlanning
 
     fun execute(seasonName: String, date: LocalDate, name: String) {
         val playerName = PlayerName(name)

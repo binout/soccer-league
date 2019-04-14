@@ -14,7 +14,6 @@ import java.time.Month
 import java.util.concurrent.ConcurrentHashMap
 import javax.enterprise.inject.Vetoed
 
-@Vetoed
 class InMemoryFriendlyMatchDateRepository : FriendlyMatchDateRepository {
 
     private val dates: MutableMap<LocalDate, FriendlyMatchDate> = ConcurrentHashMap()
@@ -29,7 +28,6 @@ class InMemoryFriendlyMatchDateRepository : FriendlyMatchDateRepository {
             dates[LocalDate.of(year, month, dayOfMonth)]
 }
 
-@Vetoed
 class InMemoryLeagueMatchDateRepository : LeagueMatchDateRepository {
 
     private val dates: MutableMap<LocalDate, LeagueMatchDate> = ConcurrentHashMap()
@@ -44,7 +42,6 @@ class InMemoryLeagueMatchDateRepository : LeagueMatchDateRepository {
             dates[LocalDate.of(year, month, dayOfMonth)]
 }
 
-@Vetoed
 class InMemoryPlayerRepository : PlayerRepository {
 
     private val players: MutableMap<PlayerName, Player> = ConcurrentHashMap()
@@ -58,7 +55,6 @@ class InMemoryPlayerRepository : PlayerRepository {
     override fun byName(name: PlayerName): Player? = players[name]
 }
 
-@Vetoed
 class InMemorySeasonRepository : SeasonRepository {
 
     private val seasons: MutableMap<String, Season> = ConcurrentHashMap()

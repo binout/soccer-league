@@ -29,8 +29,8 @@ import javax.enterprise.context.ApplicationScoped
 @ApplicationScoped
 class SendGridMailService : MailService {
 
-    @ConfigProperty(name = "\${app.mail.sendgrid.url}")
-    private lateinit var sendGridUrl: String
+    @ConfigProperty(name = "app.mail.sendgrid.url")
+    lateinit var sendGridUrl: String
 
     override fun sendMail(email: MailService.Mail) {
         val sendGridApiKey = System.getenv("SENDGRID_API_KEY")

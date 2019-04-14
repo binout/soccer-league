@@ -20,14 +20,26 @@ import io.github.binout.soccer.domain.player.Player
 import io.github.binout.soccer.domain.player.PlayerRepository
 import java.lang.IllegalStateException
 import java.util.*
+import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
-class MatchPlanning(
-        @Inject private val seasonRepository: SeasonRepository,
-        @Inject private val playerRepository: PlayerRepository,
-        @Inject private val friendlyMatchDateRepository: FriendlyMatchDateRepository,
-        @Inject private val leagueMatchDateRepository: LeagueMatchDateRepository) {
+@ApplicationScoped
+class MatchPlanning() {
 
+    private var seasonRepository: SeasonRepository? = null
+    private var playerRepository: PlayerRepository? = null
+    private var friendlyMatchDateRepository: FriendlyMatchDateRepository? = null
+    private var leagueMatchDateRepository: LeagueMatchDateRepository? = null
+
+    @Inject
+    constructor(seasonRepository: SeasonRepository, playerRepository: PlayerRepository,
+                friendlyMatchDateRepository: FriendlyMatchDateRepository,
+                leagueMatchDateRepository: LeagueMatchDateRepository): this() {
+        this.seasonRepository = seasonRepository
+        this.playerRepository = playerRepository
+        this.friendlyMatchDateRepository = friendlyMatchDateRepository
+        this.leagueMatchDateRepository = leagueMatchDateRepository
+    }
 
     fun substitutePlayer(season: Season, match: Match<*>, player: Player) {
         val matchDate = getMatchDate(match) ?: throw IllegalArgumentException("Unknown match date")
@@ -42,22 +54,22 @@ class MatchPlanning(
             }
             match.replacePlayer(player, by)
         }
-        seasonRepository.replace(season)
+        seasonRepository!!.replace(season)
         matchDate.absent(player)
         replaceMatchDate(matchDate)
     }
 
 
     private fun replaceMatchDate(matchDate: MatchDate) = when (matchDate) {
-        is LeagueMatchDate -> leagueMatchDateRepository.replace(matchDate)
-        is FriendlyMatchDate -> friendlyMatchDateRepository.replace(matchDate)
+        is LeagueMatchDate -> leagueMatchDateRepository!!.replace(matchDate)
+        is FriendlyMatchDate -> friendlyMatchDateRepository!!.replace(matchDate)
     }
 
     private fun getMatchDate(match: Match<*>): MatchDate? {
         val date = match.date
         return when (match) {
-            is FriendlyMatch -> friendlyMatchDateRepository.byDate(date.year, date.month, date.dayOfMonth)
-            is LeagueMatch -> leagueMatchDateRepository.byDate(date.year, date.month, date.dayOfMonth)
+            is FriendlyMatch -> friendlyMatchDateRepository!!.byDate(date.year, date.month, date.dayOfMonth)
+            is LeagueMatch -> leagueMatchDateRepository!!.byDate(date.year, date.month, date.dayOfMonth)
         }
     }
 
@@ -65,7 +77,7 @@ class MatchPlanning(
         val date = getMatchDate(match) ?: throw IllegalArgumentException("Unknown match date")
         val players = match.players()
         val gamesPlayedComparator = getPlayerComparator(season, match)
-        return playerRepository.all()
+        return playerRepository!!.all()
                 .filter { date.isPresent(it) }
                 .filterNot { it.name in players }
                 .sortedWith(gamesPlayedComparator)

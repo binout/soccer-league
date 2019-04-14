@@ -23,30 +23,50 @@ import io.github.binout.soccer.domain.player.PlayerRepository
 
 import java.time.LocalDate
 import java.util.*
+import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.event.Event
+import javax.inject.Inject
 
-class SeasonPlanning(
-        private val seasonRepository: SeasonRepository,
-        private val playerRepository: PlayerRepository,
-        private val friendlyMatchDateRepository: FriendlyMatchDateRepository,
-        private val leagueMatchDateRepository: LeagueMatchDateRepository,
-        private val matchPlanning: MatchPlanning,
-        private val friendlyMatchPlannedPublisher: Event<FriendlyMatchPlanned>,
-        private val leagueMatchPlannedPublisher: Event<LeagueMatchPlanned>) {
+@ApplicationScoped
+class SeasonPlanning() {
+
+    private var seasonRepository: SeasonRepository? = null
+    private var playerRepository: PlayerRepository? = null
+    private var friendlyMatchDateRepository: FriendlyMatchDateRepository? = null
+    private var leagueMatchDateRepository: LeagueMatchDateRepository? = null
+    private var matchPlanning: MatchPlanning? = null
+
+    @Inject
+    var friendlyMatchPlannedPublisher: Event<FriendlyMatchPlanned>? = null
+    @Inject
+    var leagueMatchPlannedPublisher: Event<LeagueMatchPlanned>? = null
+
+    @Inject
+    constructor(seasonRepository: SeasonRepository,
+                playerRepository: PlayerRepository,
+                friendlyMatchDateRepository: FriendlyMatchDateRepository,
+                leagueMatchDateRepository: LeagueMatchDateRepository,
+                matchPlanning: MatchPlanning) : this() {
+        this.seasonRepository = seasonRepository
+        this.playerRepository = playerRepository
+        this.friendlyMatchDateRepository = friendlyMatchDateRepository
+        this.leagueMatchDateRepository = leagueMatchDateRepository
+        this.matchPlanning = matchPlanning
+    }
 
     fun planLeagueMatch(season: Season, date: LeagueMatchDate): LeagueMatch {
-        val treeMap = computeGamesPlayed(date, playerRepository.all().filter { it.isPlayerLeague }, MatchPlanning.leagueCounter(season))
+        val treeMap = computeGamesPlayed(date, playerRepository!!.all().filter { it.isPlayerLeague }, MatchPlanning.leagueCounter(season))
         val leagueMatch = season.addLeagueMatch(date, extractPlayers(treeMap, LeagueMatch.MAX_PLAYERS, true))
-        seasonRepository.replace(season)
-        leagueMatchPlannedPublisher.fire(LeagueMatchPlanned(leagueMatch, matchPlanning.getSubstitutes(season, leagueMatch)))
+        seasonRepository!!.replace(season)
+        leagueMatchPlannedPublisher?.fire(LeagueMatchPlanned(leagueMatch, matchPlanning!!.getSubstitutes(season, leagueMatch)))
         return leagueMatch
     }
 
     fun planFriendlyMatch(season: Season, date: FriendlyMatchDate): FriendlyMatch {
-        val treeMap = computeGamesPlayed(date, playerRepository.all(), MatchPlanning.globalCounter(season))
+        val treeMap = computeGamesPlayed(date, playerRepository!!.all(), MatchPlanning.globalCounter(season))
         val friendlyMatch = season.addFriendlyMatch(date, extractPlayers(treeMap, FriendlyMatch.MAX_PLAYERS, false))
-        seasonRepository.replace(season)
-        friendlyMatchPlannedPublisher.fire(FriendlyMatchPlanned(friendlyMatch, matchPlanning.getSubstitutes(season, friendlyMatch)))
+        seasonRepository!!.replace(season)
+        friendlyMatchPlannedPublisher?.fire(FriendlyMatchPlanned(friendlyMatch, matchPlanning!!.getSubstitutes(season, friendlyMatch)))
         return friendlyMatch
     }
 
@@ -56,7 +76,7 @@ class SeasonPlanning(
     private fun extractPlayers(treeMap: TreeMap<Int, List<Player>>, maxPlayers: Int, goalPriority: Boolean): Set<Player> {
         val players = HashSet<Player>()
         if (goalPriority) {
-            treeMap.values.flatten().filter{ it.isGoalkeeper }.forEach { players.add(it) }
+            treeMap.values.flatten().filter { it.isGoalkeeper }.forEach { players.add(it) }
         }
         val iterator = treeMap.entries.iterator()
         while (iterator.hasNext() && teamIsNotFull(players, maxPlayers)) {
@@ -74,12 +94,12 @@ class SeasonPlanning(
 
     fun friendlyMatchDatesToPlan(season: Season): List<FriendlyMatchDate> {
         val dates = season.friendlyMatches().map { it.date }.toSet()
-        return matchDatesToPlan(dates, friendlyMatchDateRepository.all())
+        return matchDatesToPlan(dates, friendlyMatchDateRepository!!.all())
     }
 
     fun leagueMatchDatesToPlan(season: Season): List<LeagueMatchDate> {
         val dates = season.leagueMatches().map { it.date }.toSet()
-        return matchDatesToPlan(dates, leagueMatchDateRepository.all())
+        return matchDatesToPlan(dates, leagueMatchDateRepository!!.all())
     }
 
     private fun <T : MatchDate> matchDatesToPlan(dates: Set<LocalDate>, allDates: List<T>): List<T> {

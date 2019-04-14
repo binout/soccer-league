@@ -24,18 +24,23 @@ import javax.ws.rs.core.Response
 @Path("rest/players")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-class PlayersResource(
-        @Inject private val getAllPlayers: GetAllPlayers,
-        @Inject private val getAllLeaguePlayers: GetAllLeaguePlayers,
-        @Inject private val replacePlayer: ReplacePlayer,
-        @Inject private val getPlayer: GetPlayer) {
+class PlayersResource {
+
+    @Inject
+    lateinit var getAllPlayers: GetAllPlayers
+    @Inject
+    lateinit var getAllLeaguePlayers: GetAllLeaguePlayers
+    @Inject
+    lateinit var replacePlayer: ReplacePlayer
+    @Inject
+    lateinit var getPlayer: GetPlayer
 
     @GET
-    fun all() : List<RestPlayer> = getAllPlayers.execute().map { it.toRestModel() }
+    fun all(): List<RestPlayer> = getAllPlayers.execute().map { it.toRestModel() }
 
     @GET
     @Path("league")
-    fun allLeague() : List<RestPlayer> = getAllLeaguePlayers.execute().map { it.toRestModel() }
+    fun allLeague(): List<RestPlayer> = getAllLeaguePlayers.execute().map { it.toRestModel() }
 
     @PUT
     @Path("{name}")
@@ -53,10 +58,13 @@ class PlayersResource(
 }
 
 @Path("rest/players-stats")
-class PlayerStatsResource(val getAllPlayerStats: GetAllPlayerStats) {
+class PlayerStatsResource {
+
+    @Inject
+    lateinit var getAllPlayerStats: GetAllPlayerStats
 
     @GET
-    fun all() : List<RestPlayerStat> = getAllPlayerStats.execute().map { it.toRestModel() }
+    fun all(): List<RestPlayerStat> = getAllPlayerStats.execute().map { it.toRestModel() }
 
 }
 

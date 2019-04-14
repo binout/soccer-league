@@ -44,9 +44,7 @@ internal class SeasonPlanningTest : WithAssertions {
         friendlyMatchDateRepository.replace(DATE_FOR_FRIENDLY)
 
         matchPlanning = MatchPlanning(seasonRepository, playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository)
-        seasonPlanning = SeasonPlanning(seasonRepository, playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository, matchPlanning,
-                Mockito.mock(Event::class.java) as Event<FriendlyMatchPlanned>,
-                Mockito.mock(Event::class.java) as Event<LeagueMatchPlanned>)
+        seasonPlanning = SeasonPlanning(seasonRepository, playerRepository, friendlyMatchDateRepository, leagueMatchDateRepository, matchPlanning)
     }
 
     private fun generatePlayer(nb: Int) =

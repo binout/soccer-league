@@ -68,6 +68,7 @@ class MongoConfiguration {
 private fun Date.toLocalDate() = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate()
 private fun <T> Document.getList(key: String) : List<T> = get(key)?.let { it as List<T> } ?: emptyList<T>()
 
+@ApplicationScoped
 class MongoFriendlyMatchDateRepository():  FriendlyMatchDateRepository {
 
     @Inject var mongoDatabase : MongoDatabase? = null
@@ -97,7 +98,7 @@ class MongoFriendlyMatchDateRepository():  FriendlyMatchDateRepository {
     override fun all(): List<FriendlyMatchDate> = collection.find().map { it.toFriendlyMatchDate() }.toList()
 }
 
-
+@ApplicationScoped
 class MongoLeagueMatchDateRepository() : LeagueMatchDateRepository {
 
     @Inject var mongoDatabase : MongoDatabase? = null
@@ -129,7 +130,7 @@ class MongoLeagueMatchDateRepository() : LeagueMatchDateRepository {
     override fun all(): List<LeagueMatchDate> = collection.find().map { it.toLeagueMatchDate() }.toList()
 }
 
-
+@ApplicationScoped
 class MongoPlayerRepository() : PlayerRepository {
 
     @Inject var mongoDatabase : MongoDatabase? = null
@@ -161,8 +162,7 @@ class MongoPlayerRepository() : PlayerRepository {
     override fun all(): List<Player> = collection.find().map { it.toPlayer() }.toList()
 }
 
-
-
+@ApplicationScoped
 class MongoSeasonRepository() : SeasonRepository {
 
     @Inject lateinit var mongoDatabase : MongoDatabase
