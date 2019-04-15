@@ -89,7 +89,7 @@ class MongoFriendlyMatchDateRepository(mongoDatabase: MongoDatabase):  FriendlyM
     override fun byDate(year: Int, month: Month, dayOfMonth: Int): FriendlyMatchDate? =
             collection.find(eq("date", LocalDate.of(year, month, dayOfMonth))).first()?.toFriendlyMatchDate()
 
-    override fun all(): List<FriendlyMatchDate> = collection.find().map { it.toFriendlyMatchDate() }.toList()
+    override fun all(): List<FriendlyMatchDate> = collection.find().map { it.toFriendlyMatchDate() }.sortedBy { it.date }.toList()
 }
 
 @Component
@@ -116,7 +116,7 @@ class MongoLeagueMatchDateRepository(mongoDatabase: MongoDatabase) : LeagueMatch
     override fun byDate(year: Int, month: Month, dayOfMonth: Int): LeagueMatchDate? =
             collection.find(eq("date", LocalDate.of(year, month, dayOfMonth))).first()?.toLeagueMatchDate()
 
-    override fun all(): List<LeagueMatchDate> = collection.find().map { it.toLeagueMatchDate() }.toList()
+    override fun all(): List<LeagueMatchDate> = collection.find().map { it.toLeagueMatchDate() }.sortedBy { it.date }.toList()
 }
 
 @Component
