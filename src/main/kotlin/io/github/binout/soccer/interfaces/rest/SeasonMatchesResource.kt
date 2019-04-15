@@ -28,9 +28,11 @@ class SeasonMatchesResource(
         val getFriendlyMatches: GetFriendlyMatches,
         val getNextFriendlyMatches: GetNextFriendlyMatches,
         val addFriendlyMatch: AddFriendlyMatch,
+        val cancelFriendlyMatch: CancelFriendlyMatch,
         val getLeagueMatches: GetLeagueMatches,
         val getNextLeagueMatches: GetNextLeagueMatches,
         val addLeagueMatch: AddLeagueMatch,
+        val cancelLeagueMatch: CancelLeagueMatch,
         val getToPlanFriendlyMatches: GetToPlanFriendlyMatches,
         val getToPlanLeagueMatches: GetToPlanLeagueMatches,
         val substitutePlayerInFriendlyMatches: SubstitutePlayerInFriendlyMatches,
@@ -48,6 +50,14 @@ class SeasonMatchesResource(
         val date = dateParam.toRestDate()
         addFriendlyMatch.execute(seasonName, date.year, date.month, date.day)
         return ResponseEntity.ok().build<Any>()
+    }
+
+    @DeleteMapping("friendly/{dateParam}")
+    fun deleteFriendlyMatch(@PathVariable("name") name: String, @PathVariable("dateParam") dateParam: String): ResponseEntity<*> {
+        val seasonName = SeasonName(name).name
+        val date = dateParam.toRestDate()
+        cancelFriendlyMatch.execute(seasonName, date.year, date.month, date.day)
+        return ResponseEntity.noContent().build<Any>()
     }
 
     @GetMapping("friendly/next")
@@ -84,6 +94,14 @@ class SeasonMatchesResource(
         val date = dateParam.toRestDate()
         addLeagueMatch.execute(seasonName, date.year, date.month, date.day)
         return ResponseEntity.ok().build<Any>()
+    }
+
+    @DeleteMapping("league/{dateParam}")
+    fun deleteLeagueMatch(@PathVariable("name") name: String, @PathVariable("dateParam") dateParam: String): ResponseEntity<*> {
+        val seasonName = SeasonName(name).name
+        val date = dateParam.toRestDate()
+        cancelLeagueMatch.execute(seasonName, date.year, date.month, date.day)
+        return ResponseEntity.noContent().build<Any>()
     }
 
     @GetMapping("league/next")

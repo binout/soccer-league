@@ -43,6 +43,20 @@ class AddFriendlyMatch(
 }
 
 @Component
+class CancelFriendlyMatch(
+        private val seasonRepository: SeasonRepository,
+        private val friendlyMatchDateRepository: FriendlyMatchDateRepository) {
+
+    fun execute(seasonName: String, year: Int, month: Month, day: Int) {
+        val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Can not replace match to season")
+        friendlyMatchDateRepository.byDate(year, month, day)?.let {
+            season.cancelFriendlyMatch(it)
+            seasonRepository.replace(season)
+        }
+    }
+}
+
+@Component
 class AddLeagueMatch(
         private val seasonRepository: SeasonRepository,
         private val leagueMatchDateRepository: LeagueMatchDateRepository,
@@ -52,6 +66,20 @@ class AddLeagueMatch(
         val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Can not replace match to season")
         val matchDate = leagueMatchDateRepository.byDate(year, month, day) ?: throw IllegalArgumentException("Can not replace match to season")
         seasonPlanning.planLeagueMatch(season, matchDate)
+    }
+}
+
+@Component
+class CancelLeagueMatch(
+        private val seasonRepository: SeasonRepository,
+        private val leagueMatchDateRepository: LeagueMatchDateRepository) {
+
+    fun execute(seasonName: String, year: Int, month: Month, day: Int) {
+        val season = seasonRepository.byName(seasonName) ?: throw IllegalArgumentException("Can not replace match to season")
+        leagueMatchDateRepository.byDate(year, month, day)?.let {
+            season.cancelLeagueMatch(it)
+            seasonRepository.replace(season)
+        }
     }
 }
 

@@ -37,10 +37,18 @@ class Season(val name: String) {
         return match
     }
 
+    fun cancelFriendlyMatch(friendlyMatchDate: FriendlyMatchDate) {
+        this.friendlyMatches.removeIf { it.date == friendlyMatchDate.date}
+    }
+
     fun addLeagueMatch(date: LeagueMatchDate, players: Set<Player>): LeagueMatch {
         val match = Match.newLeagueMatch(date, players)
         this.leagueMatches.add(match)
         return match
+    }
+
+    fun cancelLeagueMatch(leagueMatchDate: LeagueMatchDate) {
+        this.leagueMatches.removeIf { it.date == leagueMatchDate.date}
     }
 
     fun matches() = friendlyMatches + leagueMatches
