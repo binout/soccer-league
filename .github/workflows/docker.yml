@@ -10,4 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build .
+      run: | 
+        docker build -t docker.pkg.github.com/binout/soccer-league/app:latest
+        docker push docker.pkg.github.com/binout/soccer-league/app:latest
+
