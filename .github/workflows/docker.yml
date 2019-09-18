@@ -10,8 +10,12 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
+      with:
+      env:
+        USERNAME: ${{ secrets.USERNAME }}    
+        TOKEN: ${{ secrets.TOKEN }}    
       run: | 
         docker build -t docker.pkg.github.com/binout/soccer-league/app:latest .
-        docker login docker.pkg.github.com -u USERNAME -p TOKEN
+        docker login docker.pkg.github.com -u ${USERNAME} -p ${TOKEN}
         docker push docker.pkg.github.com/binout/soccer-league/app:latest
 
