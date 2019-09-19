@@ -4,13 +4,16 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@master
     - name: Build the Docker image   
-      run: | 
-        docker build -t docker.pkg.github.com/binout/soccer-league/app:latest .
-        docker push docker.pkg.github.com/binout/soccer-league/app:latest
+      run: docker build -t docker.pkg.github.com/binout/soccer-league/app:latest .
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: binout/soccer-league/app
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        registry: docker.pkg.github.com
 
