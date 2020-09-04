@@ -38,7 +38,7 @@ class Season(val name: String) {
     }
 
     fun cancelFriendlyMatch(friendlyMatchDate: FriendlyMatchDate) {
-        this.friendlyMatches.removeIf { it.date == friendlyMatchDate.date}
+        this.friendlyMatches.removeIf { it.date == friendlyMatchDate.date }
     }
 
     fun addLeagueMatch(date: LeagueMatchDate, players: Set<Player>): LeagueMatch {
@@ -48,7 +48,7 @@ class Season(val name: String) {
     }
 
     fun cancelLeagueMatch(leagueMatchDate: LeagueMatchDate) {
-        this.leagueMatches.removeIf { it.date == leagueMatchDate.date}
+        this.leagueMatches.removeIf { it.date == leagueMatchDate.date }
     }
 
     fun matches() = friendlyMatches + leagueMatches
@@ -56,19 +56,21 @@ class Season(val name: String) {
     fun statistics(): SeasonStatistics = SeasonStatistics(this)
 
     companion object {
+        private val START_MONTH = System.getenv("START_MONTH")
+                ?.let { Month.of(it.toInt()) }
+                ?: Month.OCTOBER
+        private val START_DAY = System.getenv("START_DAY")?.toInt() ?: 1
 
-        fun currentSeasonName(): String {
-            return computeSeason(LocalDate.now())
-        }
+        fun currentSeasonName() = computeSeason(LocalDate.now())
 
         internal fun computeSeason(now: LocalDate): String {
             val month = now.get(ChronoField.MONTH_OF_YEAR)
             val year = now.get(ChronoField.YEAR)
             val day = now.dayOfMonth
-            return if (month > Month.SEPTEMBER.value || month == Month.SEPTEMBER.value && day > 3) {
-                year.toString() + "-" + (year + 1)
+            return if (month > START_MONTH.value || month == START_MONTH.value && day >= START_DAY) {
+                "$year-${year + 1}"
             } else {
-                (year - 1).toString() + "-" + year
+                "${(year - 1)}-$year"
             }
         }
     }

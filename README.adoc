@@ -39,6 +39,10 @@ MONGODB_URI:: a uri for a mongo database, if not an im-memory implementation is 
 
 SENDGRID_API_KEY:: the api key for https://sendgrid.com/
 
+START_MONTH:: month of start of the season (default 10)
+
+START_DAY:: day of month of start of the season (default 1)
+
 == Demo
 
 On CleverCloud:: https://pes5.cleverapps.io/
