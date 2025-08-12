@@ -1,6 +1,6 @@
 # Task ID: 2
 # Title: Spring Boot Migration to 3.x
-# Status: pending
+# Status: done
 # Dependencies: 1
 # Priority: high
 # Description: Migrate Spring Boot from 2.1.3 to 3.2.x and update all dependencies

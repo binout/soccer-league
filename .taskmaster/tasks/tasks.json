@@ -16,7 +16,7 @@
         "id": 2,
         "title": "Spring Boot Migration to 3.x",
         "description": "Migrate Spring Boot from 2.1.3 to 3.2.x and update all dependencies",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
         "dependencies": [
           "1"
