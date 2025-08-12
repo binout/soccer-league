@@ -42,7 +42,7 @@
         "id": 4,
         "title": "Additional Maven Dependencies Update",
         "description": "Further Maven dependency updates and compatibility fixes",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
         "dependencies": [
           "3"
