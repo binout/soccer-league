@@ -1,0 +1,16 @@
+# Task ID: 7
+# Title: Node.js and React Foundation Upgrade
+# Status: pending
+# Dependencies: 6
+# Priority: high
+# Description: Upgrade Node.js to 20.x LTS and React to 18.x with hooks optimization
+# Details:
+Frontend foundation modernization (NOT STARTED):
+- Upgrade Node.js from 8.9.4 to 20.x LTS (current: still v8.9.4 in pom.xml)
+- Update npm and package management
+- Migrate React from 16.8.4 to 18.x
+- Optimize components to use modern React hooks
+- Update package.json with compatible dependency versions
+
+# Test Strategy:
+Component rendering tests, hooks behavior validation, build process verification

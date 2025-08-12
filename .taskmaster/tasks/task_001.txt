@@ -1,0 +1,15 @@
+# Task ID: 1
+# Title: Backend Modernization - Java and Kotlin Upgrade
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Upgrade Java from 8 to 21 LTS and Kotlin from 1.2.71 to 1.9.x
+# Details:
+Java upgraded to 21 LTS, Kotlin upgraded to 1.9.25
+- Java version: 8 → 21 LTS
+- Kotlin version: 1.2.71 → 1.9.25
+- Maven compiler configuration updated
+- Completed in commit c58c7b8 (task 1)
+
+# Test Strategy:
+Run full test suite after upgrades. Focus on: compilation success, runtime behavior consistency, dependency compatibility

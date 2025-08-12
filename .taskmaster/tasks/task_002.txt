@@ -1,0 +1,14 @@
+# Task ID: 2
+# Title: Spring Boot Migration to 3.x
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Migrate Spring Boot from 2.1.3 to 3.2.x and update all dependencies
+# Details:
+Spring Boot upgraded to 3.2.5
+- Spring Boot version: 2.1.3 → 3.2.5
+- Maven dependencies updated
+- Completed in commit 023bdff (task 2)
+
+# Test Strategy:
+Integration tests for all REST endpoints, service layer tests, persistence layer validation
