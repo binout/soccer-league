@@ -15,8 +15,9 @@
  */
 package io.github.binout.soccer.infrastructure.persistence
 
-import com.mongodb.MongoClient
-import com.mongodb.MongoClientURI
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
+import com.mongodb.ConnectionString
 import com.mongodb.ServerAddress
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
@@ -54,12 +55,12 @@ class MongoConfiguration(@Value("\${app.mongodb.uri}") private val uri: String) 
     fun database(): MongoDatabase = if (StringUtils.isEmpty(uri)) {
         val mongoServer = MongoServer(MemoryBackend())
         val serverAddress = mongoServer.bind()
-        val client = MongoClient(ServerAddress(serverAddress))
+        val client = MongoClients.create("mongodb://localhost:${serverAddress.port}")
         client.getDatabase("dev")
     } else {
-        val mongoClientURI = MongoClientURI(uri)
-        val client = MongoClient(mongoClientURI)
-        client.getDatabase(mongoClientURI.database!!)
+        val connectionString = ConnectionString(uri)
+        val client = MongoClients.create(connectionString)
+        client.getDatabase(connectionString.database ?: "soccer-league")
     }
 
 }

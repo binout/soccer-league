@@ -23,19 +23,19 @@ import org.springframework.http.HttpMethod
 import org.springframework.util.StringUtils
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.resource.ResourceResolver
 import org.springframework.web.servlet.resource.ResourceResolverChain
+import jakarta.servlet.http.HttpServletRequest
 import java.io.IOException
 import java.util.*
-import javax.servlet.http.HttpServletRequest
 
 /**
  * Redirects every page to index.html
  * Used to handle the router
  */
 @Configuration
-class FrontAppConfig : WebMvcConfigurerAdapter() {
+class FrontAppConfig : WebMvcConfigurer {
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
@@ -43,15 +43,15 @@ class FrontAppConfig : WebMvcConfigurerAdapter() {
                 .exposedHeaders(HttpHeaders.LOCATION)
                 .allowedHeaders(HttpHeaders.ORIGIN, HttpHeaders.ACCEPT, HttpHeaders.CONTENT_TYPE, HttpHeaders.AUTHORIZATION, HttpHeaders.CACHE_CONTROL, "x-requested-with")
                 .allowedMethods(
-                        HttpMethod.GET.name,
-                        HttpMethod.PUT.name,
-                        HttpMethod.POST.name,
-                        HttpMethod.DELETE.name,
-                        HttpMethod.OPTIONS.name,
-                        HttpMethod.HEAD.name,
-                        HttpMethod.PATCH.name,
-                        HttpMethod.TRACE.name)
-                .allowedOrigins("*")
+                        "GET",
+                        "PUT",
+                        "POST",
+                        "DELETE",
+                        "OPTIONS",
+                        "HEAD",
+                        "PATCH",
+                        "TRACE")
+                .allowedOriginPatterns("*")
 
     }
 

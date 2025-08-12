@@ -29,7 +29,7 @@
         "id": 3,
         "title": "Backend Infrastructure Compatibility Updates",
         "description": "Update infrastructure layer for Spring Boot 3.x compatibility",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
         "dependencies": [
           "2"
