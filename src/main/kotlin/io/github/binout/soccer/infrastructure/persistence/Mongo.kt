@@ -52,7 +52,7 @@ import java.util.*
 class MongoConfiguration(@Value("\${app.mongodb.uri}") private val uri: String) {
 
     @Bean
-    fun database(): MongoDatabase = if (StringUtils.isEmpty(uri)) {
+    fun database(): MongoDatabase = if (uri.isBlank()) {
         val mongoServer = MongoServer(MemoryBackend())
         val serverAddress = mongoServer.bind()
         val client = MongoClients.create("mongodb://localhost:${serverAddress.port}")
@@ -66,6 +66,7 @@ class MongoConfiguration(@Value("\${app.mongodb.uri}") private val uri: String) 
 }
 
 private fun Date.toLocalDate() = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate()
+@Suppress("UNCHECKED_CAST")
 private fun <T> Document.getList(key: String) : List<T> = get(key)?.let { it as List<T> } ?: emptyList<T>()
 
 @Component

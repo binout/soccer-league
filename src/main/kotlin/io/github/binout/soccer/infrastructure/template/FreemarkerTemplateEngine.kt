@@ -25,8 +25,8 @@ import java.io.StringWriter
 @Component
 class FreemarkerTemplateEngine : TemplateEngine {
 
-    private val configuration: Configuration = Configuration().apply {
-        setClassForTemplateLoading(this.javaClass, "/templates")
+    private val configuration: Configuration = Configuration(Configuration.VERSION_2_3_33).apply {
+        setClassForTemplateLoading(this@FreemarkerTemplateEngine.javaClass, "/templates")
     }
 
     override fun render(templateName: String, params: Map<String, Any>): String {

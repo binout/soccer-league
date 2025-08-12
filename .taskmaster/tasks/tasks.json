@@ -55,7 +55,7 @@
         "id": 5,
         "title": "Infrastructure Services Update",
         "description": "Update SendGrid mail service, MongoDB persistence, and Freemarker templates",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
         "dependencies": [
           "4"

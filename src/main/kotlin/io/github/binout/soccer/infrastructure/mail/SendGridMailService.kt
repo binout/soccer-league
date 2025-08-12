@@ -36,13 +36,13 @@ class SendGridMailService : MailService {
     @Value("\${app.mail.sendgrid.api-key}")
     private val sendGridApiKey: String? = null
 
-    override fun sendMail(email: MailService.Mail) {
-        if (!StringUtils.isEmpty(sendGridApiKey)) {
-            if (email.hasRecipients()) {
-                val jsonMail = toSendGridMail(email)
+    override fun sendMail(mail: MailService.Mail) {
+        if (!sendGridApiKey.isNullOrBlank()) {
+            if (mail.hasRecipients()) {
+                val jsonMail = toSendGridMail(mail)
                 try {
                     Feign.builder()
-                            .requestInterceptor { r -> r.header("Authorization", "Bearer " + sendGridApiKey!!) }
+                            .requestInterceptor { r -> r.header("Authorization", "Bearer $sendGridApiKey") }
                             .target(SendGrid::class.java, sendGridUrl)
                             .sendMail(jsonMail)
                 } catch (e: Throwable) {
@@ -65,12 +65,12 @@ class SendGridMailService : MailService {
 
     companion object {
 
-        internal fun toSendGridMail(email: MailService.Mail): String {
+        internal fun toSendGridMail(mail: MailService.Mail): String {
             try {
                 val jsonObject = JSONObject()
-                jsonObject.put("from", toEmail(email.from()))
-                jsonObject.put("personalizations", toPersonalizations(email))
-                jsonObject.put("content", toContent(email))
+                jsonObject.put("from", toEmail(mail.from()))
+                jsonObject.put("personalizations", toPersonalizations(mail))
+                jsonObject.put("content", toContent(mail))
                 return jsonObject.toString()
             } catch (e: JSONException) {
                 throw RuntimeException(e)
@@ -78,12 +78,12 @@ class SendGridMailService : MailService {
 
         }
 
-        private fun toContent(email: MailService.Mail): JSONArray {
+        private fun toContent(mail: MailService.Mail): JSONArray {
             try {
                 val jsonArray = JSONArray()
                 val jsonObject = JSONObject()
                 jsonObject.put("type", "text/html")
-                jsonObject.put("value", email.content())
+                jsonObject.put("value", mail.content())
                 jsonArray.put(jsonObject)
                 return jsonArray
             } catch (e: JSONException) {
@@ -92,12 +92,12 @@ class SendGridMailService : MailService {
 
         }
 
-        private fun toPersonalizations(email: MailService.Mail): JSONArray {
+        private fun toPersonalizations(mail: MailService.Mail): JSONArray {
             try {
                 val jsonArray = JSONArray()
                 val jsonObject = JSONObject()
-                jsonObject.put("to", toTos(email))
-                jsonObject.put("subject", email.subject())
+                jsonObject.put("to", toTos(mail))
+                jsonObject.put("subject", mail.subject())
                 jsonArray.put(jsonObject)
                 return jsonArray
             } catch (e: JSONException) {
@@ -106,9 +106,9 @@ class SendGridMailService : MailService {
 
         }
 
-        private fun toTos(email: MailService.Mail): JSONArray {
+        private fun toTos(mail: MailService.Mail): JSONArray {
             val tos = JSONArray()
-            email.recipients().map { toEmail(it) }.forEach { tos.put(it) }
+            mail.recipients().map { toEmail(it) }.forEach { tos.put(it) }
             return tos
         }
 
