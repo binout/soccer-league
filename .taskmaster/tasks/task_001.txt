@@ -1,6 +1,6 @@
 # Task ID: 1
 # Title: Backend Modernization - Java and Kotlin Upgrade
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: high
 # Description: Upgrade Java from 8 to 21 LTS and Kotlin from 1.2.71 to 1.9.x
