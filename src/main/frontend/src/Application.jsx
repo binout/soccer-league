@@ -4,9 +4,9 @@ import styled from "styled-components";
 import { createGlobalStyle } from "styled-components";
 import AppBar from "@mui/material/AppBar";
 import { green } from "@mui/material/colors";
-import Players from "./Players.js";
-import Agenda from "./Agenda.js";
-import Season from "./Season.js";
+import Players from "./Players.jsx";
+import Agenda from "./Agenda.jsx";
+import Season from "./Season.jsx";
 import { Toolbar } from "@mui/material";
 import { media } from "./style";
 

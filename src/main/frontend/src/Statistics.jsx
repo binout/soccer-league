@@ -10,6 +10,7 @@ const StatisticsHeader = styled.div`
   grid-auto-rows: 40px;
   align-items: center;
 `;
+
 const StatisticsBody = styled.div`
   display: grid;
   div:first-child {
@@ -19,10 +20,12 @@ const StatisticsBody = styled.div`
     border: none;
   }
 `;
+
 const Title = styled.div`
   font-weight: bold;
   font-size: 16px;
 `;
+
 const LineByPlayer = styled.div`
   display: grid;
   grid-template-columns: [first] 30% 20% 20% 20%;

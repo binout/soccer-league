@@ -5,7 +5,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { grey } from "@mui/material/colors";
 
-import PlayersAgenda from "./PlayersAgenda.js";
+import PlayersAgenda from "./PlayersAgenda.jsx";
 
 const TabContent = styled.div`
   width: 100%;

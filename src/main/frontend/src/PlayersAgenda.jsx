@@ -6,7 +6,7 @@ import Checkbox from "@mui/material/Checkbox";
 import axios from "axios";
 // Using HTML5 date input instead of deprecated @mui/lab DatePicker
 import { media } from "./style";
-var moment = require("moment");
+import moment from "moment";
 
 const Badge = styled.div`
   width: 20px;

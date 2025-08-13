@@ -107,7 +107,7 @@
         "id": 9,
         "title": "TypeScript Integration",
         "description": "Add TypeScript support gradually to the frontend codebase",
-        "status": "pending",
+        "status": "deferred",
         "priority": "medium",
         "dependencies": [
           "8"
@@ -120,7 +120,7 @@
         "id": 10,
         "title": "Webpack to Vite Migration",
         "description": "Replace Webpack 4 with Vite for faster builds and better development experience",
-        "status": "pending",
+        "status": "in-progress",
         "priority": "medium",
         "dependencies": [
           "9"
@@ -216,7 +216,7 @@
       "totalTasks": 16,
       "created": "2025-08-13T09:57:06.337Z",
       "description": "Tasks for master context",
-      "updated": "2025-08-13T10:11:48.309Z"
+      "updated": "2025-08-13T10:28:39.830Z"
     }
   }
 }

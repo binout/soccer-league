@@ -6,8 +6,8 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import AppBar from "@mui/material/AppBar";
 import { grey } from "@mui/material/colors";
-import ScheduleMatch from "./ScheduleMatch";
-import Statistics from "./Statistics";
+import ScheduleMatch from "./ScheduleMatch.jsx";
+import Statistics from "./Statistics.jsx";
 
 const TabsContentWrapper = styled.div`
   display: flex;
