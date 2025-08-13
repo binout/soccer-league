@@ -4,6 +4,11 @@ import Button from "@mui/material/Button";
 
 import moment from "moment";
 import axios from "axios";
+import { Match, MatchToPlan } from "./types";
+
+interface ScheduleMatchProps {
+  matchType: 'friendly' | 'league';
+}
 
 const Player = styled.div`
   display: grid;
@@ -31,26 +36,26 @@ const Title = styled.h3`
   font-size: 20px;
 `;
 
-const ScheduleMatch = ({ matchType }) => {
-  const [scheduledMatches, setScheduledMatches] = useState([]);
-  const [matchesList, setMatchesList] = useState([]);
-  const [updateToggle, setUpdateToggle] = useState(false);
-  const [matchToPlanCount, setMatchToPlanCount] = useState(0);
+const ScheduleMatch: React.FC<ScheduleMatchProps> = ({ matchType }) => {
+  const [scheduledMatches, setScheduledMatches] = useState<Match[]>([]);
+  const [matchesList, setMatchesList] = useState<MatchToPlan[]>([]);
+  const [updateToggle, setUpdateToggle] = useState<boolean>(false);
+  const [matchToPlanCount, setMatchToPlanCount] = useState<number>(0);
 
   useEffect(() => {
     async function fetchData() {
-      const result = await axios(
+      const result = await axios.get<Match[]>(
         `/rest/seasons/current/matches/${matchType}/next`
       );
       setScheduledMatches(result.data);
     }
 
     fetchData();
-  }, [updateToggle]);
+  }, [updateToggle, matchType]);
 
   useEffect(() => {
     async function fetchData() {
-      const result = await axios(
+      const result = await axios.get<MatchToPlan[]>(
         `rest/seasons/current/matches/${matchType}/to-plan`
       );
       setMatchesList(result.data);
@@ -58,22 +63,22 @@ const ScheduleMatch = ({ matchType }) => {
     }
 
     fetchData();
-  }, [matchToPlanCount]);
+  }, [matchToPlanCount, matchType]);
 
-  const handleSubstitute = async (date, player) => {
+  const handleSubstitute = async (date: string, player: string) => {
     await axios.delete(
       `/rest/seasons/current/matches/${matchType}/${date}/players/${player}`
     );
     setUpdateToggle(!updateToggle);
   };
 
-  const planHanlder = async date => {
+  const planHanlder = async (date: string) => {
     await axios.put(`/rest/seasons/current/matches/${matchType}/${date}`);
     setUpdateToggle(!updateToggle);
     setMatchToPlanCount(matchToPlanCount - 1);
   };
 
-  const intersperse = (arr, sep) => {
+  const intersperse = (arr: string[], sep: string): (string | string[])[] => {
     if (arr.length === 0) {
       return [];
     }

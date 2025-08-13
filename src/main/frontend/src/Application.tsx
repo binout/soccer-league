@@ -4,9 +4,9 @@ import styled from "styled-components";
 import { createGlobalStyle } from "styled-components";
 import AppBar from "@mui/material/AppBar";
 import { green } from "@mui/material/colors";
-import Players from "./Players.jsx";
-import Agenda from "./Agenda.jsx";
-import Season from "./Season.jsx";
+import Players from "./Players.tsx";
+import Agenda from "./Agenda.tsx";
+import Season from "./Season.tsx";
 import { Toolbar } from "@mui/material";
 import { media } from "./style";
 
@@ -53,7 +53,7 @@ const Content = styled.div`
   ${media.phone`width: 95%;`}
 `;
 
-const Application = () => {
+const Application: React.FC = () => {
   return (
     <Router>
       <GlobalStyle />

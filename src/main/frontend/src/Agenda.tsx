@@ -5,7 +5,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { grey } from "@mui/material/colors";
 
-import PlayersAgenda from "./PlayersAgenda.jsx";
+import PlayersAgenda from "./PlayersAgenda.tsx";
 
 const TabContent = styled.div`
   width: 100%;
@@ -22,14 +22,15 @@ const StyledTab = styled(({ ...other }) => (
     color: ${grey[900]};
   }
 `;
-const Agenda = () => {
-  const [selectedTab, setSelectedTab] = useState(0);
+
+const Agenda: React.FC = () => {
+  const [selectedTab, setSelectedTab] = useState<number>(0);
   return (
     <Fragment>
       <AppBar position="static" color="default">
         <Tabs
           value={selectedTab}
-          onChange={(evt, value) => setSelectedTab(value)}
+          onChange={(_evt: React.SyntheticEvent, value: number) => setSelectedTab(value)}
         >
           <StyledTab label="Friendly" />
           <StyledTab label="League" />

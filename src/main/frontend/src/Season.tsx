@@ -6,8 +6,9 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import AppBar from "@mui/material/AppBar";
 import { grey } from "@mui/material/colors";
-import ScheduleMatch from "./ScheduleMatch.jsx";
-import Statistics from "./Statistics.jsx";
+import ScheduleMatch from "./ScheduleMatch.tsx";
+import Statistics from "./Statistics.tsx";
+import { Season as SeasonType } from "./types";
 
 const TabsContentWrapper = styled.div`
   display: flex;
@@ -28,19 +29,19 @@ const Title = styled.h2`
   margin-bottom: 20px;
 `;
 
-const Season = () => {
-  const [season, setSeason] = useState([]);
-  const [selectedTabValue, setSelectedTabValue] = useState(0);
+const Season: React.FC = () => {
+  const [season, setSeason] = useState<SeasonType>({ name: "" });
+  const [selectedTabValue, setSelectedTabValue] = useState<number>(0);
 
   useEffect(() => {
     const fetchSeasons = async () => {
-      const result = await axios("/rest/seasons/current");
+      const result = await axios<SeasonType>("/rest/seasons/current");
       setSeason(result.data);
     };
     fetchSeasons();
   }, []);
 
-  const handleChange = (evt, value) => {
+  const handleChange = (_evt: React.SyntheticEvent, value: number) => {
     setSelectedTabValue(value);
   };
 

@@ -7,8 +7,17 @@ import axios from "axios";
 // Using HTML5 date input instead of deprecated @mui/lab DatePicker
 import { media } from "./style";
 import moment from "moment";
+import { Player, MatchDate } from "./types";
 
-const Badge = styled.div`
+interface PlayersAgendaProps {
+  matchType: 'friendly' | 'league';
+}
+
+interface BadgeProps {
+  canBePlanned: boolean;
+}
+
+const Badge = styled.div<BadgeProps>`
   width: 20px;
   height: 15px;
   margin-left: 10px;
@@ -28,7 +37,11 @@ const PlayersPlanning = styled.div`
   margin-left: 15px;
   overflow-y: hidden;
 `;
-const PlayerLine = styled.div`
+interface GridProps {
+  column?: number;
+}
+
+const PlayerLine = styled.div<GridProps>`
   display: grid;
   grid-template-columns: ${props =>
     props.column
@@ -37,11 +50,11 @@ const PlayerLine = styled.div`
   align-items: center;
   grid-auto-rows: 35px;
   ${media.phone`
-    grid-template-columns: ${props => props.column ? `[first] 80px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
+    grid-template-columns: ${(props: GridProps) => props.column ? `[first] 80px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
     grid-auto-rows: auto;
   `}
 `;
-const PlanningHeader = styled.div`
+const PlanningHeader = styled.div<GridProps>`
   display: grid;
   grid-template-columns: ${props =>
     props.column
@@ -50,7 +63,7 @@ const PlanningHeader = styled.div`
   font-size: 16px;
   font-weight: bold;
   ${media.phone`
-    grid-template-columns: ${props => props.column ? `[first] 80px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
+    grid-template-columns: ${(props: GridProps) => props.column ? `[first] 80px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
     grid-auto-rows: auto;    
   `}
 `;
@@ -64,34 +77,34 @@ const AddBtn = styled(Button)`
   }
 `;
 
-const PlayersAgenda = ({ matchType }) => {
-  const [date, setDate] = useState(new Date());
-  const [updateMatchStateToggle, setUpdateMatchStateToggle] = useState(false);
-  const [matchDates, setMatchDates] = useState([]);
-  const [players, setPlayers] = useState([]);
+const PlayersAgenda: React.FC<PlayersAgendaProps> = ({ matchType }) => {
+  const [date, setDate] = useState<Date>(new Date());
+  const [updateMatchStateToggle, setUpdateMatchStateToggle] = useState<boolean>(false);
+  const [matchDates, setMatchDates] = useState<MatchDate[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
 
   useEffect(() => {
     const fetchMatchDates = async () => {
-      const result = await axios.get(`/rest/match-dates/${matchType}/next`);
+      const result = await axios.get<MatchDate[]>(`/rest/match-dates/${matchType}/next`);
       setMatchDates(result.data);
     };
     fetchMatchDates();
-  }, [updateMatchStateToggle]);
+  }, [updateMatchStateToggle, matchType]);
 
   useEffect(() => {
     const fetchPlayers = async () => {
       if (matchType === "friendly") {
-        const result = await axios.get("/rest/players");
+        const result = await axios.get<Player[]>("/rest/players");
         setPlayers(result.data);
       } else {
-        const result = await axios.get("/rest/players/league");
+        const result = await axios.get<Player[]>("/rest/players/league");
         setPlayers(result.data);
       }
     };
     fetchPlayers();
-  }, []);
+  }, [matchType]);
 
-  const handleOnCheck = async (date, player, checked) => {
+  const handleOnCheck = async (date: string, player: string, checked: boolean) => {
     if (checked) {
       await axios.put(
         `/rest/match-dates/${matchType}/${date}/players/${player}`
@@ -118,8 +131,8 @@ const PlayersAgenda = ({ matchType }) => {
           label="Match date"
           type="date"
           value={date ? moment(date).format("YYYY-MM-DD") : ""}
-          onChange={(event) => {
-            const newDate = event.target.value ? moment(event.target.value).toDate() : null;
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            const newDate = event.target.value ? moment(event.target.value).toDate() : new Date();
             setDate(newDate);
           }}
           InputLabelProps={{

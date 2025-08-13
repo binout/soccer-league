@@ -107,7 +107,7 @@
         "id": 9,
         "title": "TypeScript Integration",
         "description": "Add TypeScript support gradually to the frontend codebase",
-        "status": "deferred",
+        "status": "done",
         "priority": "medium",
         "dependencies": [
           "8"
@@ -229,7 +229,7 @@
       "totalTasks": 16,
       "created": "2025-08-13T09:57:06.337Z",
       "description": "Tasks for master context",
-      "updated": "2025-08-13T10:47:03.387Z"
+      "updated": "2025-08-13T10:59:57.247Z"
     }
   }
 }

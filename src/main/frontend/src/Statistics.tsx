@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components";
 import { grey } from "@mui/material/colors";
 import axios from "axios";
+import { StatisticsData } from "./types";
 
 const StatisticsHeader = styled.div`
   padding-top: 15px;
@@ -38,12 +39,12 @@ const LineByPlayer = styled.div`
   }
 `;
 
-const Statistics = () => {
-  const [stats, setStats] = useState([]);
+const Statistics: React.FC = () => {
+  const [stats, setStats] = useState<StatisticsData[]>([]);
 
   useEffect(() => {
     async function fetchData() {
-      const result = await axios("/rest/seasons/current/stats");
+      const result = await axios.get<StatisticsData[]>("/rest/seasons/current/stats");
       setStats(result.data);
     }
 
@@ -59,7 +60,7 @@ const Statistics = () => {
         <Title>Total Matches Played</Title>
       </StatisticsHeader>
       <StatisticsBody>
-        {stats.map(stat => (
+        {stats.map((stat: StatisticsData) => (
           <LineByPlayer key={stat.player}>
             <span style={{ paddingLeft: "15px" }}>{stat.player}</span>
             <span>{stat.nbFriendlyMatches}</span>

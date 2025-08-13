@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { grey } from "@mui/material/colors";
 import { media } from "./style";
+import { PlayerStats } from "./types";
 
 const PlayersWrapper = styled.div`
   display: flex;
@@ -52,18 +53,18 @@ const Note = styled.div`
   margin: 0 20px 5px 0;
 `;
 
-const Players = () => {
-  const [players, setPlayers] = useState([]);
+const Players: React.FC = () => {
+  const [players, setPlayers] = useState<PlayerStats[]>([]);
 
   useEffect(() => {
     const fetchPlayers = async () => {
-      const result = await axios.get("/rest/players-stats");
+      const result = await axios.get<PlayerStats[]>("/rest/players-stats");
       setPlayers(result.data);
     };
     fetchPlayers();
   }, []);
 
-  const nbLeaguePlayers = players.filter(p => p.playerLeague).length;
+  const nbLeaguePlayers = players.filter((p: PlayerStats) => p.playerLeague).length;
 
   return (
     <PlayersWrapper>
@@ -82,7 +83,7 @@ const Players = () => {
           <span>Nb Seasons</span>
           <span>Nb Matches</span>
         </TableTitle>
-        {players.sort((p1, p2) => p2.nbMatches - p1.nbMatches).map(player => (
+        {players.sort((p1: PlayerStats, p2: PlayerStats) => p2.nbMatches - p1.nbMatches).map((player: PlayerStats) => (
           <PlayerLine key={player.name}>
             <span>
               {player.name} {player.playerLeague && "⭐"}
