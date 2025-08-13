@@ -21,21 +21,21 @@
   "dependencies": {
     "@date-io/moment": "^1.1.0",
     "@material-ui/core": "^3.9.2",
-    "axios": "^0.18.0",
+    "axios": "^1.7.7",
     "babel-polyfill": "^6.5.0",
     "babel-runtime": "^6.3.19",
     "history": "^2.0.0",
     "material-ui-pickers": "^2.2.4",
     "moment": "^2.10.6",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
-    "react-router-dom": "^5.0.0",
-    "styled-components": "^4.1.3"
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "react-router-dom": "^5.3.4",
+    "styled-components": "^5.3.11"
   },
   "scripts": {
     "inject-data": "node data/inject.js",
-    "watch": "webpack -d --watch",
-    "dev-build": "webpack -d --display-modules",
-    "prod-build": "webpack -d -p"
+    "watch": "NODE_OPTIONS=--openssl-legacy-provider webpack -d --watch",
+    "dev-build": "NODE_OPTIONS=--openssl-legacy-provider webpack -d --display-modules",
+    "prod-build": "NODE_OPTIONS=--openssl-legacy-provider webpack -d -p"
   }
 }
