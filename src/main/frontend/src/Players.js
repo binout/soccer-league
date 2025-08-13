@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import grey from "@material-ui/core/colors/grey";
+import { grey } from "@mui/material/colors";
 import { media } from "./style";
 
 const PlayersWrapper = styled.div`

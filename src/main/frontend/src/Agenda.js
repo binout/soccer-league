@@ -1,9 +1,9 @@
 import React, { useState, Fragment } from "react";
 import styled from "styled-components";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import grey from "@material-ui/core/colors/grey";
+import AppBar from "@mui/material/AppBar";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import { grey } from "@mui/material/colors";
 
 import PlayersAgenda from "./PlayersAgenda.js";
 

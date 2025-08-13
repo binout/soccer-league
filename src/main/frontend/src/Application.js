@@ -1,13 +1,13 @@
 import React from "react";
-import { BrowserRouter as Router, Route, NavLink } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import { createGlobalStyle } from "styled-components";
-import AppBar from "@material-ui/core/AppBar";
-import green from "@material-ui/core/colors/green";
+import AppBar from "@mui/material/AppBar";
+import { green } from "@mui/material/colors";
 import Players from "./Players.js";
 import Agenda from "./Agenda.js";
 import Season from "./Season.js";
-import { Toolbar } from "@material-ui/core";
+import { Toolbar } from "@mui/material";
 import { media } from "./style";
 
 const GlobalStyle = createGlobalStyle`
@@ -66,9 +66,11 @@ const Application = () => {
           </Toolbar>
         </StyledAppBar>
         <Content>
-          <Route path="/" exact component={Season} />
-          <Route path="/agenda" component={Agenda} />
-          <Route path="/players" component={Players} />
+          <Routes>
+            <Route path="/" element={<Season />} />
+            <Route path="/agenda" element={<Agenda />} />
+            <Route path="/players" element={<Players />} />
+          </Routes>
         </Content>
       </SoccerAppWrapper>
     </Router>

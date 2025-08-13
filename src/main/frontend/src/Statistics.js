@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components";
-import grey from "@material-ui/core/colors/grey";
+import { grey } from "@mui/material/colors";
 import axios from "axios";
 
 const StatisticsHeader = styled.div`

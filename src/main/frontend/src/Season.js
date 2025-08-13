@@ -2,10 +2,10 @@ import React, { useState, useEffect, Fragment } from "react";
 import styled from "styled-components";
 import axios from "axios";
 
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import AppBar from "@material-ui/core/AppBar";
-import grey from "@material-ui/core/colors/grey";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import AppBar from "@mui/material/AppBar";
+import { grey } from "@mui/material/colors";
 import ScheduleMatch from "./ScheduleMatch";
 import Statistics from "./Statistics";
 

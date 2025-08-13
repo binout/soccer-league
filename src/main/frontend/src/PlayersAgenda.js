@@ -1,10 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 import styled from "styled-components";
-import Checkbox from "@material-ui/core/Checkbox";
+import Checkbox from "@mui/material/Checkbox";
 import axios from "axios";
-import { MuiPickersUtilsProvider, InlineDatePicker } from "material-ui-pickers";
-import DateFnsUtils from "@date-io/moment";
+// Using HTML5 date input instead of deprecated @mui/lab DatePicker
 import { media } from "./style";
 var moment = require("moment");
 
@@ -114,17 +114,18 @@ const PlayersAgenda = ({ matchType }) => {
   return (
     <Fragment>
       <DatePickerWrapper>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <InlineDatePicker
-            variant="outlined"
-            onlyCalendar
-            label="Match date"
-            value={date}
-            onChange={date => {
-              setDate(date);
-            }}
-          />
-        </MuiPickersUtilsProvider>
+        <TextField
+          label="Match date"
+          type="date"
+          value={date ? moment(date).format("YYYY-MM-DD") : ""}
+          onChange={(event) => {
+            const newDate = event.target.value ? moment(event.target.value).toDate() : null;
+            setDate(newDate);
+          }}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
 
         <AddBtn variant="contained" color="primary" onClick={handleSubmit}>
           ADD
