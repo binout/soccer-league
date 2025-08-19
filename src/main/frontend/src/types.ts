@@ -8,8 +8,8 @@ export interface Player {
 export interface PlayerStats {
   name: string;
   email: string;
-  playerLeague: boolean;
-  goalkeeper: boolean;
+  isPlayerLeague: boolean;
+  isGoalkeeper: boolean;
   nbSeasons: number;
   nbMatches: number;
 }

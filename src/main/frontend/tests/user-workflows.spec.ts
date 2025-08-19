@@ -7,16 +7,28 @@ test.describe('End-to-End User Workflows', () => {
     // Inject test data using the same approach as inject.js script
     const players = [
       {
-        "playerLeague": true,
-        "goalkeeper": true,
-        "name": "Test Player 1",
-        "email": "test1@test.com"
+        "isPlayerLeague": true,
+        "isGoalkeeper": true,
+        "name": "League Goalkeeper",
+        "email": "league.gk@test.com"
       },
       {
-        "playerLeague": false,
-        "goalkeeper": false,
-        "name": "Test Player 2", 
-        "email": "test2@test.com"
+        "isPlayerLeague": true,
+        "isGoalkeeper": false,
+        "name": "League Player",
+        "email": "league@test.com"
+      },
+      {
+        "isPlayerLeague": false,
+        "isGoalkeeper": true,
+        "name": "Regular Goalkeeper",
+        "email": "gk@test.com"
+      },
+      {
+        "isPlayerLeague": false,
+        "isGoalkeeper": false,
+        "name": "Regular Player",
+        "email": "regular@test.com"
       }
     ];
 
@@ -28,7 +40,7 @@ test.describe('End-to-End User Workflows', () => {
     }
   });
 
-  test('should view player management with data', async ({ page }) => {
+  test('should view player management with correct icons', async ({ page }) => {
     await page.goto('/');
     
     // Navigate to Players page
@@ -43,14 +55,35 @@ test.describe('End-to-End User Workflows', () => {
     await expect(page.locator('text=Name')).toBeVisible();
     await expect(page.locator('text=Email')).toBeVisible();
     
-    // Verify test data is displayed
-    await expect(page.locator('text=Test Player 1')).toBeVisible();
-    await expect(page.locator('text=Test Player 2')).toBeVisible();
+    // Verify test data is displayed (using more specific selectors)
+    await expect(page.locator('span:has-text("League Goalkeeper")')).toBeVisible();
+    await expect(page.locator('span:has-text("League Player ⭐")')).toBeVisible();
+    await expect(page.locator('span:has-text("Regular Goalkeeper")')).toBeVisible();
+    await expect(page.locator('span:has-text("Regular Player")')).toBeVisible();
     
-    // Verify league player indicator (⭐) appears for league players
-    // Note: The indicator may not show immediately if stats need to be calculated
-    const leaguePlayerText = page.locator('span:has-text("Test Player 1")');
-    await expect(leaguePlayerText.first()).toBeVisible();
+    // Verify player icons are displayed correctly
+    // League Goalkeeper should have both ⭐ and 🥅 (note: goalkeeper icon has leading space)
+    const leagueGk = page.locator('span').filter({ hasText: 'League Goalkeeper' });
+    await expect(leagueGk).toContainText('⭐');
+    await expect(leagueGk).toContainText('🥅');
+    
+    // League Player should have only ⭐
+    const leaguePlayer = page.locator('span').filter({ hasText: 'League Player' }).first();
+    await expect(leaguePlayer).toContainText('⭐');
+    await expect(leaguePlayer).not.toContainText('🥅');
+    
+    // Regular Goalkeeper should have only 🥅
+    const regularGk = page.locator('span').filter({ hasText: 'Regular Goalkeeper' });
+    await expect(regularGk).toContainText('🥅');
+    await expect(regularGk).not.toContainText('⭐');
+    
+    // Regular Player should have no icons
+    const regularPlayer = page.locator('span').filter({ hasText: 'Regular Player' }).first();
+    await expect(regularPlayer).not.toContainText('⭐');
+    await expect(regularPlayer).not.toContainText('🥅');
+    
+    // Verify league player count is correct (should show "2 League Players")
+    await expect(page.locator('h3')).toContainText('2 League Players');
   });
 
   test('should view agenda and match scheduling interface', async ({ page }) => {

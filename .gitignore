@@ -42,6 +42,8 @@ node_modules/
 # tasks/ 
 
 # Playwright test results and reports
+/test-results/
+/src/test-results/
 /src/main/frontend/test-results/
 /src/main/frontend/playwright-report/
 /src/main/frontend/playwright/.cache/

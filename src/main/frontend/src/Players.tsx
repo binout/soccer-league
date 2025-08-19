@@ -56,7 +56,7 @@ const Note = styled.div`
 const Players: React.FC = () => {
   const { data: players = [], isLoading, error } = usePlayersStats();
 
-  const nbLeaguePlayers = players.filter((p: PlayerStats) => p.playerLeague).length;
+  const nbLeaguePlayers = players.filter((p: PlayerStats) => p.isPlayerLeague).length;
 
   if (isLoading) {
     return (
@@ -98,8 +98,8 @@ const Players: React.FC = () => {
         {players.sort((p1: PlayerStats, p2: PlayerStats) => p2.nbMatches - p1.nbMatches).map((player: PlayerStats) => (
           <PlayerLine key={player.name}>
             <span>
-              {player.name} {player.playerLeague && "⭐"}
-              {player.goalkeeper && " 🥅"}
+              {player.name} {player.isPlayerLeague && "⭐"}
+              {player.isGoalkeeper && " 🥅"}
             </span>
             <span>{player.email}</span>
             <span>{player.nbSeasons}</span>
