@@ -140,6 +140,105 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>integration-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>cleanup-ports</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>scripts/cleanup-ports.sh</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <version>${lib.spring-boot.version}</version>
+                        <executions>
+                            <execution>
+                                <id>start-spring-boot</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <wait>1000</wait>
+                                    <maxAttempts>30</maxAttempts>
+                                    <jmxPort>9999</jmxPort>
+                                    <fork>true</fork>
+                                    <jvmArguments>
+                                        -Dcom.sun.management.jmxremote.port=9999
+                                        -Dcom.sun.management.jmxremote.authenticate=false
+                                        -Dcom.sun.management.jmxremote.ssl=false
+                                    </jvmArguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop-spring-boot</id>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                                <phase>post-integration-test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.15.1</version>
+                        <configuration>
+                            <workingDirectory>src/main/frontend</workingDirectory>
+                            <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
+                            <nodeVersion>v20.18.0</nodeVersion>
+                            <npmVersion>10.8.2</npmVersion>
+                            <installDirectory>target</installDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>playwright-install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <arguments>run playwright-install</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>playwright-test</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>integration-test</phase>
+                                <configuration>
+                                    <arguments>run test</arguments>
+                                    <environmentVariables>
+                                        <MAVEN_INTEGRATION>true</MAVEN_INTEGRATION>
+                                    </environmentVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

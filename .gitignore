@@ -40,3 +40,8 @@ node_modules/
 # Task files
 # tasks.json
 # tasks/ 
+
+# Playwright test results and reports
+/src/main/frontend/test-results/
+/src/main/frontend/playwright-report/
+/src/main/frontend/playwright/.cache/
