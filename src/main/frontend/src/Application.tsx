@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import styled from "styled-components";
 import { createGlobalStyle } from "styled-components";
 import AppBar from "@mui/material/AppBar";
@@ -9,6 +11,7 @@ import Agenda from "./Agenda.tsx";
 import Season from "./Season.tsx";
 import { Toolbar } from "@mui/material";
 import { media } from "./style";
+import { queryClient } from "./config/queryClient";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -55,25 +58,28 @@ const Content = styled.div`
 
 const Application: React.FC = () => {
   return (
-    <Router>
-      <GlobalStyle />
-      <SoccerAppWrapper>
-        <StyledAppBar position="static" color="default">
-          <Toolbar>
-            <NavLink to="/">Planning Equipe Soccer 5</NavLink>
-            <NavLink to="/agenda">Agenda</NavLink>
-            <NavLink to="/players">Players</NavLink>
-          </Toolbar>
-        </StyledAppBar>
-        <Content>
-          <Routes>
-            <Route path="/" element={<Season />} />
-            <Route path="/agenda" element={<Agenda />} />
-            <Route path="/players" element={<Players />} />
-          </Routes>
-        </Content>
-      </SoccerAppWrapper>
-    </Router>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <GlobalStyle />
+        <SoccerAppWrapper>
+          <StyledAppBar position="static" color="default">
+            <Toolbar>
+              <NavLink to="/">Planning Equipe Soccer 5</NavLink>
+              <NavLink to="/agenda">Agenda</NavLink>
+              <NavLink to="/players">Players</NavLink>
+            </Toolbar>
+          </StyledAppBar>
+          <Content>
+            <Routes>
+              <Route path="/" element={<Season />} />
+              <Route path="/agenda" element={<Agenda />} />
+              <Route path="/players" element={<Players />} />
+            </Routes>
+          </Content>
+        </SoccerAppWrapper>
+      </Router>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 };
 

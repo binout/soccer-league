@@ -1,10 +1,10 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components";
 import Button from "@mui/material/Button";
 
 import moment from "moment";
-import axios from "axios";
 import { Match, MatchToPlan } from "./types";
+import { useMatches, useMatchesToPlan, useSubstitutePlayer, usePlanMatch } from "./hooks/useQueries";
 
 interface ScheduleMatchProps {
   matchType: 'friendly' | 'league';
@@ -37,45 +37,26 @@ const Title = styled.h3`
 `;
 
 const ScheduleMatch: React.FC<ScheduleMatchProps> = ({ matchType }) => {
-  const [scheduledMatches, setScheduledMatches] = useState<Match[]>([]);
-  const [matchesList, setMatchesList] = useState<MatchToPlan[]>([]);
-  const [updateToggle, setUpdateToggle] = useState<boolean>(false);
-  const [matchToPlanCount, setMatchToPlanCount] = useState<number>(0);
+  // React Query hooks
+  const { data: scheduledMatches = [], isLoading: matchesLoading, error: matchesError } = useMatches(matchType);
+  const { data: matchesList = [], isLoading: matchesToPlanLoading, error: matchesToPlanError } = useMatchesToPlan(matchType);
+  
+  const substitutePlayerMutation = useSubstitutePlayer();
+  const planMatchMutation = usePlanMatch();
 
-  useEffect(() => {
-    async function fetchData() {
-      const result = await axios.get<Match[]>(
-        `/rest/seasons/current/matches/${matchType}/next`
-      );
-      setScheduledMatches(result.data);
-    }
-
-    fetchData();
-  }, [updateToggle, matchType]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const result = await axios.get<MatchToPlan[]>(
-        `rest/seasons/current/matches/${matchType}/to-plan`
-      );
-      setMatchesList(result.data);
-      setMatchToPlanCount(result.data.length);
-    }
-
-    fetchData();
-  }, [matchToPlanCount, matchType]);
-
-  const handleSubstitute = async (date: string, player: string) => {
-    await axios.delete(
-      `/rest/seasons/current/matches/${matchType}/${date}/players/${player}`
-    );
-    setUpdateToggle(!updateToggle);
+  const handleSubstitute = (date: string, player: string) => {
+    substitutePlayerMutation.mutate({
+      matchType,
+      date,
+      playerId: player
+    });
   };
 
-  const planHanlder = async (date: string) => {
-    await axios.put(`/rest/seasons/current/matches/${matchType}/${date}`);
-    setUpdateToggle(!updateToggle);
-    setMatchToPlanCount(matchToPlanCount - 1);
+  const planHanlder = (date: string) => {
+    planMatchMutation.mutate({
+      matchType,
+      date
+    });
   };
 
   const intersperse = (arr: string[], sep: string): (string | string[])[] => {
@@ -84,6 +65,14 @@ const ScheduleMatch: React.FC<ScheduleMatchProps> = ({ matchType }) => {
     }
     return arr.slice(1).reduce((xs, x, i) => xs.concat([sep, x]), [arr[0]]);
   };
+
+  if (matchesLoading || matchesToPlanLoading) {
+    return <div>Loading matches...</div>;
+  }
+
+  if (matchesError || matchesToPlanError) {
+    return <div>Error loading matches</div>;
+  }
 
   return (
     <Fragment>

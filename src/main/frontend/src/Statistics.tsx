@@ -1,8 +1,8 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components";
 import { grey } from "@mui/material/colors";
-import axios from "axios";
 import { StatisticsData } from "./types";
+import { useSeasonStats } from "./hooks/useQueries";
 
 const StatisticsHeader = styled.div`
   padding-top: 15px;
@@ -40,16 +40,15 @@ const LineByPlayer = styled.div`
 `;
 
 const Statistics: React.FC = () => {
-  const [stats, setStats] = useState<StatisticsData[]>([]);
+  const { data: stats = [], isLoading, error } = useSeasonStats();
 
-  useEffect(() => {
-    async function fetchData() {
-      const result = await axios.get<StatisticsData[]>("/rest/seasons/current/stats");
-      setStats(result.data);
-    }
+  if (isLoading) {
+    return <div>Loading statistics...</div>;
+  }
 
-    fetchData();
-  }, []);
+  if (error) {
+    return <div>Error loading statistics</div>;
+  }
 
   return (
     <Fragment>

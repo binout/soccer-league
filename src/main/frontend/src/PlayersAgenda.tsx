@@ -1,13 +1,13 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import styled from "styled-components";
 import Checkbox from "@mui/material/Checkbox";
-import axios from "axios";
 // Using HTML5 date input instead of deprecated @mui/lab DatePicker
 import { media } from "./style";
 import moment from "moment";
-import { Player, MatchDate } from "./types";
+import { Player, type MatchDate } from "./types";
+import { useMatchDates, usePlayers, useLeaguePlayers, useCreateMatchDate, usePlayerPresence } from "./hooks/useQueries";
 
 interface PlayersAgendaProps {
   matchType: 'friendly' | 'league';
@@ -79,50 +79,51 @@ const AddBtn = styled(Button)`
 
 const PlayersAgenda: React.FC<PlayersAgendaProps> = ({ matchType }) => {
   const [date, setDate] = useState<Date>(new Date());
-  const [updateMatchStateToggle, setUpdateMatchStateToggle] = useState<boolean>(false);
-  const [matchDates, setMatchDates] = useState<MatchDate[]>([]);
-  const [players, setPlayers] = useState<Player[]>([]);
 
-  useEffect(() => {
-    const fetchMatchDates = async () => {
-      const result = await axios.get<MatchDate[]>(`/rest/match-dates/${matchType}/next`);
-      setMatchDates(result.data);
-    };
-    fetchMatchDates();
-  }, [updateMatchStateToggle, matchType]);
+  // React Query hooks
+  const { data: matchDates = [], isLoading: matchDatesLoading, error: matchDatesError } = useMatchDates(matchType);
+  const { data: allPlayers = [], isLoading: allPlayersLoading, error: allPlayersError } = usePlayers();
+  const { data: leaguePlayers = [], isLoading: leaguePlayersLoading, error: leaguePlayersError } = useLeaguePlayers();
+  
+  const createMatchDateMutation = useCreateMatchDate();
+  const playerPresenceMutations = usePlayerPresence();
 
-  useEffect(() => {
-    const fetchPlayers = async () => {
-      if (matchType === "friendly") {
-        const result = await axios.get<Player[]>("/rest/players");
-        setPlayers(result.data);
-      } else {
-        const result = await axios.get<Player[]>("/rest/players/league");
-        setPlayers(result.data);
-      }
-    };
-    fetchPlayers();
-  }, [matchType]);
+  // Select the right players based on match type
+  const players = matchType === 'friendly' ? allPlayers : leaguePlayers;
+  const playersLoading = matchType === 'friendly' ? allPlayersLoading : leaguePlayersLoading;
+  const playersError = matchType === 'friendly' ? allPlayersError : leaguePlayersError;
 
   const handleOnCheck = async (date: string, player: string, checked: boolean) => {
     if (checked) {
-      await axios.put(
-        `/rest/match-dates/${matchType}/${date}/players/${player}`
-      );
-      setUpdateMatchStateToggle(!updateMatchStateToggle);
+      playerPresenceMutations.add.mutate({
+        matchType,
+        date,
+        playerId: player
+      });
     } else {
-      await axios.delete(
-        `/rest/match-dates/${matchType}/${date}/players/${player}`
-      );
-      setUpdateMatchStateToggle(!updateMatchStateToggle);
+      playerPresenceMutations.remove.mutate({
+        matchType,
+        date,
+        playerId: player
+      });
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const newMatchDate = moment(date).format("YYYY-MM-DD");
-    await axios.put(`/rest/match-dates/${matchType}/${newMatchDate}`);
-    setUpdateMatchStateToggle(!updateMatchStateToggle);
+    createMatchDateMutation.mutate({
+      matchType,
+      date: newMatchDate
+    });
   };
+
+  if (matchDatesLoading || playersLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (matchDatesError || playersError) {
+    return <div>Error loading data</div>;
+  }
 
   return (
     <Fragment>
@@ -171,7 +172,6 @@ const PlayersAgenda: React.FC<PlayersAgendaProps> = ({ matchType }) => {
                   return (
                     <span key={`checkbox-${matchDate.date}-${player.name}`}>
                       <Checkbox
-                        type="checkbox"
                         checked={matchDate.presents.includes(player.name)}
                         onChange={(evt, checked) =>
                           handleOnCheck(matchDate.date, player.name, checked)

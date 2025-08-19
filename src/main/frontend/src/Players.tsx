@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-import axios from "axios";
 import { grey } from "@mui/material/colors";
 import { media } from "./style";
 import { PlayerStats } from "./types";
+import { usePlayersStats } from "./hooks/useQueries";
 
 const PlayersWrapper = styled.div`
   display: flex;
@@ -54,17 +54,29 @@ const Note = styled.div`
 `;
 
 const Players: React.FC = () => {
-  const [players, setPlayers] = useState<PlayerStats[]>([]);
-
-  useEffect(() => {
-    const fetchPlayers = async () => {
-      const result = await axios.get<PlayerStats[]>("/rest/players-stats");
-      setPlayers(result.data);
-    };
-    fetchPlayers();
-  }, []);
+  const { data: players = [], isLoading, error } = usePlayersStats();
 
   const nbLeaguePlayers = players.filter((p: PlayerStats) => p.playerLeague).length;
+
+  if (isLoading) {
+    return (
+      <PlayersWrapper>
+        <TitleWrapper>
+          <Title>Loading players...</Title>
+        </TitleWrapper>
+      </PlayersWrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <PlayersWrapper>
+        <TitleWrapper>
+          <Title>Error loading players</Title>
+        </TitleWrapper>
+      </PlayersWrapper>
+    );
+  }
 
   return (
     <PlayersWrapper>

@@ -1,6 +1,5 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, Fragment } from "react";
 import styled from "styled-components";
-import axios from "axios";
 
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -9,6 +8,7 @@ import { grey } from "@mui/material/colors";
 import ScheduleMatch from "./ScheduleMatch.tsx";
 import Statistics from "./Statistics.tsx";
 import { Season as SeasonType } from "./types";
+import { useCurrentSeason } from "./hooks/useQueries";
 
 const TabsContentWrapper = styled.div`
   display: flex;
@@ -30,20 +30,20 @@ const Title = styled.h2`
 `;
 
 const Season: React.FC = () => {
-  const [season, setSeason] = useState<SeasonType>({ name: "" });
   const [selectedTabValue, setSelectedTabValue] = useState<number>(0);
-
-  useEffect(() => {
-    const fetchSeasons = async () => {
-      const result = await axios<SeasonType>("/rest/seasons/current");
-      setSeason(result.data);
-    };
-    fetchSeasons();
-  }, []);
+  const { data: season, isLoading, error } = useCurrentSeason();
 
   const handleChange = (_evt: React.SyntheticEvent, value: number) => {
     setSelectedTabValue(value);
   };
+
+  if (isLoading) {
+    return <Title>Loading season...</Title>;
+  }
+
+  if (error || !season) {
+    return <Title>Error loading season</Title>;
+  }
 
   return (
     <Fragment>

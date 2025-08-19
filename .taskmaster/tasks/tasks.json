@@ -227,7 +227,7 @@
         "description": "Replace manual axios calls with React Query for improved caching, synchronization, and data fetching patterns",
         "details": "Implement TanStack Query (React Query) to modernize data fetching patterns:\n\n1. **Setup and Configuration:**\n   - Install @tanstack/react-query and @tanstack/react-query-devtools\n   - Configure QueryClient with proper defaults\n   - Add QueryClientProvider to Application root\n   - Setup React Query DevTools for development\n\n2. **API Layer Refactoring:**\n   - Create centralized API service layer with typed functions\n   - Replace direct axios calls with query/mutation hooks\n   - Implement proper error handling and loading states\n\n3. **Component Updates:**\n   - Season.tsx: useQuery for season data\n   - Players.tsx: useQuery for players statistics\n   - PlayersAgenda.tsx: useQuery for players and match dates, useMutation for updates\n   - ScheduleMatch.tsx: useQuery for matches, useMutation for planning/substitution\n   - Statistics.tsx: useQuery for statistics data\n\n4. **Advanced Features:**\n   - Implement optimistic updates for match planning\n   - Add proper cache invalidation strategies\n   - Background refetching for real-time data\n   - Error boundaries for better error handling\n\nThis will eliminate manual state management, provide automatic caching, background updates, and better loading/error states.",
         "testStrategy": "Verify all data fetching works correctly, test loading states, error handling, cache behavior, and optimistic updates",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           9
         ],
@@ -242,7 +242,7 @@
       "totalTasks": 16,
       "created": "2025-08-13T09:57:06.337Z",
       "description": "Tasks for master context",
-      "updated": "2025-08-19T19:33:53.149Z"
+      "updated": "2025-08-19T20:38:02.499Z"
     }
   }
 }
