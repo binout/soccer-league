@@ -47,43 +47,43 @@ test.describe('End-to-End User Workflows', () => {
     await page.click('a[href="/players"]');
     await page.waitForLoadState('networkidle');
     
-    // Verify players page loads with expected content
-    await expect(page.locator('h2')).toContainText('Players');
-    await expect(page.locator('h3')).toContainText('League Players');
+    // Verify players page loads with expected content (h1 for main heading, h5 for subtitle)
+    await expect(page.locator('h1')).toContainText('Players');
+    await expect(page.locator('h5')).toContainText('League Players');
     
     // Verify table headers are present
     await expect(page.locator('text=Name')).toBeVisible();
     await expect(page.locator('text=Email')).toBeVisible();
     
-    // Verify test data is displayed (using more specific selectors)
-    await expect(page.locator('span:has-text("League Goalkeeper")')).toBeVisible();
-    await expect(page.locator('span:has-text("League Player ⭐")')).toBeVisible();
-    await expect(page.locator('span:has-text("Regular Goalkeeper")')).toBeVisible();
-    await expect(page.locator('span:has-text("Regular Player")')).toBeVisible();
+    // Verify test data is displayed with new MUI Table design
+    // Use more specific selectors to avoid multiple matches
+    await expect(page.locator('tbody tr').filter({ hasText: 'League Goalkeeper' })).toBeVisible();
+    await expect(page.locator('tbody tr').filter({ hasText: 'League Player' })).toBeVisible();
+    await expect(page.locator('tbody tr').filter({ hasText: 'Regular Goalkeeper' })).toBeVisible();
+    await expect(page.locator('tbody tr').filter({ hasText: 'Regular Player' })).toBeVisible();
     
-    // Verify player icons are displayed correctly
-    // League Goalkeeper should have both ⭐ and 🥅 (note: goalkeeper icon has leading space)
-    const leagueGk = page.locator('span').filter({ hasText: 'League Goalkeeper' });
-    await expect(leagueGk).toContainText('⭐');
-    await expect(leagueGk).toContainText('🥅');
+    // Verify player icons are displayed as MUI Chips
+    // League Goalkeeper should have both chips visible (star and goalkeeper)
+    const leagueGkRow = page.locator('tr').filter({ hasText: 'League Goalkeeper' });
+    await expect(leagueGkRow.locator('.MuiChip-label:has-text("⭐")')).toBeVisible(); // Star chip
+    await expect(leagueGkRow.locator('.MuiChip-label:has-text("🥅")')).toBeVisible(); // Goalkeeper chip
     
-    // League Player should have only ⭐
-    const leaguePlayer = page.locator('span').filter({ hasText: 'League Player' }).first();
-    await expect(leaguePlayer).toContainText('⭐');
-    await expect(leaguePlayer).not.toContainText('🥅');
+    // League Player should have only star chip
+    const leaguePlayerRow = page.locator('tr').filter({ hasText: 'League Player' });
+    await expect(leaguePlayerRow.locator('.MuiChip-label:has-text("⭐")')).toBeVisible(); // Star chip
+    await expect(leaguePlayerRow.locator('.MuiChip-label:has-text("🥅")')).toHaveCount(0); // No goalkeeper chip
     
-    // Regular Goalkeeper should have only 🥅
-    const regularGk = page.locator('span').filter({ hasText: 'Regular Goalkeeper' });
-    await expect(regularGk).toContainText('🥅');
-    await expect(regularGk).not.toContainText('⭐');
+    // Regular Goalkeeper should have only goalkeeper chip
+    const regularGkRow = page.locator('tr').filter({ hasText: 'Regular Goalkeeper' });
+    await expect(regularGkRow.locator('.MuiChip-label:has-text("🥅")')).toBeVisible(); // Goalkeeper chip
+    await expect(regularGkRow.locator('.MuiChip-label:has-text("⭐")')).toHaveCount(0); // No star chip
     
-    // Regular Player should have no icons
-    const regularPlayer = page.locator('span').filter({ hasText: 'Regular Player' }).first();
-    await expect(regularPlayer).not.toContainText('⭐');
-    await expect(regularPlayer).not.toContainText('🥅');
+    // Regular Player should have no chips
+    const regularPlayerRow = page.locator('tr').filter({ hasText: 'Regular Player' });
+    await expect(regularPlayerRow.locator('.MuiChip-label')).toHaveCount(0); // No chips
     
-    // Verify league player count is correct (should show "2 League Players")
-    await expect(page.locator('h3')).toContainText('2 League Players');
+    // Verify league player count is correct (changed from h3 to h5)
+    await expect(page.locator('h5')).toContainText('2 League Players');
   });
 
   test('should view agenda and match scheduling interface', async ({ page }) => {
@@ -138,6 +138,6 @@ test.describe('End-to-End User Workflows', () => {
     await expect(page.locator('a[href="/players"]')).toBeVisible();
     await page.click('a[href="/players"]');
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('h2')).toContainText('Players');
+    await expect(page.locator('h1')).toContainText('Players');
   });
 });

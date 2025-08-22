@@ -17,7 +17,7 @@ test.describe('API Integration Tests', () => {
     expect(currentSeasonCalled).toBe(true);
     
     // Check that season data is displayed (target the heading, not the navigation link)
-    await expect(page.locator('h2:has-text("Season")')).toBeVisible();
+    await expect(page.locator('h1:has-text("Season")')).toBeVisible();
   });
 
   test('should load players from API', async ({ page }) => {
@@ -114,24 +114,33 @@ test.describe('API Integration Tests', () => {
     await page.click('a[href="/players"]');
     await page.waitForLoadState('networkidle');
 
-    // Verify API structure mapping works correctly
-    // League goalkeeper should show both icons ⭐ 🥅
-    await expect(page.locator('span', { hasText: 'Test League GK ⭐' })).toBeVisible();
-    await expect(page.locator('span', { hasText: 'Test League GK ⭐ 🥅' })).toBeVisible();
+    // Verify API structure mapping works correctly with new MUI design
+    // League goalkeeper should show name and both chip badges
+    await expect(page.locator('text=Test League GK')).toBeVisible();
     
-    // League player should show only star ⭐
-    await expect(page.locator('span', { hasText: 'Test League Player ⭐' })).toBeVisible();
+    // Find the row containing Test League GK and check for chips
+    const leagueGkRow = page.locator('tr').filter({ hasText: 'Test League GK' });
+    await expect(leagueGkRow.locator('.MuiChip-label:has-text("⭐")')).toBeVisible(); // Star chip
+    await expect(leagueGkRow.locator('.MuiChip-label:has-text("🥅")')).toBeVisible(); // Goalkeeper chip
     
-    // Regular goalkeeper should show only goalkeeper icon 🥅
-    await expect(page.locator('span', { hasText: 'Test Regular GK 🥅' })).toBeVisible();
+    // League player should show name and star chip only
+    await expect(page.locator('text=Test League Player')).toBeVisible();
+    const leaguePlayerRow = page.locator('tr').filter({ hasText: 'Test League Player' });
+    await expect(leaguePlayerRow.locator('.MuiChip-label:has-text("⭐")')).toBeVisible(); // Star chip
+    await expect(leaguePlayerRow.locator('.MuiChip-label:has-text("🥅")')).toHaveCount(0); // No goalkeeper chip
     
-    // Regular player should show no icons
-    const regularPlayer = page.locator('span', { hasText: 'Test Regular Player' });
-    await expect(regularPlayer).toBeVisible();
-    await expect(regularPlayer).not.toContainText('⭐');
-    await expect(regularPlayer).not.toContainText('🥅');
+    // Regular goalkeeper should show name and goalkeeper chip only
+    await expect(page.locator('text=Test Regular GK')).toBeVisible();
+    const regularGkRow = page.locator('tr').filter({ hasText: 'Test Regular GK' });
+    await expect(regularGkRow.locator('.MuiChip-label:has-text("🥅")')).toBeVisible(); // Goalkeeper chip
+    await expect(regularGkRow.locator('.MuiChip-label:has-text("⭐")')).toHaveCount(0); // No star chip
+    
+    // Regular player should show name with no chips
+    await expect(page.locator('text=Test Regular Player')).toBeVisible();
+    const regularPlayerRow = page.locator('tr').filter({ hasText: 'Test Regular Player' });
+    await expect(regularPlayerRow.locator('.MuiChip-label')).toHaveCount(0); // No chips
 
-    // Verify league player count is correct
-    await expect(page.locator('h3')).toContainText('2 League Players');
+    // Verify league player count is correct (changed from h3 to h5)
+    await expect(page.locator('h5')).toContainText('2 League Players');
   });
 });

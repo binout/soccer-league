@@ -1,14 +1,19 @@
 import { createTheme, ThemeOptions } from '@mui/material/styles';
 import { green } from '@mui/material/colors';
+import { designTokens } from './designTokens';
 
 // Common theme settings
 const commonTheme: ThemeOptions = {
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontWeightRegular: designTokens.fontWeight.regular,
+    fontWeightMedium: designTokens.fontWeight.medium,
+    fontWeightBold: designTokens.fontWeight.bold,
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: parseInt(designTokens.borderRadius.md),
   },
+  spacing: 8, // 8px grid system
   breakpoints: {
     values: {
       xs: 0,
@@ -18,13 +23,27 @@ const commonTheme: ThemeOptions = {
       xl: 1536,
     },
   },
+  transitions: {
+    duration: {
+      shortest: 150,
+      shorter: 200,
+      short: 250,
+      standard: 300,
+      complex: 375,
+      enteringScreen: 225,
+      leavingScreen: 195,
+    },
+  },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           textTransform: 'none',
-          fontWeight: 500,
+          fontWeight: designTokens.fontWeight.medium,
           minHeight: 44, // Touch target size
+          borderRadius: designTokens.borderRadius.md,
+          padding: designTokens.components.button.padding,
+          transition: designTokens.transition.normal,
         },
       },
     },
@@ -33,6 +52,57 @@ const commonTheme: ThemeOptions = {
         root: {
           minHeight: 44, // Touch target size
           minWidth: 44,
+          transition: designTokens.transition.fast,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: designTokens.borderRadius.lg,
+        },
+        elevation1: {
+          boxShadow: designTokens.elevation.low,
+        },
+        elevation2: {
+          boxShadow: designTokens.elevation.medium,
+        },
+        elevation3: {
+          boxShadow: designTokens.elevation.high,
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: designTokens.components.card.borderRadius,
+          padding: designTokens.components.card.padding,
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          padding: designTokens.components.table.cellPadding,
+        },
+        head: {
+          fontWeight: designTokens.components.table.headerFontWeight,
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          fontWeight: designTokens.fontWeight.medium,
+          minHeight: 48,
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          boxShadow: 'none',
         },
       },
     },

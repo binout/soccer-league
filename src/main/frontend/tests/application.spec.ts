@@ -53,6 +53,6 @@ test.describe('Application Load and Navigation Tests', () => {
     
     // Verify we're on the players page and content is loaded
     await expect(page).toHaveURL('/players');
-    await expect(page.locator('h2')).toContainText('Players');
+    await expect(page.locator('h1')).toContainText('Players');
   });
 });
