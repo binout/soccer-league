@@ -159,7 +159,7 @@
         "id": 13,
         "title": "Dark/Light Theme System",
         "description": "Add dark/light theme support with user preference toggle",
-        "status": "pending",
+        "status": "done",
         "priority": "low",
         "dependencies": [
           "12"
@@ -242,7 +242,7 @@
       "totalTasks": 16,
       "created": "2025-08-13T09:57:06.337Z",
       "description": "Tasks for master context",
-      "updated": "2025-08-22T20:05:09.801Z"
+      "updated": "2025-08-22T20:21:19.290Z"
     }
   }
 }

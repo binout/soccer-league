@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, NavLink as RouterNavLink } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import styled from "styled-components";
+import styled, { ThemeProvider as StyledThemeProvider } from "styled-components";
 import { createGlobalStyle } from "styled-components";
 import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { green } from "@mui/material/colors";
+import { useTheme as useMuiTheme } from "@mui/material/styles";
 import Players from "./Players.tsx";
 import Agenda from "./Agenda.tsx";
 import Season from "./Season.tsx";
@@ -16,8 +17,10 @@ import { Toolbar } from "@mui/material";
 import { media, responsive } from "./style";
 import { queryClient } from "./config/queryClient";
 import SwipeNavigation from "./components/SwipeNavigation";
+import { CustomThemeProvider } from "./contexts/ThemeContext";
+import ThemeToggle from "./components/ThemeToggle";
 
-const GlobalStyle = createGlobalStyle`
+const GlobalStyle = createGlobalStyle<{ theme: any }>`
   * {
     box-sizing: border-box;
   }
@@ -26,6 +29,9 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     line-height: 1.5;
+    background-color: ${props => props.theme.palette.background.default};
+    color: ${props => props.theme.palette.text.primary};
+    transition: background-color 0.3s ease, color 0.3s ease;
     
     /* Mobile-first typography */
     font-size: ${responsive.fontSize.md};
@@ -49,10 +55,11 @@ const SoccerAppWrapper = styled.div`
   margin: 0 auto;
 `;
 
-const StyledAppBar = styled(AppBar)`
+const StyledAppBar = styled(AppBar)<{ theme: any }>`
   && {
-    background-color: ${green[900]};
+    background-color: ${props => props.theme.palette.primary.main};
     margin-bottom: ${responsive.spacing.lg};
+    transition: background-color 0.3s ease;
     
     ${media.md`
       margin-bottom: ${responsive.spacing.xxl};
@@ -85,14 +92,14 @@ const MobileMenuButton = styled(IconButton)`
   }
 `;
 
-const NavigationContainer = styled.div<{ $isOpen: boolean }>`
+const NavigationContainer = styled.div<{ $isOpen: boolean; theme: any }>`
   /* Mobile: overlay menu */
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: ${green[900]};
+  background-color: ${props => props.theme.palette.primary.main};
   z-index: 1300;
   display: flex;
   flex-direction: column;
@@ -100,7 +107,7 @@ const NavigationContainer = styled.div<{ $isOpen: boolean }>`
   align-items: center;
   gap: ${responsive.spacing.lg};
   transform: translateX(${props => props.$isOpen ? '0' : '-100%'});
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, background-color 0.3s ease;
   
   ${media.sm`
     /* Desktop: horizontal navigation - always visible */
@@ -230,10 +237,11 @@ const Content = styled.div`
   `}
 `;
 
-const Application: React.FC = () => {
+const ApplicationContent: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const firstMenuLinkRef = React.useRef<HTMLAnchorElement>(null);
+  const muiTheme = useMuiTheme();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -277,77 +285,92 @@ const Application: React.FC = () => {
   }, [mobileMenuOpen]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router>
-        <GlobalStyle />
-        <SoccerAppWrapper>
-          <StyledAppBar position="static" color="default">
-            <StyledToolbar>
-              <BrandLink to="/" onClick={handleNavLinkClick}>
-                Planning Equipe Soccer 5
-              </BrandLink>
-              <MobileMenuButton
-                ref={menuButtonRef}
-                onClick={toggleMobileMenu}
-                aria-label="Toggle navigation menu"
-                aria-expanded={mobileMenuOpen}
-                aria-controls="navigation-menu"
-              >
-                <MenuIcon />
-              </MobileMenuButton>
-              
-              <NavigationContainer 
-                $isOpen={mobileMenuOpen}
-                role="navigation"
-                aria-label="Navigation menu"
-                onKeyDown={handleKeyDown}
-                id="navigation-menu"
-              >
-                <MobileMenuHeader>
-                  <IconButton 
-                    onClick={closeMobileMenu}
-                    aria-label="Close navigation menu"
-                    sx={{ color: 'white', padding: '0.5rem' }}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </MobileMenuHeader>
+    <StyledThemeProvider theme={muiTheme}>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <GlobalStyle theme={muiTheme} />
+          <SoccerAppWrapper>
+            <StyledAppBar position="static" color="default" theme={muiTheme}>
+              <StyledToolbar>
+                <BrandLink to="/" onClick={handleNavLinkClick}>
+                  Planning Equipe Soccer 5
+                </BrandLink>
                 
-                <StyledNavLink 
-                  ref={firstMenuLinkRef}
-                  to="/" 
-                  onClick={handleNavLinkClick}
+                <NavigationContainer 
+                  $isOpen={mobileMenuOpen}
+                  theme={muiTheme}
+                  role="navigation"
+                  aria-label="Navigation menu"
+                  onKeyDown={handleKeyDown}
+                  id="navigation-menu"
                 >
-                  Season
-                </StyledNavLink>
-                <StyledNavLink 
-                  to="/agenda" 
-                  onClick={handleNavLinkClick}
+                  <MobileMenuHeader>
+                    <IconButton 
+                      onClick={closeMobileMenu}
+                      aria-label="Close navigation menu"
+                      sx={{ color: 'white', padding: '0.5rem' }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </MobileMenuHeader>
+                  
+                  <StyledNavLink 
+                    ref={firstMenuLinkRef}
+                    to="/" 
+                    onClick={handleNavLinkClick}
+                  >
+                    Season
+                  </StyledNavLink>
+                  <StyledNavLink 
+                    to="/agenda" 
+                    onClick={handleNavLinkClick}
+                  >
+                    Agenda
+                  </StyledNavLink>
+                  <StyledNavLink 
+                    to="/players" 
+                    onClick={handleNavLinkClick}
+                  >
+                    Players
+                  </StyledNavLink>
+                </NavigationContainer>
+                
+                <div style={{ marginLeft: 'auto' }}>
+                  <ThemeToggle />
+                </div>
+                <MobileMenuButton
+                  ref={menuButtonRef}
+                  onClick={toggleMobileMenu}
+                  aria-label="Toggle navigation menu"
+                  aria-expanded={mobileMenuOpen}
+                  aria-controls="navigation-menu"
                 >
-                  Agenda
-                </StyledNavLink>
-                <StyledNavLink 
-                  to="/players" 
-                  onClick={handleNavLinkClick}
-                >
-                  Players
-                </StyledNavLink>
-              </NavigationContainer>
-            </StyledToolbar>
-          </StyledAppBar>
-          <Content>
-            <SwipeNavigation>
-              <Routes>
-                <Route path="/" element={<Season />} />
-                <Route path="/agenda" element={<Agenda />} />
-                <Route path="/players" element={<Players />} />
-              </Routes>
-            </SwipeNavigation>
-          </Content>
-        </SoccerAppWrapper>
-      </Router>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+                  <MenuIcon />
+                </MobileMenuButton>
+              </StyledToolbar>
+            </StyledAppBar>
+            <Content>
+              <SwipeNavigation>
+                <Routes>
+                  <Route path="/" element={<Season />} />
+                  <Route path="/agenda" element={<Agenda />} />
+                  <Route path="/players" element={<Players />} />
+                </Routes>
+              </SwipeNavigation>
+            </Content>
+          </SoccerAppWrapper>
+        </Router>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </StyledThemeProvider>
+  );
+};
+
+const Application: React.FC = () => {
+  return (
+    <CustomThemeProvider>
+      <ApplicationContent />
+    </CustomThemeProvider>
   );
 };
 
