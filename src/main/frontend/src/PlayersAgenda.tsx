@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import styled from "styled-components";
 import Checkbox from "@mui/material/Checkbox";
 // Using HTML5 date input instead of deprecated @mui/lab DatePicker
-import { media } from "./style";
+import { media, responsive } from "./style";
 import moment from "moment";
 import { Player, type MatchDate } from "./types";
 import { useMatchDates, usePlayers, useLeaguePlayers, useCreateMatchDate, usePlayerPresence } from "./hooks/useQueries";
@@ -18,24 +18,39 @@ interface BadgeProps {
 }
 
 const Badge = styled.div<BadgeProps>`
-  width: 20px;
-  height: 15px;
+  min-width: 24px;
+  min-height: 20px;
   margin-left: 10px;
-  font-size: 10px;
-  border-radius: 10px;
+  font-size: 11px;
+  border-radius: 12px;
   background-color: ${props => (props.canBePlanned ? "#2e7d32" : "#ffc107")};
   text-align: center;
-  padding-top: 2px;
+  padding: 4px 6px;
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
 `;
 
 const DatePickerWrapper = styled.div`
   margin-left: 15px;
+  display: flex;
+  align-items: center;
+  gap: ${responsive.spacing.md};
+  flex-wrap: wrap;
+  
+  ${media.sm`
+    flex-wrap: nowrap;
+  `}
 `;
+
 const PlayersPlanning = styled.div`
   margin-top: 30px;
   margin-left: 15px;
   overflow-y: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 `;
 interface GridProps {
   column?: number;
@@ -48,11 +63,20 @@ const PlayerLine = styled.div<GridProps>`
       ? `[first] 200px repeat(${props.column}, 200px)`
       : `200px 200px`};
   align-items: center;
-  grid-auto-rows: 35px;
+  grid-auto-rows: 50px; /* Increased height for better touch targets */
+  min-height: ${responsive.touchTarget};
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  
   ${media.phone`
-    grid-template-columns: ${(props: GridProps) => props.column ? `[first] 80px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
+    grid-template-columns: ${(props: GridProps) => props.column ? `[first] 120px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
     grid-auto-rows: auto;
+    min-height: ${responsive.touchTarget};
+    padding: ${responsive.spacing.sm} 0;
   `}
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
 `;
 const PlanningHeader = styled.div<GridProps>`
   display: grid;
@@ -62,9 +86,18 @@ const PlanningHeader = styled.div<GridProps>`
       : `200px 200px`};
   font-size: 16px;
   font-weight: bold;
+  align-items: center;
+  min-height: ${responsive.touchTarget};
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: ${responsive.spacing.sm} 0;
+  border-radius: 4px 4px 0 0;
+  margin-bottom: ${responsive.spacing.xs};
+  
   ${media.phone`
-    grid-template-columns: ${(props: GridProps) => props.column ? `[first] 80px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
-    grid-auto-rows: auto;    
+    grid-template-columns: ${(props: GridProps) => props.column ? `[first] 120px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
+    grid-auto-rows: auto;
+    font-size: ${responsive.fontSize.sm};
+    padding: ${responsive.spacing.md} 0;
   `}
 `;
 const MatchDate = styled.span`
@@ -72,8 +105,16 @@ const MatchDate = styled.span`
 `;
 const AddBtn = styled(Button)`
   && {
-    margin-top: 10px;
-    margin-left: 15px;
+    margin-top: ${responsive.spacing.sm};
+    min-height: ${responsive.touchTarget};
+    min-width: ${responsive.touchTarget};
+    padding: ${responsive.spacing.md} ${responsive.spacing.lg};
+    font-weight: 600;
+    font-size: ${responsive.fontSize.md};
+    
+    ${media.sm`
+      margin-top: 0;
+    `}
   }
 `;
 
@@ -176,6 +217,18 @@ const PlayersAgenda: React.FC<PlayersAgendaProps> = ({ matchType }) => {
                         onChange={(evt, checked) =>
                           handleOnCheck(matchDate.date, player.name, checked)
                         }
+                        sx={{
+                          padding: '1rem',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            fontSize: '1.5rem',
+                          },
+                        }}
+                        inputProps={{
+                          'aria-label': `Mark ${player.name} present for ${matchDate.date}`
+                        }}
                       />
                     </span>
                   );

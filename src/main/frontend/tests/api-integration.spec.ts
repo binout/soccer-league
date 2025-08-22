@@ -16,8 +16,8 @@ test.describe('API Integration Tests', () => {
     // Verify API call was made
     expect(currentSeasonCalled).toBe(true);
     
-    // Check that season data is displayed
-    await expect(page.locator('text=Season')).toBeVisible();
+    // Check that season data is displayed (target the heading, not the navigation link)
+    await expect(page.locator('h2:has-text("Season")')).toBeVisible();
   });
 
   test('should load players from API', async ({ page }) => {

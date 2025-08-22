@@ -28,7 +28,8 @@ test.describe('Application Load and Navigation Tests', () => {
     await page.goto('/');
     
     // Click on Season navigation link (Home page)
-    await page.click('a[href="/"]');
+    // Use more specific selector that targets the navigation link
+    await page.click('nav a[href="/"], a[href="/"]:has-text("Season")');
     
     // Verify we're on the season page (by checking URL)
     await expect(page).toHaveURL('/');

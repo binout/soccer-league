@@ -128,7 +128,13 @@ test.describe('End-to-End User Workflows', () => {
     // Verify page loads on mobile
     await expect(page.locator('body')).toBeVisible();
     
-    // Test navigation on mobile - navigation should still be accessible
+    // Test mobile navigation - hamburger menu should be visible
+    await expect(page.locator('button[aria-label="Toggle navigation menu"]')).toBeVisible();
+    
+    // Click hamburger menu to open mobile navigation
+    await page.click('button[aria-label="Toggle navigation menu"]');
+    
+    // Wait for menu to open and navigation links to be accessible
     await expect(page.locator('a[href="/players"]')).toBeVisible();
     await page.click('a[href="/players"]');
     await page.waitForLoadState('networkidle');

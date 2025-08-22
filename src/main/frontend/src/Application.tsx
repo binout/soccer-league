@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, NavLink as RouterNavLink } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import styled from "styled-components";
 import { createGlobalStyle } from "styled-components";
 import AppBar from "@mui/material/AppBar";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 import { green } from "@mui/material/colors";
 import Players from "./Players.tsx";
 import Agenda from "./Agenda.tsx";
@@ -12,6 +15,7 @@ import Season from "./Season.tsx";
 import { Toolbar } from "@mui/material";
 import { media, responsive } from "./style";
 import { queryClient } from "./config/queryClient";
+import SwipeNavigation from "./components/SwipeNavigation";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -58,13 +62,90 @@ const StyledAppBar = styled(AppBar)`
 
 const StyledToolbar = styled(Toolbar)`
   && {
-    flex-direction: column;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: ${responsive.spacing.sm};
     
     ${media.sm`
-      flex-direction: row;
+      justify-content: flex-start;
       padding: ${responsive.spacing.md};
     `}
+  }
+`;
+
+const MobileMenuButton = styled(IconButton)`
+  && {
+    color: white;
+    padding: ${responsive.spacing.sm};
+    
+    ${media.sm`
+      display: none;
+    `}
+  }
+`;
+
+const NavigationContainer = styled.div<{ $isOpen: boolean }>`
+  /* Mobile: overlay menu */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: ${green[900]};
+  z-index: 1300;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: ${responsive.spacing.lg};
+  transform: translateX(${props => props.$isOpen ? '0' : '-100%'});
+  transition: transform 0.3s ease-in-out;
+  
+  ${media.sm`
+    /* Desktop: horizontal navigation - always visible */
+    position: static;
+    background: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0;
+    transform: translateX(0) !important;
+    transition: none;
+    z-index: auto;
+    width: auto;
+    height: auto;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+  `}
+`;
+
+const MobileMenuHeader = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: ${responsive.spacing.md};
+  
+  ${media.sm`
+    display: none;
+  `}
+`;
+
+const BrandLink = styled(RouterNavLink)`
+  color: white;
+  text-decoration: none;
+  font-size: ${responsive.fontSize.lg};
+  font-weight: 600;
+  
+  ${media.sm`
+    margin-right: ${responsive.spacing.xl};
+  `}
+  
+  &:hover {
+    text-decoration: none;
+    color: white;
   }
 `;
 
@@ -73,16 +154,18 @@ const StyledNavLink = styled(RouterNavLink)`
   text-decoration: none;
   text-transform: uppercase;
   font-weight: 500;
-  transition: opacity 0.3s;
-  opacity: 0.8;
+  transition: all 0.3s ease;
+  opacity: 0.9;
   
-  /* Mobile-first: stack vertically with full width touch targets */
+  /* Mobile: large touch targets in overlay menu */
   display: block;
   width: 100%;
   text-align: center;
-  padding: ${responsive.spacing.md};
-  font-size: ${responsive.fontSize.sm};
+  padding: ${responsive.spacing.lg};
+  font-size: ${responsive.fontSize.xl};
   min-height: ${responsive.touchTarget};
+  border-radius: 8px;
+  margin: ${responsive.spacing.xs} 0;
   
   /* Small screens and up: horizontal layout */
   ${media.sm`
@@ -90,6 +173,8 @@ const StyledNavLink = styled(RouterNavLink)`
     width: auto;
     padding: ${responsive.spacing.lg} ${responsive.spacing.xl};
     font-size: ${responsive.fontSize.lg};
+    margin: 0;
+    border-radius: 4px;
   `}
 
   &:active,
@@ -99,12 +184,19 @@ const StyledNavLink = styled(RouterNavLink)`
     text-decoration: none;
     color: white;
     opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
   }
 
   &.active {
     opacity: 1;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+  }
+  
+  /* Touch feedback enhancement */
+  &:active {
+    transform: scale(0.98);
   }
 `;
 
@@ -139,6 +231,51 @@ const Content = styled.div`
 `;
 
 const Application: React.FC = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const menuButtonRef = React.useRef<HTMLButtonElement>(null);
+  const firstMenuLinkRef = React.useRef<HTMLAnchorElement>(null);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+    // Return focus to menu button after closing
+    setTimeout(() => {
+      menuButtonRef.current?.focus();
+    }, 100);
+  };
+
+  // Close menu on route change (for mobile)
+  const handleNavLinkClick = () => {
+    closeMobileMenu();
+  };
+
+  // Handle keyboard navigation for mobile menu
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      closeMobileMenu();
+    }
+  };
+
+  // Add body scroll lock when menu is open and manage focus
+  React.useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      // Focus first menu link when menu opens
+      setTimeout(() => {
+        firstMenuLinkRef.current?.focus();
+      }, 100);
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
@@ -146,17 +283,66 @@ const Application: React.FC = () => {
         <SoccerAppWrapper>
           <StyledAppBar position="static" color="default">
             <StyledToolbar>
-              <StyledNavLink to="/">Planning Equipe Soccer 5</StyledNavLink>
-              <StyledNavLink to="/agenda">Agenda</StyledNavLink>
-              <StyledNavLink to="/players">Players</StyledNavLink>
+              <BrandLink to="/" onClick={handleNavLinkClick}>
+                Planning Equipe Soccer 5
+              </BrandLink>
+              <MobileMenuButton
+                ref={menuButtonRef}
+                onClick={toggleMobileMenu}
+                aria-label="Toggle navigation menu"
+                aria-expanded={mobileMenuOpen}
+                aria-controls="navigation-menu"
+              >
+                <MenuIcon />
+              </MobileMenuButton>
+              
+              <NavigationContainer 
+                $isOpen={mobileMenuOpen}
+                role="navigation"
+                aria-label="Navigation menu"
+                onKeyDown={handleKeyDown}
+                id="navigation-menu"
+              >
+                <MobileMenuHeader>
+                  <IconButton 
+                    onClick={closeMobileMenu}
+                    aria-label="Close navigation menu"
+                    sx={{ color: 'white', padding: '0.5rem' }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </MobileMenuHeader>
+                
+                <StyledNavLink 
+                  ref={firstMenuLinkRef}
+                  to="/" 
+                  onClick={handleNavLinkClick}
+                >
+                  Season
+                </StyledNavLink>
+                <StyledNavLink 
+                  to="/agenda" 
+                  onClick={handleNavLinkClick}
+                >
+                  Agenda
+                </StyledNavLink>
+                <StyledNavLink 
+                  to="/players" 
+                  onClick={handleNavLinkClick}
+                >
+                  Players
+                </StyledNavLink>
+              </NavigationContainer>
             </StyledToolbar>
           </StyledAppBar>
           <Content>
-            <Routes>
-              <Route path="/" element={<Season />} />
-              <Route path="/agenda" element={<Agenda />} />
-              <Route path="/players" element={<Players />} />
-            </Routes>
+            <SwipeNavigation>
+              <Routes>
+                <Route path="/" element={<Season />} />
+                <Route path="/agenda" element={<Agenda />} />
+                <Route path="/players" element={<Players />} />
+              </Routes>
+            </SwipeNavigation>
           </Content>
         </SoccerAppWrapper>
       </Router>
