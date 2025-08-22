@@ -161,8 +161,10 @@ const StyledNavLink = styled(RouterNavLink)`
   text-decoration: none;
   text-transform: uppercase;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0.9;
+  position: relative;
+  overflow: hidden;
   
   /* Mobile: large touch targets in overlay menu */
   display: block;
@@ -184,6 +186,18 @@ const StyledNavLink = styled(RouterNavLink)`
     border-radius: 4px;
   `}
 
+  /* Playful hover animation */
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
   &:active,
   &:visited,
   &:focus,
@@ -192,18 +206,24 @@ const StyledNavLink = styled(RouterNavLink)`
     color: white;
     opacity: 1;
     background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
+    &:before {
+      left: 100%;
+    }
   }
 
   &.active {
     opacity: 1;
     background-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.02);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
   /* Touch feedback enhancement */
   &:active {
-    transform: scale(0.98);
+    transform: translateY(0px);
   }
 `;
 
@@ -293,7 +313,7 @@ const ApplicationContent: React.FC = () => {
             <StyledAppBar position="static" color="default" theme={muiTheme}>
               <StyledToolbar>
                 <BrandLink to="/" onClick={handleNavLinkClick}>
-                  Planning Equipe Soccer 5
+                  ⚽ Planning Equipe Soccer 5
                 </BrandLink>
                 
                 <NavigationContainer 
@@ -319,19 +339,19 @@ const ApplicationContent: React.FC = () => {
                     to="/" 
                     onClick={handleNavLinkClick}
                   >
-                    Season
+                    🏆 Season
                   </StyledNavLink>
                   <StyledNavLink 
                     to="/agenda" 
                     onClick={handleNavLinkClick}
                   >
-                    Agenda
+                    📅 Agenda
                   </StyledNavLink>
                   <StyledNavLink 
                     to="/players" 
                     onClick={handleNavLinkClick}
                   >
-                    Players
+                    👥 Players
                   </StyledNavLink>
                 </NavigationContainer>
                 

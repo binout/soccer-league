@@ -41,8 +41,17 @@ const StatsChips = styled(Box)`
 
 const StyledPaper = styled(Paper)`
   && {
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 8px 32px rgba(255, 102, 0, 0.15);
+    background: linear-gradient(135deg, ${props => props.theme.palette.background.paper} 0%, ${props => props.theme.palette.background.default} 100%);
+    border: 1px solid ${props => props.theme.palette.primary.light}20;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(255, 102, 0, 0.2);
+    }
   }
 `;
 
@@ -65,9 +74,9 @@ const Players: React.FC = () => {
     return (
       <PlayersContainer>
         <Box display="flex" alignItems="center" gap={2}>
-          <CircularProgress size={24} />
+          <CircularProgress size={32} sx={{ color: 'primary.main' }} />
           <Typography variant="h4" component="h1">
-            Loading players...
+            👥 Loading players...
           </Typography>
         </Box>
       </PlayersContainer>
@@ -87,11 +96,23 @@ const Players: React.FC = () => {
   return (
     <PlayersContainer>
       <HeaderBox>
-        <Typography variant="h4" component="h1" fontWeight={600}>
-          {players.length} Players
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          fontWeight={600}
+          sx={{
+            background: 'linear-gradient(135deg, #ff6600 0%, #ff8533 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            textAlign: 'center',
+            mb: 1
+          }}
+        >
+          👥 {players.length} Players
         </Typography>
         <Typography variant="h5" color="text.secondary">
-          {nbLeaguePlayers} League Players
+          ⭐ {nbLeaguePlayers} League Players
         </Typography>
         
         <StatsChips>
@@ -99,11 +120,31 @@ const Players: React.FC = () => {
             label="⭐ League Player" 
             variant="outlined" 
             size="small"
+            sx={{ 
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              '&:hover': { 
+                backgroundColor: 'primary.light',
+                color: 'white',
+                transform: 'scale(1.05)'
+              },
+              transition: 'all 0.2s ease'
+            }}
           />
           <Chip 
             label="🥅 Goalkeeper" 
             variant="outlined" 
             size="small"
+            sx={{ 
+              borderColor: 'secondary.main',
+              color: 'secondary.main',
+              '&:hover': { 
+                backgroundColor: 'secondary.light',
+                color: 'white',
+                transform: 'scale(1.05)'
+              },
+              transition: 'all 0.2s ease'
+            }}
           />
         </StatsChips>
       </HeaderBox>
@@ -155,6 +196,15 @@ const Players: React.FC = () => {
                             size="small" 
                             color="primary"
                             variant="filled"
+                            sx={{
+                              fontWeight: 'bold',
+                              boxShadow: '0 2px 8px rgba(255, 102, 0, 0.3)',
+                              '&:hover': {
+                                transform: 'scale(1.1)',
+                                boxShadow: '0 4px 12px rgba(255, 102, 0, 0.4)'
+                              },
+                              transition: 'all 0.2s ease'
+                            }}
                           />
                         )}
                         {player.isGoalkeeper && (
@@ -163,6 +213,15 @@ const Players: React.FC = () => {
                             size="small" 
                             color="secondary"
                             variant="filled"
+                            sx={{
+                              fontWeight: 'bold',
+                              boxShadow: '0 2px 8px rgba(26, 26, 26, 0.3)',
+                              '&:hover': {
+                                transform: 'scale(1.1)',
+                                boxShadow: '0 4px 12px rgba(26, 26, 26, 0.4)'
+                              },
+                              transition: 'all 0.2s ease'
+                            }}
                           />
                         )}
                       </PlayerNameCell>

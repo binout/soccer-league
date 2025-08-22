@@ -115,20 +115,31 @@ export const lightTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: green[900],
-      light: green[700],
-      dark: green[900],
+      main: '#ff6600', // Urban Soccer orange
+      light: '#ff8533',
+      dark: '#cc5200',
     },
     secondary: {
-      main: green[600],
+      main: '#1a1a1a', // Black
+      light: '#333333',
+      dark: '#000000',
+    },
+    success: {
+      main: '#ff6600', // Orange for success
+    },
+    warning: {
+      main: '#ff9800', // Warning orange
+    },
+    error: {
+      main: '#d32f2f', // Red for errors
     },
     background: {
-      default: '#ffffff',
-      paper: '#f5f5f5',
+      default: '#ffffff', // Pure white
+      paper: '#fafafa', // Very light gray
     },
     text: {
-      primary: '#333333',
-      secondary: '#666666',
+      primary: '#1a1a1a', // Black
+      secondary: '#666666', // Gray
     },
   },
 });
@@ -139,20 +150,31 @@ export const darkTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: green[400],
-      light: green[300],
-      dark: green[600],
+      main: '#ff8533', // Lighter orange for dark mode
+      light: '#ffad66',
+      dark: '#ff6600',
     },
     secondary: {
-      main: green[300],
+      main: '#f5f5f5', // Light gray for dark mode
+      light: '#ffffff',
+      dark: '#e0e0e0',
+    },
+    success: {
+      main: '#ff8533',
+    },
+    warning: {
+      main: '#ffb74d',
+    },
+    error: {
+      main: '#f44336',
     },
     background: {
-      default: '#121212',
-      paper: '#1e1e1e',
+      default: '#1a1a1a', // Black
+      paper: '#2d2d2d', // Dark gray
     },
     text: {
-      primary: '#ffffff',
-      secondary: '#cccccc',
+      primary: '#ffffff', // White
+      secondary: '#cccccc', // Light gray
     },
   },
 });

@@ -41,8 +41,8 @@ const Agenda: React.FC = () => {
             indicatorColor="primary"
             textColor="primary"
           >
-            <Tab label="Friendly" />
-            <Tab label="League" />
+            <Tab label="⚽ Friendly" />
+            <Tab label="🏁 League" />
           </Tabs>
         </AppBar>
         <TabContent>
