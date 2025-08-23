@@ -14,23 +14,34 @@ interface PlayersAgendaProps {
 }
 
 interface BadgeProps {
-  canBePlanned: boolean;
+  isCanBePlanned: boolean;
 }
 
 const Badge = styled.div<BadgeProps>`
-  min-width: 24px;
-  min-height: 20px;
-  margin-left: 10px;
-  font-size: 11px;
-  border-radius: 12px;
-  background-color: ${props => (props.canBePlanned ? "#2e7d32" : "#ffc107")};
+  min-width: 28px;
+  min-height: 24px;
+  margin-left: 8px;
+  font-size: 12px;
+  border-radius: 14px;
+  background-color: ${props => (props.isCanBePlanned ? "#2e7d32" : "#ffc107")};
   text-align: center;
-  padding: 4px 6px;
+  padding: 6px 8px;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  
+  ${media.phone`
+    min-width: 20px;
+    min-height: 18px;
+    font-size: 9px;
+    padding: 2px 4px;
+    margin-left: 2px;
+    border-radius: 8px;
+  `}
 `;
 
 const DatePickerWrapper = styled.div`
@@ -48,9 +59,17 @@ const DatePickerWrapper = styled.div`
 const PlayersPlanning = styled.div`
   margin-top: 30px;
   margin-left: 15px;
+  margin-right: 15px;
   overflow-y: hidden;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  width: calc(100% - 30px);
+  
+  ${media.phone`
+    margin-left: 8px;
+    margin-right: 8px;
+    width: calc(100% - 16px);
+  `}
 `;
 interface GridProps {
   column?: number;
@@ -60,18 +79,39 @@ const PlayerLine = styled.div<GridProps>`
   display: grid;
   grid-template-columns: ${props =>
     props.column
-      ? `[first] 200px repeat(${props.column}, 200px)`
-      : `200px 200px`};
+      ? `[first] 200px repeat(${props.column}, 240px)`
+      : `200px 240px`};
   align-items: center;
   grid-auto-rows: 50px; /* Increased height for better touch targets */
   min-height: ${responsive.touchTarget};
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   
+  & > span:first-child {
+    padding-left: ${responsive.spacing.md};
+  }
+  
+  & > span:not(:first-child) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: ${responsive.spacing.md};
+    padding-right: ${responsive.spacing.md};
+  }
+  
   ${media.phone`
-    grid-template-columns: ${(props: GridProps) => props.column ? `[first] 120px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
+    grid-template-columns: ${(props: GridProps) => props.column ? `[first] 120px repeat(${props.column}, minmax(80px, 1fr))`: `120px minmax(80px, 1fr)`};
     grid-auto-rows: auto;
     min-height: ${responsive.touchTarget};
     padding: ${responsive.spacing.sm} 0;
+    
+    & > span:first-child {
+      padding-left: ${responsive.spacing.sm};
+    }
+    
+    & > span:not(:first-child) {
+      padding-left: ${responsive.spacing.xs};
+      padding-right: ${responsive.spacing.xs};
+    }
   `}
   
   &:hover {
@@ -82,8 +122,8 @@ const PlanningHeader = styled.div<GridProps>`
   display: grid;
   grid-template-columns: ${props =>
     props.column
-      ? `[first] 200px repeat(${props.column}, 200px)`
-      : `200px 200px`};
+      ? `[first] 200px repeat(${props.column}, 240px)`
+      : `200px 240px`};
   font-size: 16px;
   font-weight: bold;
   align-items: center;
@@ -92,16 +132,50 @@ const PlanningHeader = styled.div<GridProps>`
   padding: ${responsive.spacing.sm} 0;
   border-radius: 4px 4px 0 0;
   margin-bottom: ${responsive.spacing.xs};
+  width: 100%;
+  min-width: max-content;
+  
+  & > span:first-child {
+    padding-left: ${responsive.spacing.md};
+  }
+  
+  & > span:not(:first-child) {
+    padding-left: ${responsive.spacing.md};
+    padding-right: ${responsive.spacing.md};
+  }
   
   ${media.phone`
-    grid-template-columns: ${(props: GridProps) => props.column ? `[first] 120px repeat(${props.column}, 1fr)`: `repeat(2, 1fr)`};
+    grid-template-columns: ${(props: GridProps) => props.column ? `[first] 120px repeat(${props.column}, minmax(80px, 1fr))`: `120px minmax(80px, 1fr)`};
     grid-auto-rows: auto;
     font-size: ${responsive.fontSize.sm};
     padding: ${responsive.spacing.md} 0;
+    
+    & > span:first-child {
+      padding-left: ${responsive.spacing.sm};
+    }
+    
+    & > span:not(:first-child) {
+      padding-left: ${responsive.spacing.xs};
+      padding-right: ${responsive.spacing.xs};
+    }
   `}
 `;
 const MatchDate = styled.span`
-  display: inline-flex;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 4px;
+  min-width: 0;
+  width: 100%;
+  
+  ${media.phone`
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-align: center;
+    justify-content: center;
+  `}
 `;
 const AddBtn = styled(Button)`
   && {
@@ -194,7 +268,7 @@ const PlayersAgenda: React.FC<PlayersAgendaProps> = ({ matchType }) => {
               return (
                 <MatchDate key={`header-${matchDate.date}`}>
                   {matchDate.date}
-                  <Badge canBePlanned={matchDate.canBePlanned}>
+                  <Badge isCanBePlanned={matchDate.isCanBePlanned}>
                     {matchDate.presents.length}
                   </Badge>
                 </MatchDate>

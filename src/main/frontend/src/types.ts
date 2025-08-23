@@ -21,7 +21,7 @@ export interface Season {
 export interface MatchDate {
   date: string;
   presents: string[];
-  canBePlanned: boolean;
+  isCanBePlanned: boolean;
 }
 
 export interface Match {
