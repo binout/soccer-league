@@ -63,21 +63,19 @@ fun MatchDate.toRestModel(): RestMatchDate {
 
 data class RestPlayer(
         var name: String,
-        var email: String? = null,
         var isPlayerLeague: Boolean = false,
         var isGoalkeeper: Boolean = false)
 
-fun Player.toRestModel() = RestPlayer(name.value, email, isPlayerLeague, isGoalkeeper)
+fun Player.toRestModel() = RestPlayer(name.value, isPlayerLeague, isGoalkeeper)
 
 data class RestPlayerStat(
         var name: String,
-        var email: String? = null,
         var isPlayerLeague: Boolean = false,
         var isGoalkeeper: Boolean = false,
         var nbSeasons: Int,
         var nbMatches: Int)
 
-fun PlayerStats.toRestModel() = RestPlayerStat(player.name.value, player.email, player.isPlayerLeague, player.isGoalkeeper, nbSeasons, nbMatches)
+fun PlayerStats.toRestModel() = RestPlayerStat(player.name.value, player.isPlayerLeague, player.isGoalkeeper, nbSeasons, nbMatches)
 
 
 data class RestSeason(var name: String)

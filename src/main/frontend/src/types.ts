@@ -2,12 +2,10 @@
 
 export interface Player {
   name: string;
-  email?: string;
 }
 
 export interface PlayerStats {
   name: string;
-  email: string;
   isPlayerLeague: boolean;
   isGoalkeeper: boolean;
   nbSeasons: number;

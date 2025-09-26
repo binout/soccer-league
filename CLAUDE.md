@@ -19,6 +19,7 @@ Soccer League is a web application for managing soccer match planning between fr
 - **Development build**: `npm run dev-build`
 - **Production build**: `npm run prod-build`
 - **Inject test data**: `npm run inject-data`
+- **Run frontend tests**: `mvn verify -Pintegration-tests`
 
 ### Development Workflow
 1. Run backend from IDE (IntelliJ recommended)

@@ -53,7 +53,6 @@ test.describe('End-to-End User Workflows', () => {
     
     // Verify table headers are present
     await expect(page.locator('text=Name')).toBeVisible();
-    await expect(page.locator('text=Email')).toBeVisible();
     
     // Verify test data is displayed with new MUI Table design
     // Use more specific selectors to avoid multiple matches

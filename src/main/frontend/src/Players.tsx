@@ -159,11 +159,6 @@ const Players: React.FC = () => {
                     Name
                   </Typography>
                 </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Email
-                  </Typography>
-                </TableCell>
                 {!isMobile && (
                   <TableCell align="center">
                     <Typography variant="subtitle2" fontWeight={600}>
@@ -225,11 +220,6 @@ const Players: React.FC = () => {
                           />
                         )}
                       </PlayerNameCell>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
-                        {player.email}
-                      </Typography>
                     </TableCell>
                     {!isMobile && (
                       <TableCell align="center">

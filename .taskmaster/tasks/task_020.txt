@@ -1,0 +1,37 @@
+# Task 20: Remove Email Notification Functionality
+
+**Status:** pending  
+**Priority:** medium  
+**Dependencies:** []
+
+## Description
+Remove email notification functionality (not used) and hide email field in frontend. Keep database model unchanged for backward compatibility. This involves removing SendGrid integration, email templates, and hiding email UI elements while preserving the underlying data structure.
+
+## Details
+Remove unused email notification functionality while maintaining data compatibility:
+
+1. **Backend Cleanup:**
+   - Remove SendGrid integration from infrastructure layer
+   - Remove email service implementations
+   - Remove email template files (Freemarker templates)
+   - Clean up email-related configuration
+   - Keep Player entity email field for backward compatibility
+
+2. **Frontend Changes:**
+   - Hide email field in player forms
+   - Remove email-related UI components
+   - Update player management interfaces
+   - Remove email validation logic
+
+3. **Configuration Cleanup:**
+   - Remove SENDGRID_API_KEY environment variable references
+   - Clean up email-related application properties
+   - Update documentation to reflect removed functionality
+
+IMPORTANT: Keep the email field in the database model and Player entity to ensure backward compatibility with existing data.
+
+## Test Strategy
+Verify email functionality is completely removed from UI and backend while ensuring existing player data remains intact and accessible
+
+## Subtasks
+None

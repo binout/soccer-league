@@ -31,10 +31,9 @@ class GetPlayer(private val playerRepository: PlayerRepository) {
 @Component
 class ReplacePlayer(private val playerRepository: PlayerRepository) {
 
-    fun execute(name: String, email: String?, playerLeague: Boolean?, goalkeeper: Boolean?) {
+    fun execute(name: String, playerLeague: Boolean?, goalkeeper: Boolean?) {
         val playerName = PlayerName(name)
         val player = playerRepository.byName(playerName) ?: Player(playerName)
-        email?.let { player.email = it }
         playerLeague?.let { player.isPlayerLeague = it }
         goalkeeper?.let { player.isGoalkeeper = it }
         playerRepository.add(player)

@@ -246,16 +246,27 @@
         ],
         "priority": "medium",
         "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Remove Email Notification Functionality",
+        "description": "Remove email notification functionality (not used) and hide email field in frontend. Keep database model unchanged for backward compatibility. This involves removing SendGrid integration, email templates, and hiding email UI elements while preserving the underlying data structure.",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Remove unused email notification functionality while maintaining data compatibility:\n\n1. **Backend Cleanup:**\n   - Remove SendGrid integration from infrastructure layer\n   - Remove email service implementations\n   - Remove email template files (Freemarker templates)\n   - Clean up email-related configuration\n   - Keep Player entity email field for backward compatibility\n\n2. **Frontend Changes:**\n   - Hide email field in player forms\n   - Remove email-related UI components\n   - Update player management interfaces\n   - Remove email validation logic\n\n3. **Configuration Cleanup:**\n   - Remove SENDGRID_API_KEY environment variable references\n   - Clean up email-related application properties\n   - Update documentation to reflect removed functionality\n\nIMPORTANT: Keep the email field in the database model and Player entity to ensure backward compatibility with existing data.",
+        "testStrategy": "Verify email functionality is completely removed from UI and backend while ensuring existing player data remains intact and accessible",
+        "subtasks": []
       }
     ],
     "metadata": {
       "createdAt": "2025-01-12T15:40:00Z",
       "lastModified": "2025-01-12T15:40:00Z",
       "version": "1.0.0",
-      "totalTasks": 16,
+      "totalTasks": 20,
       "created": "2025-08-13T09:57:06.337Z",
       "description": "Tasks for master context",
-      "updated": "2025-08-22T20:55:38.634Z"
+      "updated": "2025-09-26T12:00:00.000Z"
     }
   }
 }

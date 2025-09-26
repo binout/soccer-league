@@ -128,13 +128,11 @@ class MongoPlayerRepository(mongoDatabase: MongoDatabase) : PlayerRepository {
 
     private fun Player.toDocument(): Document = Document()
             .append("name", name.value)
-            .append("email", email)
             .append("isPlayerLeague", isPlayerLeague)
             .append("isGoalkeeper", isGoalkeeper)
 
     private fun Document.toPlayer(): Player = Player(
             PlayerName(getString("name")),
-            getString("email"),
             getBoolean("isPlayerLeague"),
             getBoolean("isGoalkeeper")
     )

@@ -2,181 +2,151 @@
   {
     "playerLeague": true,
     "goalkeeper": true,
-    "name": "Malinda Hickman",
-    "email": "malindahickman@dyno.com"
+    "name": "Malinda Hickman"
   },
   {
     "playerLeague": false,
     "goalkeeper": true,
-    "name": "Marta Blackburn",
-    "email": "martablackburn@dyno.com"
+    "name": "Marta Blackburn"
   },
   {
     "playerLeague": true,
     "goalkeeper": false,
-    "name": "Ila Carney",
-    "email": "ilacarney@dyno.com"
+    "name": "Ila Carney"
   },
   {
     "playerLeague": false,
     "goalkeeper": false,
-    "name": "Hollie Kelly",
-    "email": "holliekelly@dyno.com"
+    "name": "Hollie Kelly"
   },
   {
     "playerLeague": true,
     "goalkeeper": true,
-    "name": "Huber Hill",
-    "email": "huberhill@dyno.com"
+    "name": "Huber Hill"
   },
   {
     "playerLeague": true,
     "goalkeeper": true,
-    "name": "Ramos Landry",
-    "email": "ramoslandry@dyno.com"
+    "name": "Ramos Landry"
   },
   {
     "playerLeague": true,
     "goalkeeper": true,
-    "name": "Fran Buchanan",
-    "email": "franbuchanan@dyno.com"
+    "name": "Fran Buchanan"
   },
   {
     "playerLeague": false,
     "goalkeeper": true,
-    "name": "Watkins Waller",
-    "email": "watkinswaller@dyno.com"
+    "name": "Watkins Waller"
   },
   {
     "playerLeague": true,
     "goalkeeper": false,
-    "name": "Chavez Johnson",
-    "email": "chavezjohnson@dyno.com"
+    "name": "Chavez Johnson"
   },
   {
     "playerLeague": true,
     "goalkeeper": false,
-    "name": "Pruitt Hunter",
-    "email": "pruitthunter@dyno.com"
+    "name": "Pruitt Hunter"
   },
   {
     "playerLeague": false,
     "goalkeeper": true,
-    "name": "Stevens Robertson",
-    "email": "stevensrobertson@dyno.com"
+    "name": "Stevens Robertson"
   },
   {
     "playerLeague": true,
     "goalkeeper": true,
-    "name": "Haley Collier",
-    "email": "haleycollier@dyno.com"
+    "name": "Haley Collier"
   },
   {
     "playerLeague": false,
     "goalkeeper": true,
-    "name": "Shanna Bonner",
-    "email": "shannabonner@dyno.com"
+    "name": "Shanna Bonner"
   },
   {
     "playerLeague": true,
     "goalkeeper": false,
-    "name": "Riley Glass",
-    "email": "rileyglass@dyno.com"
+    "name": "Riley Glass"
   },
   {
     "playerLeague": false,
     "goalkeeper": false,
-    "name": "Ball Terrell",
-    "email": "ballterrell@dyno.com"
+    "name": "Ball Terrell"
   },
   {
     "playerLeague": true,
     "goalkeeper": false,
-    "name": "Latisha Velasquez",
-    "email": "latishavelasquez@dyno.com"
+    "name": "Latisha Velasquez"
   },
   {
     "playerLeague": false,
     "goalkeeper": true,
-    "name": "Sharlene Hooper",
-    "email": "sharlenehooper@dyno.com"
+    "name": "Sharlene Hooper"
   },
   {
     "playerLeague": true,
     "goalkeeper": true,
-    "name": "Adams Hyde",
-    "email": "adamshyde@dyno.com"
+    "name": "Adams Hyde"
   },
   {
     "playerLeague": true,
     "goalkeeper": false,
-    "name": "Puckett Dudley",
-    "email": "puckettdudley@dyno.com"
+    "name": "Puckett Dudley"
   },
   {
     "playerLeague": true,
     "goalkeeper": true,
-    "name": "Greer Hartman",
-    "email": "greerhartman@dyno.com"
+    "name": "Greer Hartman"
   },
   {
     "playerLeague": true,
     "goalkeeper": false,
-    "name": "Lindsey Randall",
-    "email": "lindseyrandall@dyno.com"
+    "name": "Lindsey Randall"
   },
   {
     "playerLeague": true,
     "goalkeeper": false,
-    "name": "Tamika Glover",
-    "email": "tamikaglover@dyno.com"
+    "name": "Tamika Glover"
   },
   {
     "playerLeague": false,
     "goalkeeper": true,
-    "name": "Carey Douglas",
-    "email": "careydouglas@dyno.com"
+    "name": "Carey Douglas"
   },
   {
     "playerLeague": false,
     "goalkeeper": true,
-    "name": "Aguirre Montgomery",
-    "email": "aguirremontgomery@dyno.com"
+    "name": "Aguirre Montgomery"
   },
   {
     "playerLeague": true,
     "goalkeeper": false,
-    "name": "Richmond Powell",
-    "email": "richmondpowell@dyno.com"
+    "name": "Richmond Powell"
   },
   {
     "playerLeague": false,
     "goalkeeper": false,
-    "name": "Short Carey",
-    "email": "shortcarey@dyno.com"
+    "name": "Short Carey"
   },
   {
     "playerLeague": true,
     "goalkeeper": true,
-    "name": "Latasha Garrison",
-    "email": "latashagarrison@dyno.com"
+    "name": "Latasha Garrison"
   },
   {
     "playerLeague": false,
     "goalkeeper": false,
-    "name": "Howell Johnston",
-    "email": "howelljohnston@dyno.com"
+    "name": "Howell Johnston"
   },
   {
     "playerLeague": false,
     "goalkeeper": true,
-    "name": "Dee Simmons",
-    "email": "deesimmons@dyno.com"
+    "name": "Dee Simmons"
   },
   {
     "playerLeague": false,
     "goalkeeper": true,
-    "name": "Little Butler",
-    "email": "littlebutler@dyno.com"
+    "name": "Little Butler"
   }
 ]
