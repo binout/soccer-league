@@ -35,7 +35,7 @@ class PlayersResource(
 
     @PutMapping("{name}")
     fun put(@PathVariable("name") name: String, @RequestBody restPlayer: RestPlayer): ResponseEntity<*> {
-        replacePlayer.execute(name, restPlayer.email, restPlayer.isPlayerLeague, restPlayer.isGoalkeeper)
+        replacePlayer.execute(name, restPlayer.isPlayerLeague, restPlayer.isGoalkeeper)
         return ResponseEntity.ok().build<Any>()
     }
 

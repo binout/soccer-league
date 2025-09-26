@@ -20,9 +20,6 @@ This project is a web app to manage a planning for soccer matches between friend
 == Build Tools
 
 * Maven + NPM (with webpack configuration)
-* Travis for continuous integration
-
-image:https://travis-ci.org/binout/soccer-league.svg?branch=master["Build Status", link="https://travis-ci.org/binout/soccer-league"]
 
 === Dev Mode
 
@@ -43,6 +40,3 @@ START_MONTH:: month of start of the season (default 10)
 
 START_DAY:: day of month of start of the season (default 1)
 
-== Demo
-
-On CleverCloud:: https://pes5.cleverapps.io/

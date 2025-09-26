@@ -10,12 +10,12 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <kotlin.version>1.2.71</kotlin.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <kotlin.version>1.9.25</kotlin.version>
         <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
 
-        <lib.spring-boot.version>2.1.3.RELEASE</lib.spring-boot.version>
+        <lib.spring-boot.version>3.2.5</lib.spring-boot.version>
     </properties>
 
     <dependencyManagement>
@@ -36,12 +36,12 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>0.0.29</version>
+                <version>1.15.1</version>
                 <configuration>
                     <workingDirectory>src/main/frontend</workingDirectory>
                     <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
-                    <nodeVersion>v8.9.4</nodeVersion>
-                    <npmVersion>6.4.1</npmVersion>
+                    <nodeVersion>v20.19.5</nodeVersion>
+                    <npmVersion>10.8.2</npmVersion>
                     <installDirectory>target</installDirectory>
                 </configuration>
                 <executions>
@@ -91,7 +91,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <jvmTarget>1.8</jvmTarget>
+                            <jvmTarget>21</jvmTarget>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
                             </sourceDirs>
@@ -103,7 +103,7 @@
                             <goal>test-compile</goal>
                         </goals>
                         <configuration>
-                            <jvmTarget>1.8</jvmTarget>
+                            <jvmTarget>21</jvmTarget>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
                             </sourceDirs>
@@ -122,7 +122,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>3.2.5</version>
             </plugin>
 
             <plugin>
@@ -140,6 +140,105 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>integration-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>cleanup-ports</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>scripts/cleanup-ports.sh</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <version>${lib.spring-boot.version}</version>
+                        <executions>
+                            <execution>
+                                <id>start-spring-boot</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <wait>1000</wait>
+                                    <maxAttempts>30</maxAttempts>
+                                    <jmxPort>9999</jmxPort>
+                                    <fork>true</fork>
+                                    <jvmArguments>
+                                        -Dcom.sun.management.jmxremote.port=9999
+                                        -Dcom.sun.management.jmxremote.authenticate=false
+                                        -Dcom.sun.management.jmxremote.ssl=false
+                                    </jvmArguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop-spring-boot</id>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                                <phase>post-integration-test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.15.1</version>
+                        <configuration>
+                            <workingDirectory>src/main/frontend</workingDirectory>
+                            <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
+                            <nodeVersion>v20.19.5</nodeVersion>
+                            <npmVersion>10.8.2</npmVersion>
+                            <installDirectory>target</installDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>playwright-install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <arguments>run playwright-install</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>playwright-test</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>integration-test</phase>
+                                <configuration>
+                                    <arguments>run test</arguments>
+                                    <environmentVariables>
+                                        <MAVEN_INTEGRATION>true</MAVEN_INTEGRATION>
+                                    </environmentVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -155,32 +254,23 @@
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>4.11.4</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.netflix.feign</groupId>
-            <artifactId>feign-core</artifactId>
-            <version>8.18.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20090211</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-            <version>2.3.20</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <!-- For Dev Mode -->
         <dependency>
             <groupId>de.bwaldvogel</groupId>
             <artifactId>mongo-java-server</artifactId>
-            <version>1.12.0</version>
+            <version>1.47.0</version>
         </dependency>
 
         <!-- Test -->

@@ -23,33 +23,30 @@ class MongoPlayerRepositoryTest {
 
         val benoit = repository.byName(PlayerName("benoit"))
         assertThat(benoit).isNotNull
-        assertThat(benoit!!.email).isNull()
-        assertThat(benoit.isPlayerLeague).isFalse()
+        assertThat(benoit!!.isPlayerLeague).isFalse()
     }
 
     @Test
     fun should_persist_league_player() {
-        val leaguePlayer = Player(name = PlayerName("benoit"), email = "mail@google.com")
+        val leaguePlayer = Player(name = PlayerName("benoit"))
         leaguePlayer.isPlayerLeague = true
         repository.add(leaguePlayer)
 
         val benoit = repository.byName(PlayerName("benoit"))
         assertThat(benoit).isNotNull
-        assertThat(benoit!!.email).isEqualTo("mail@google.com")
-        assertThat(benoit.isPlayerLeague).isTrue()
+        assertThat(benoit!!.isPlayerLeague).isTrue()
     }
 
     @Test
     fun should_persist_goalkeeper() {
-        val leaguePlayer = Player(name = PlayerName("thomas"), email = "mail@google.com")
+        val leaguePlayer = Player(name = PlayerName("thomas"))
         leaguePlayer.isPlayerLeague = true
         leaguePlayer.isGoalkeeper = true
         repository.add(leaguePlayer)
 
         val thomas = repository.byName(PlayerName("thomas"))
         assertThat(thomas).isNotNull
-        assertThat(thomas!!.email).isEqualTo("mail@google.com")
-        assertThat(thomas.isPlayerLeague).isTrue()
+        assertThat(thomas!!.isPlayerLeague).isTrue()
         assertThat(thomas.isGoalkeeper).isTrue()
     }
 
