@@ -25,7 +25,8 @@ import {
   SportsSoccer,
   People,
   PersonAdd,
-  Schedule
+  Schedule,
+  Share
 } from "@mui/icons-material";
 
 import moment from "moment";
@@ -122,6 +123,43 @@ const ScheduleMatch: React.FC<ScheduleMatchProps> = ({ matchType }) => {
     });
   };
 
+  const generateWhatsAppMessage = (match: Match) => {
+    const formattedDate = new Date(match.date).toLocaleDateString(navigator.language, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    const squadList = match.players.join('\n• ');
+    const subsText = match.subs.length > 0 ? `\n\n🔄 Substitutes:\n• ${match.subs.join('\n• ')}` : '';
+    
+    const message = `
+📅 Date: ${formattedDate}
+
+👥 List:
+• ${squadList}${subsText}
+
+`;
+
+    return message;
+  };
+
+  const handleCopyToClipboard = async (match: Match) => {
+    const message = generateWhatsAppMessage(match);
+    
+    try {
+      await navigator.clipboard.writeText(message);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = message;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+  };
+
   const intersperse = (arr: string[], sep: string): (string | string[])[] => {
     if (arr.length === 0) {
       return [];
@@ -159,11 +197,29 @@ const ScheduleMatch: React.FC<ScheduleMatchProps> = ({ matchType }) => {
             {scheduledMatches.map(match => (
               <MatchCard key={`match-${match.date}`}>
                 <CardContent>
-                  <DateChip 
-                    icon={<CalendarMonth />}
-                    label={moment(match.date).format("dddd, MMMM Do YYYY")}
-                    size="medium"
-                  />
+                  <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+                    <DateChip 
+                      icon={<CalendarMonth />}
+                      label={moment(match.date).format("dddd, MMMM Do YYYY")}
+                      size="medium"
+                    />
+                    <IconButton
+                      onClick={() => handleCopyToClipboard(match)}
+                      color="primary"
+                      sx={{
+                        backgroundColor: 'primary.light',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'primary.main',
+                          transform: 'scale(1.1)'
+                        },
+                        transition: 'all 0.2s ease'
+                      }}
+                      aria-label="Share match details"
+                    >
+                      <Share />
+                    </IconButton>
+                  </Box>
                   
                   <Box display="flex" alignItems="center" gap={1} mb={2}>
                     <People color="primary" />

@@ -257,6 +257,17 @@
         "details": "Remove unused email notification functionality while maintaining data compatibility:\n\n1. **Backend Cleanup:**\n   - Remove SendGrid integration from infrastructure layer\n   - Remove email service implementations\n   - Remove email template files (Freemarker templates)\n   - Clean up email-related configuration\n   - Keep Player entity email field for backward compatibility\n\n2. **Frontend Changes:**\n   - Hide email field in player forms\n   - Remove email-related UI components\n   - Update player management interfaces\n   - Remove email validation logic\n\n3. **Configuration Cleanup:**\n   - Remove SENDGRID_API_KEY environment variable references\n   - Clean up email-related application properties\n   - Update documentation to reflect removed functionality\n\nIMPORTANT: Keep the email field in the database model and Player entity to ensure backward compatibility with existing data.",
         "testStrategy": "Verify email functionality is completely removed from UI and backend while ensuring existing player data remains intact and accessible",
         "subtasks": []
+      },
+      {
+        "id": 21,
+        "title": "WhatsApp Share Feature for Scheduled Matches",
+        "description": "Add a copy button when a match is scheduled so the planned match can be shared by WhatsApp message to all players",
+        "details": "Implement a copy-to-clipboard button that formats match details (date, time, location, player list) into a WhatsApp-friendly message format. The button should appear after a match is successfully scheduled and copy formatted text that users can paste directly into WhatsApp.",
+        "testStrategy": "Test copy functionality across different browsers, verify message format is WhatsApp-friendly, test with various match scenarios (friendly vs league matches)",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -266,7 +277,7 @@
       "totalTasks": 20,
       "created": "2025-08-13T09:57:06.337Z",
       "description": "Tasks for master context",
-      "updated": "2025-09-26T12:00:00.000Z"
+      "updated": "2025-09-26T19:54:49.870Z"
     }
   }
 }
