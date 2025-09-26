@@ -40,7 +40,7 @@
                 <configuration>
                     <workingDirectory>src/main/frontend</workingDirectory>
                     <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
-                    <nodeVersion>v20.18.0</nodeVersion>
+                    <nodeVersion>v20.19.5</nodeVersion>
                     <npmVersion>10.8.2</npmVersion>
                     <installDirectory>target</installDirectory>
                 </configuration>
@@ -204,7 +204,7 @@
                         <configuration>
                             <workingDirectory>src/main/frontend</workingDirectory>
                             <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
-                            <nodeVersion>v20.18.0</nodeVersion>
+                            <nodeVersion>v20.19.5</nodeVersion>
                             <npmVersion>10.8.2</npmVersion>
                             <installDirectory>target</installDirectory>
                         </configuration>
