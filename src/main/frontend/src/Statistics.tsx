@@ -93,7 +93,7 @@ const Statistics: React.FC = () => {
     <StatisticsContainer>
       <SectionTitle variant="h5">
         <BarChart />
-        📊 Season Statistics
+        Season Statistics
       </SectionTitle>
 
       {/* Most Active Player(s) Highlight */}

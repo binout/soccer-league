@@ -109,7 +109,7 @@ const commonTheme: ThemeOptions = {
   },
 };
 
-// Light theme
+// Light theme (only theme available)
 export const lightTheme = createTheme({
   ...commonTheme,
   palette: {
@@ -140,41 +140,6 @@ export const lightTheme = createTheme({
     text: {
       primary: '#1a1a1a', // Black
       secondary: '#666666', // Gray
-    },
-  },
-});
-
-// Dark theme
-export const darkTheme = createTheme({
-  ...commonTheme,
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#ff8533', // Lighter orange for dark mode
-      light: '#ffad66',
-      dark: '#ff6600',
-    },
-    secondary: {
-      main: '#f5f5f5', // Light gray for dark mode
-      light: '#ffffff',
-      dark: '#e0e0e0',
-    },
-    success: {
-      main: '#ff8533',
-    },
-    warning: {
-      main: '#ffb74d',
-    },
-    error: {
-      main: '#f44336',
-    },
-    background: {
-      default: '#1a1a1a', // Black
-      paper: '#2d2d2d', // Dark gray
-    },
-    text: {
-      primary: '#ffffff', // White
-      secondary: '#cccccc', // Light gray
     },
   },
 });

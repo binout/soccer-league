@@ -32,6 +32,7 @@ import {
 import moment from "moment";
 import { Match, MatchToPlan } from "./types";
 import { useMatches, useMatchesToPlan, useSubstitutePlayer, usePlanMatch } from "./hooks/useQueries";
+import { media, responsive } from "./style";
 
 interface ScheduleMatchProps {
   matchType: 'friendly' | 'league';
@@ -40,7 +41,11 @@ interface ScheduleMatchProps {
 const MatchesContainer = styled(Box)`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: ${responsive.spacing.lg};
+
+  ${media.phone`
+    gap: ${responsive.spacing.md};
+  `}
 `;
 
 const MatchCard = styled(Card)`
@@ -81,22 +86,32 @@ const DateChip = styled(Chip)`
 const PlayersGrid = styled(Box)`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+  gap: ${responsive.spacing.md};
+  margin-top: ${responsive.spacing.md};
+
+  ${media.phone`
+    grid-template-columns: 1fr;
+    gap: ${responsive.spacing.sm};
+  `}
 `;
 
 const PlayerCard = styled(Paper)`
   && {
-    padding: 12px;
+    padding: ${responsive.spacing.sm};
     border-radius: 12px;
     background: ${props => props.theme.palette.background.paper};
     border: 1px solid ${props => props.theme.palette.divider};
     transition: all 0.2s ease;
-    
+
     &:hover {
       background: ${props => props.theme.palette.action.hover};
       transform: translateY(-1px);
     }
+
+    ${media.phone`
+      padding: ${responsive.spacing.xs};
+      border-radius: 8px;
+    `}
   }
 `;
 
@@ -124,15 +139,10 @@ const ScheduleMatch: React.FC<ScheduleMatchProps> = ({ matchType }) => {
   };
 
   const generateWhatsAppMessage = (match: Match) => {
-    const formattedDate = new Date(match.date).toLocaleDateString(navigator.language, {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    const formattedDate = moment(match.date).format("YYYY-MM-DD");
     const squadList = match.players.join('\n• ');
     const subsText = match.subs.length > 0 ? `\n\n🔄 Substitutes:\n• ${match.subs.join('\n• ')}` : '';
-    
+
     const message = `
 📅 Date: ${formattedDate}
 
@@ -190,7 +200,7 @@ const ScheduleMatch: React.FC<ScheduleMatchProps> = ({ matchType }) => {
         <Box>
           <SectionTitle variant="h5">
             <SportsSoccer />
-            ⚽ Upcoming {matchType} matches
+            Upcoming {matchType} matches
           </SectionTitle>
           
           <Stack spacing={3}>
@@ -198,9 +208,9 @@ const ScheduleMatch: React.FC<ScheduleMatchProps> = ({ matchType }) => {
               <MatchCard key={`match-${match.date}`}>
                 <CardContent>
                   <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-                    <DateChip 
+                    <DateChip
                       icon={<CalendarMonth />}
-                      label={moment(match.date).format("dddd, MMMM Do YYYY")}
+                      label={moment(match.date).format("YYYY-MM-DD")}
                       size="medium"
                     />
                     <IconButton
@@ -307,7 +317,7 @@ const ScheduleMatch: React.FC<ScheduleMatchProps> = ({ matchType }) => {
                     <Box display="flex" alignItems="center" gap={2}>
                       <CalendarMonth color="primary" />
                       <Typography variant="h6" fontWeight={600}>
-                        {moment(match.date).format("dddd, MMMM Do YYYY")}
+                        {moment(match.date).format("YYYY-MM-DD")}
                       </Typography>
                     </Box>
                     <Button

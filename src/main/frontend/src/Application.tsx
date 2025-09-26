@@ -18,7 +18,6 @@ import { media, responsive } from "./style";
 import { queryClient } from "./config/queryClient";
 import SwipeNavigation from "./components/SwipeNavigation";
 import { CustomThemeProvider } from "./contexts/ThemeContext";
-import ThemeToggle from "./components/ThemeToggle";
 
 const GlobalStyle = createGlobalStyle<{ theme: any }>`
   * {
@@ -354,10 +353,7 @@ const ApplicationContent: React.FC = () => {
                     👥 Players
                   </StyledNavLink>
                 </NavigationContainer>
-                
-                <div style={{ marginLeft: 'auto' }}>
-                  <ThemeToggle />
-                </div>
+
                 <MobileMenuButton
                   ref={menuButtonRef}
                   onClick={toggleMobileMenu}
