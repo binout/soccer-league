@@ -7,34 +7,51 @@ This project is a web app to manage a planning for soccer matches between friend
 
 == Technical Stack
 
-=== BackEnd
+=== Backend
 
-* JDK 8 / Koltin
-* Spring Boot 2
-* MongoDB
+* JDK 21 / Kotlin 1.9.25
+* Spring Boot 3.2.5
+* MongoDB with in-memory fallback for development
 
-=== FrontEnd
+=== Frontend
 
-* https://facebook.github.io/react/[react]
+* https://react.dev/[React 18]
+* https://vitejs.dev/[Vite] (build tool)
+* https://mui.com/[Material-UI]
+* https://tanstack.com/query/latest[TanStack Query] for data fetching
+* TypeScript support
+* Playwright for E2E testing
 
 == Build Tools
 
-* Maven + NPM (with webpack configuration)
+* Maven + npm (with Vite configuration)
 
-=== Dev Mode
+=== Development Mode
 
-* Run server from IDE (Intellij)
-* Run npm in watch mode : `npm run watch`
-** Every time a jsx file is modified, bundle is rebuilt in `target folder`
-** Every time `target` folder is modified, server reloads static files
+* Run backend from IDE (IntelliJ recommended): `mvn spring-boot:run`
+* Run frontend in watch mode: `npm run watch`
+** Vite provides fast HMR (Hot Module Replacement)
+** Frontend builds to `target/classes/public` for Spring Boot to serve
+
+=== Build Commands
+
+==== Backend
+* Build: `mvn clean package`
+* Run tests: `mvn test`
+* Run application: `mvn spring-boot:run`
+
+==== Frontend (in src/main/frontend)
+* Development: `npm run watch`
+* Build (dev): `npm run dev-build`
+* Build (prod): `npm run prod-build`
+* Tests: `npm run test`
+* Inject test data: `npm run inject-data`
 
 TIP: you can inject test data with `npm run inject-data`
 
-== Environment Variable
+== Environment Variables
 
 MONGODB_URI:: a uri for a mongo database, if not an im-memory implementation is used (https://github.com/bwaldvogel/mongo-java-server[mongo java server])
-
-SENDGRID_API_KEY:: the api key for https://sendgrid.com/
 
 START_MONTH:: month of start of the season (default 10)
 
